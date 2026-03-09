@@ -1,0 +1,21 @@
+identity:
+  backend: tpm2-preferred
+  fallback: software-fallback
+
+runtime:
+  coordination_target_ms: 10
+  checkpoint_interval_seconds: 300
+  continuity_evidence_required: true
+
+measurement:
+  cgi_mode: evidence_index
+  external_claims_forbidden: true
+  anti_theater_continuous: true
+
+grounding:
+  require_freshness_class: RT
+  permit_nrt_with_warning: true
+
+federation:
+  preserve_dissent: true
+  workspace_mode: bounded_collective

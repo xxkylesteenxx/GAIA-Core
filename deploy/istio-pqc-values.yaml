@@ -1,0 +1,11 @@
+meshConfig:
+  defaultConfig:
+    proxyMetadata:
+      COMPLIANCE_POLICY: pqc
+pilot:
+  env:
+    EXTERNAL_ISTIOD: "false"
+global:
+  meshID: gaia-mesh
+  multiCluster:
+    enabled: false
