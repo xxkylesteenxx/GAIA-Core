@@ -1,0 +1,50 @@
+// NexusSyncService Protobuf schema
+// Cross-host coherence synchronisation contract
+// Generated client: gaia_core/ipc/grpc/nexus_sync_service.py
+
+syntax = "proto3";
+
+package gaia.ipc.nexus;
+
+option java_package = "ai.gaia.ipc.nexus";
+
+message GaiaEnvelope {
+  string message_id = 1;
+  string source_core = 2;
+  string target_core = 3;
+  uint64 monotonic_ns = 4;
+  string trace_id = 5;
+  map<string, int64> causal_clock = 6;
+  string contract_version = 7;
+  string data_class = 8;
+  string priority = 9;
+}
+
+message CoherenceBarrierRequest {
+  string source_core = 1;
+  int64 generation = 2;
+  map<string, int64> vector_clock = 3;
+  string trace_id = 4;
+}
+
+message CoherenceBarrierResponse {
+  bool accepted = 1;
+  int64 generation = 2;
+  map<string, int64> merged_clock = 3;
+  float latency_ms = 4;
+  string detail = 5;
+}
+
+message HealthBeacon {
+  string node_id = 1;
+  string core = 2;
+  uint64 timestamp_ns = 3;
+  bool degraded = 4;
+  string risk_level = 5;
+  string detail = 6;
+}
+
+service NexusSyncService {
+  rpc Barrier(CoherenceBarrierRequest) returns (CoherenceBarrierResponse);
+  rpc EmitBeacon(HealthBeacon) returns (HealthBeacon);
+}

@@ -1,0 +1,44 @@
+// GuardianPolicyService Protobuf schema
+// Cross-host policy enforcement contract
+// Generated client: gaia_core/ipc/grpc/guardian_policy_service.py
+
+syntax = "proto3";
+
+package gaia.ipc.guardian;
+
+option java_package = "ai.gaia.ipc.guardian";
+
+message PolicyCheckRequest {
+  string requesting_core = 1;
+  string action_type = 2;
+  bytes action_payload = 3;
+  string trace_id = 4;
+}
+
+message PolicyCheckResponse {
+  bool allowed = 1;
+  string risk_level = 2;
+  string reason = 3;
+  bool requires_human_approval = 4;
+  float latency_ms = 5;
+}
+
+message VetoSignal {
+  string source_core = 1;
+  string action_type = 2;
+  string reason = 3;
+  uint64 timestamp_ns = 4;
+  string risk_level = 5;
+}
+
+message RiskLevelUpdate {
+  string previous = 1;
+  string current = 2;
+  uint64 timestamp_ns = 3;
+}
+
+service GuardianPolicyService {
+  rpc Check(PolicyCheckRequest) returns (PolicyCheckResponse);
+  rpc Veto(VetoSignal) returns (VetoSignal);
+  rpc SetRiskLevel(RiskLevelUpdate) returns (RiskLevelUpdate);
+}
