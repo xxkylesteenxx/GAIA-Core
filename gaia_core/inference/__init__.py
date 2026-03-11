@@ -1,15 +1,5 @@
-"""Inference contracts — InferRequest, InferResponse, TaskType, RuntimeBackend."""
+"""GAIA inference package — unified runtime abstraction layer."""
 
-from gaia_core.inference.contracts import (
-    InferRequest,
-    InferResponse,
-    RuntimeBackend,
-    TaskType,
-)
+from gaia_core.inference.contracts import InferRequest, InferResponse, InferBackend
 
-__all__ = [
-    "InferRequest",
-    "InferResponse",
-    "RuntimeBackend",
-    "TaskType",
-]
+__all__ = ["InferRequest", "InferResponse", "InferBackend"]

@@ -1,61 +1,41 @@
+"""Unified inference contract for all GAIA backends.
+
+No GAIA subsystem should import backend-specific APIs directly.
+All calls go through InferRequest → router → backend → InferResponse.
+"""
 from __future__ import annotations
 
+import enum
 from dataclasses import dataclass, field
-from enum import StrEnum
-from typing import Any, Mapping
+from typing import Any
 
 
-class TaskType(StrEnum):
-    GENERATE = "generate"
-    EMBED = "embed"
-    RERANK = "rerank"
-    CLASSIFY = "classify"
-    SUMMARIZE = "summarize"
-    ROUTE = "route"
-    POLICY_EVAL = "policy_eval"
+class InferBackend(str, enum.Enum):
+    """Available inference backends."""
+    LLAMA_CPP = "llama_cpp"   # Edge / offline
+    VLLM = "vllm"             # Server / high-context generative
+    TRITON = "triton"         # Perception / embedding / classifier
 
 
-class RuntimeBackend(StrEnum):
-    MOCK = "mock"
-    LLAMA_CPP = "llama.cpp"
-    VLLM = "vllm"
-    TRITON = "triton"
-    REMOTE_HTTP = "remote_http"
-
-
-@dataclass(slots=True, frozen=True)
+@dataclass
 class InferRequest:
-    schema_version: str = "1.0"
-    request_id: str = ""
-    core_id: str = ""
-    task_type: TaskType = TaskType.GENERATE
-    backend: RuntimeBackend | None = None
-
-    model_id: str | None = None
-    payload: Mapping[str, Any] = field(default_factory=dict)
-    context: Mapping[str, Any] = field(default_factory=dict)
-    routing_hints: Mapping[str, Any] = field(default_factory=dict)
-
-    timeout_ms: int = 30_000
-    priority: int = 100
-    max_tokens: int | None = None
-    temperature: float | None = None
+    """A single inference request, backend-agnostic."""
+    prompt: str
+    model_id: str
+    backend: InferBackend | None = None       # None = auto-route via policy
+    max_tokens: int = 512
+    temperature: float = 0.7
+    stream: bool = False
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass
 class InferResponse:
-    schema_version: str = "1.0"
-    request_id: str = ""
-    accepted: bool = True
-
-    core_id: str = ""
-    task_type: TaskType = TaskType.GENERATE
-    backend: RuntimeBackend = RuntimeBackend.MOCK
-    model_id: str | None = None
-
-    result: Mapping[str, Any] = field(default_factory=dict)
-    usage: Mapping[str, Any] = field(default_factory=dict)
-    latency_ms: int = 0
-
-    error_code: str | None = None
-    error_message: str | None = None
+    """A single inference response, backend-agnostic."""
+    text: str
+    model_id: str
+    backend: InferBackend
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    latency_ms: float = 0.0
+    metadata: dict[str, Any] = field(default_factory=dict)

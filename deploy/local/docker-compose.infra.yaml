@@ -1,0 +1,73 @@
+# GAIA Local Development Infrastructure
+# Starts MinIO, etcd, and NATS JetStream for local dev/testing.
+# Usage: docker compose -f deploy/local/docker-compose.infra.yaml up -d
+
+version: "3.9"
+
+services:
+
+  # --- MinIO: durable object store ---
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: gaia-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"    # S3 API
+      - "9001:9001"    # Web console
+    volumes:
+      - gaia_minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- etcd: consistent metadata + coordination ---
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.12
+    container_name: gaia-etcd
+    command:
+      - etcd
+      - --name=gaia-etcd0
+      - --data-dir=/etcd-data
+      - --listen-client-urls=http://0.0.0.0:2379
+      - --advertise-client-urls=http://localhost:2379
+      - --listen-peer-urls=http://0.0.0.0:2380
+      - --initial-advertise-peer-urls=http://localhost:2380
+      - --initial-cluster=gaia-etcd0=http://localhost:2380
+      - --initial-cluster-token=gaia-dev-cluster
+      - --initial-cluster-state=new
+    ports:
+      - "2379:2379"
+      - "2380:2380"
+    volumes:
+      - gaia_etcd_data:/etcd-data
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # --- NATS with JetStream: causal WAL + event streaming ---
+  nats:
+    image: nats:2.10-alpine
+    container_name: gaia-nats
+    command: ["-js", "-m", "8222"]
+    ports:
+      - "4222:4222"    # Client connections
+      - "8222:8222"    # HTTP monitoring
+    volumes:
+      - gaia_nats_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  gaia_minio_data:
+  gaia_etcd_data:
+  gaia_nats_data:

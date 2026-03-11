@@ -1,0 +1,54 @@
+# GAIA Model Profile Registry
+# Maps model IDs to their preferred inference backend and runtime parameters.
+# Used by gaia_core/inference/router.py for policy-based routing.
+#
+# backend options: llama_cpp | vllm | triton
+
+models:
+  # --- Generative / Deliberative (NEXUS, GUARDIAN, SOPHIA) ---
+  nexus-7b-q4:
+    backend: llama_cpp
+    description: NEXUS offline deliberative — edge fallback
+    n_ctx: 8192
+    n_gpu_layers: 0
+
+  nexus-70b:
+    backend: vllm
+    description: NEXUS server-tier high-context reasoning
+    max_tokens: 4096
+
+  sophia-7b-q4:
+    backend: llama_cpp
+    description: SOPHIA research synthesis — edge
+    n_ctx: 4096
+
+  sophia-70b:
+    backend: vllm
+    description: SOPHIA server-tier synthesis
+    max_tokens: 2048
+
+  guardian-7b-q4:
+    backend: llama_cpp
+    description: GUARDIAN ethical arbiter — edge, offline-safe
+    n_ctx: 4096
+
+  # --- Perception / Grounding (ATLAS, TERRA, AQUA, AERO, VITA) ---
+  atlas-embed-v1:
+    backend: triton
+    description: ATLAS spatial embedding model
+
+  terra-classify-v1:
+    backend: triton
+    description: TERRA land-cover + geosphere classifier
+
+  aqua-embed-v1:
+    backend: triton
+    description: AQUA hydrosphere embedding
+
+  aero-classify-v1:
+    backend: triton
+    description: AERO atmospheric state classifier
+
+  vita-embed-v1:
+    backend: triton
+    description: VITA biosphere species/ecosystem embedding
