@@ -1,0 +1,2 @@
+# GUARDIAN LSM kernel module build
+obj-m += guardian_lsm.o
