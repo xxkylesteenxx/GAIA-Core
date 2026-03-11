@@ -1,5 +1,8 @@
-"""GAIA attestation package — TPM 2.0 identity and boot integrity."""
+# GAIA Attestation Package
+from .identity_root import IdentityRoot
+from .tpm2_backend import TPM2Backend
+from .software_backend import SoftwareBackend
+from .quote import AttestationQuote
+from .pcr_policy import PCRPolicy
 
-from gaia_core.attestation.tpm_quote import TPMQuote, AttestationResult
-
-__all__ = ["TPMQuote", "AttestationResult"]
+__all__ = ["IdentityRoot", "TPM2Backend", "SoftwareBackend", "AttestationQuote", "PCRPolicy"]
