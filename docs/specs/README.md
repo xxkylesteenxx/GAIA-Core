@@ -66,6 +66,7 @@ This directory contains all canonical specifications for the GAIA project. Specs
 | Document | Path | Status |
 |---|---|---|
 | Gap Resolution Matrix | [`GAIA_Gap_Resolution_Matrix_v1.0.md`](GAIA_Gap_Resolution_Matrix_v1.0.md) | v1.0 |
+| Remediation Execution Plan | [`GAIA_Remediation_Execution_Plan_v1.0.md`](GAIA_Remediation_Execution_Plan_v1.0.md) | v1.0 |
 | Substrate Resolution & Setup Plan | [`GAIA_Substrate_Resolution_and_Setup_Plan_v1.0.md`](GAIA_Substrate_Resolution_and_Setup_Plan_v1.0.md) | v1.0 |
 | Tier 1 Implementation Plan | [`GAIA_Tier1_Implementation_Plan_v1.0.md`](GAIA_Tier1_Implementation_Plan_v1.0.md) | v1.0 |
 | Tier 2 Implementation Plan | [`GAIA_Tier2_Implementation_Plan_v1.0.md`](GAIA_Tier2_Implementation_Plan_v1.0.md) | v1.0 |
@@ -93,4 +94,4 @@ The following specs are **referenced** by existing documents but do not yet exis
 
 ---
 
-*Last updated: 2026-03-11 — added Inference Contract Reconciliation Spec (GAIA-SPEC-INF-001)*
+*Last updated: 2026-03-11 — added Remediation Execution Plan v1.0*
