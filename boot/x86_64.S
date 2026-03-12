@@ -1,34 +1,42 @@
-// GAIA L0 Boot Entry — x86_64 Assembly stub
-// Layer: L0 (Boot / Hardware Entry)
-// See: docs/specs/platform/GAIALanguageStackSpecv1.0.md
+/* GAIA L0 Boot Stub — x86_64
+ * Layer: L0 — Boot / Hardware Entry
+ * Language: Assembly
+ * Purpose: Early CPU handoff from UEFI to GAIA kernel entry point.
+ *
+ * This stub is executed after UEFI hands off control.
+ * It prepares the CPU state (long mode confirmed, stack set),
+ * clears BSS, and jumps to the C/Rust kernel entry.
+ */
 
-.section .text.boot, "ax"
+.section .text
 .global _gaia_boot_start
-.type _gaia_boot_start, @function
+.extern gaia_kernel_entry
 
 _gaia_boot_start:
-    // Disable interrupts during early boot
+    /* Disable interrupts during early boot */
     cli
 
-    // Set up stack pointer
-    lea gaia_boot_stack_top(%rip), %rsp
+    /* Set up a minimal stack pointer */
+    lea     gaia_boot_stack_top(%rip), %rsp
 
-    // Clear BSS segment
-    lea _bss_start(%rip), %rdi
-    lea _bss_end(%rip), %rcx
-    sub %rdi, %rcx
-    xor %eax, %eax
-    rep stosb
+    /* Zero out BSS segment */
+    lea     __bss_start(%rip), %rdi
+    lea     __bss_end(%rip), %rcx
+    sub     %rdi, %rcx
+    xor     %eax, %eax
+    rep     stosb
 
-    // Jump to C early init
-    call gaia_early_init
+    /* Jump to C/Rust kernel entry — does not return */
+    call    gaia_kernel_entry
 
-    // Should never return
-1:  hlt
-    jmp 1b
+    /* Halt if kernel entry returns (should never happen) */
+_gaia_halt:
+    hlt
+    jmp     _gaia_halt
 
+/* Boot-time stack: 16KB */
 .section .bss
 .align 16
 gaia_boot_stack:
-    .space 4096
+    .space 16384
 gaia_boot_stack_top:

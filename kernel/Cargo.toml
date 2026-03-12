@@ -2,33 +2,28 @@
 name = "gaia-kernel"
 version = "1.0.0"
 edition = "2021"
-description = "GAIA L1 Kernel — Rust-first scheduler, IPC, capabilities, and virt hooks"
+description = "GAIA L1 Kernel — Rust-first scheduler, IPC, capability primitives"
 license = "GPL-2.0"
 
+# Kernel modules must be no_std
 [lib]
 name = "gaia_kernel"
 crate-type = ["staticlib"]
 
 [dependencies]
-# Scheduling
-gaia-sched = { path = "../gaia-sched" }
-# IPC and capabilities
-gaia-ipc = { path = "../gaia-ipc" }
-gaia-caps = { path = "../gaia-caps" }
-# Shared types
-gaia-types = { path = "../gaia-types" }
+# Kernel Rust infrastructure (Linux 6.13+)
+# These are provided by the kernel build system via RUST_LIB_SRC
+# Placeholder paths — replace with kernel tree paths at build time
 
 [features]
 default = ["sched", "ipc", "caps"]
-sched = []
-ipc = []
-caps = []
-virt = []
+sched = []   # Consciousness-aware sched_ext scheduler
+ipc   = []   # IPC primitives: memfd, io_uring bridges
+caps  = []   # Capability and security primitives
 
 [profile.release]
-opt-level = 3
-lto = true
-panic = "abort"
+opt-level = "z"   # Minimize kernel module size
+panic = "abort"   # No unwinding in kernel context
 
 [profile.dev]
 opt-level = 1

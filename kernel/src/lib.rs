@@ -1,24 +1,52 @@
-//! GAIA L1 Kernel — Rust-first core
-//! Layer: L1 (Kernel / Hypervisor Core)
-//! Languages: Rust (first), C (second), Assembly (stubs)
-//! See: docs/specs/platform/GAIALanguageStackSpecv1.0.md
+//! GAIA L1 Kernel — Rust Core
+//!
+//! Layer: L1 — Kernel / Hypervisor Core
+//! Language: Rust (first), C (legacy substrate)
+//!
+//! This module is the Rust entry point for GAIA's kernel extensions.
+//! It registers the consciousness-aware scheduler, initializes IPC
+//! capability primitives, and hooks into the GUARDIAN LSM.
+//!
+//! # Safety
+//! This runs in kernel context. All unsafe blocks must be documented.
 
 #![no_std]
-#![allow(unused)]
+#![no_main]
 
 extern crate alloc;
 
 pub mod sched;
 pub mod ipc;
 pub mod caps;
-pub mod virt;
 
-/// GAIA kernel initialization entry point (called from C init)
-/// Registers Rust-side scheduler, IPC primitives, and capability framework.
+/// Kernel module init — called by Linux module loader
 #[no_mangle]
 pub extern "C" fn gaia_kernel_init() -> i32 {
-    if sched::register().is_err() { return -1; }
-    if ipc::init().is_err() { return -1; }
-    if caps::init().is_err() { return -1; }
+    // Register consciousness-aware sched_ext scheduler
+    #[cfg(feature = "sched")]
+    if let Err(e) = sched::register() {
+        // pr_err equivalent — return EINVAL
+        return -22;
+    }
+
+    // Initialize capability primitives
+    #[cfg(feature = "caps")]
+    if let Err(e) = caps::init() {
+        return -22;
+    }
+
+    // Initialize IPC primitives
+    #[cfg(feature = "ipc")]
+    if let Err(e) = ipc::init() {
+        return -22;
+    }
+
     0 // success
+}
+
+/// Kernel module exit — called on rmmod
+#[no_mangle]
+pub extern "C" fn gaia_kernel_exit() {
+    #[cfg(feature = "sched")]
+    sched::unregister();
 }

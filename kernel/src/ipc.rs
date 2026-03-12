@@ -1,27 +1,28 @@
-//! GAIA IPC Primitives (L1)
-//! Safe Rust wrappers over kernel IPC: mailboxes, ring buffers, capability channels.
+//! GAIA IPC Primitives
+//!
+//! Layer: L1 — Kernel / Hypervisor Core
+//! Subsystem: Inter-Process Communication
+//!
+//! Provides the foundation for GAIA's three-tier IPC fabric:
+//!   Tier 1 — memfd zero-copy shared memory (intra-host, same security domain)
+//!   Tier 2 — io_uring async I/O (high-throughput async messaging)
+//!   Tier 3 — gRPC/Protobuf over Unix sockets (cross-domain, cross-host)
+//!
+//! This module initializes kernel-side IPC bookkeeping and capability gates.
 
-/// IPC initialization — registers GAIA-specific IPC endpoints with the kernel.
-pub fn init() -> Result<(), IpcError> {
-    // TODO: register GAIA IPC namespaces, bounded mailboxes, and cap channels
+/// IPC tier classification.
+#[repr(u8)]
+#[derive(Debug, Clone, Copy)]
+pub enum IpcTier {
+    SharedMemory = 1, // memfd zero-copy
+    AsyncIo      = 2, // io_uring
+    RpcSock      = 3, // gRPC/Protobuf over Unix socket
+}
+
+/// Initialize IPC primitives at kernel module load.
+pub fn init() -> Result<(), i32> {
+    // TODO: register GAIA IPC capability gates with GUARDIAN LSM
+    // TODO: initialize memfd policy table
+    // TODO: set up io_uring submission queue bookkeeping
     Ok(())
-}
-
-#[derive(Debug)]
-pub enum IpcError {
-    InitFailed,
-    CapabilityDenied,
-    BufferFull,
-}
-
-/// Bounded mailbox for inter-core messaging
-pub struct BoundedMailbox<T, const N: usize> {
-    // ring buffer: single-writer, single-reader, lock-free
-    _marker: core::marker::PhantomData<T>,
-}
-
-impl<T, const N: usize> BoundedMailbox<T, N> {
-    pub const fn new() -> Self {
-        Self { _marker: core::marker::PhantomData }
-    }
 }
