@@ -49,6 +49,12 @@ This directory contains all canonical specifications for the GAIA project. Specs
 |---|---|---|
 | Post-Quantum Cryptography Deployment | [`security/pqc/GAIA_Post_Quantum_Cryptography_Production_Deployment_Spec_v1.0.md`](security/pqc/GAIA_Post_Quantum_Cryptography_Production_Deployment_Spec_v1.0.md) | Draft v1.0 |
 
+## Packaging & Repository Governance
+
+| Spec | Path | Status |
+|---|---|---|
+| Cross-Repo Packaging & Dependency Resolution | [`packaging/GAIA_Cross_Repo_Packaging_Dependency_Resolution_Spec_v1.0.md`](packaging/GAIA_Cross_Repo_Packaging_Dependency_Resolution_Spec_v1.0.md) | Draft v1.0 |
+
 ## Implementation Plans & Gap Analysis
 
 | Document | Path | Status |
@@ -77,8 +83,8 @@ The following specs are **referenced** by existing documents but do not yet exis
 | Plugin / Extension Security Spec | ATLAS scope, GAIA OS Thread | 🟠 High |
 | Jurisdiction Engine Spec | Tier 2 Blockers Plan | 🟡 Medium |
 | GAIA Observability / Telemetry Spec | Tier 1/2 Plans | 🟡 Medium |
-| Cross-Repo Dependency Map | All repos | 🟡 Medium |
+| Cross-Repo Dependency Map | All repos | 🟡 Medium — partially addressed by PKG-001 |
 
 ---
 
-*Last updated: 2026-03-11 — GAIA-Core housekeeping pass*
+*Last updated: 2026-03-11 — added Cross-Repo Packaging & Dependency Resolution Spec (GAIA-SPEC-PKG-001)*
