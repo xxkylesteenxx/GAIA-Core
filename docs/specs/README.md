@@ -40,7 +40,7 @@ This directory contains all canonical specifications for the GAIA project. Specs
 
 | Spec | Path | Status |
 |---|---|---|
-| Planetary Multi-Agent Coordination | [`coordination/GAIA_Planetary_Multi_Agent_Coordination_Spec_v1.0.md`](coordination/GAIA_Planetary_Multi_Agent_Coordination_Spec_v1.0.md) | Draft v1.0 |
+| Planetary Multi-Agent Coordination | [`coordination/GAIA_Planetary_Multi_Agent_Coordination_Spec_v1.0.md`](coordination/GAIA_Planetary_Multi_Agent_Coordination_Spec_v1.0.md) | Draft v1.0 — full spec |
 | Synergy Measurement Framework | [`synergy/GAIA_Synergy_Measurement_Framework_Spec_v1.0.md`](synergy/GAIA_Synergy_Measurement_Framework_Spec_v1.0.md) | Draft v1.0 |
 
 ## Security
@@ -94,4 +94,4 @@ The following specs are **referenced** by existing documents but do not yet exis
 
 ---
 
-*Last updated: 2026-03-11 — added Remediation Execution Plan v1.0*
+*Last updated: 2026-03-11 — added full Planetary Multi-Agent Coordination Spec v1.0 (GAIA-SPEC-005), replacing prior stub*
