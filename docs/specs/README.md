@@ -55,6 +55,12 @@ This directory contains all canonical specifications for the GAIA project. Specs
 |---|---|---|
 | Cross-Repo Packaging & Dependency Resolution | [`packaging/GAIA_Cross_Repo_Packaging_Dependency_Resolution_Spec_v1.0.md`](packaging/GAIA_Cross_Repo_Packaging_Dependency_Resolution_Spec_v1.0.md) | Draft v1.0 |
 
+## Inference & Runtime Contracts
+
+| Spec | Path | Status |
+|---|---|---|
+| Inference Contract Reconciliation | [`inference/GAIA_Inference_Contract_Reconciliation_Spec_v1.0.md`](inference/GAIA_Inference_Contract_Reconciliation_Spec_v1.0.md) | Draft v1.0 |
+
 ## Implementation Plans & Gap Analysis
 
 | Document | Path | Status |
@@ -87,4 +93,4 @@ The following specs are **referenced** by existing documents but do not yet exis
 
 ---
 
-*Last updated: 2026-03-11 — added Cross-Repo Packaging & Dependency Resolution Spec (GAIA-SPEC-PKG-001)*
+*Last updated: 2026-03-11 — added Inference Contract Reconciliation Spec (GAIA-SPEC-INF-001)*
