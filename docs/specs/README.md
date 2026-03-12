@@ -43,10 +43,11 @@ This directory contains all canonical specifications for the GAIA project. Specs
 | Planetary Multi-Agent Coordination | [`coordination/GAIA_Planetary_Multi_Agent_Coordination_Spec_v1.0.md`](coordination/GAIA_Planetary_Multi_Agent_Coordination_Spec_v1.0.md) | Draft v1.0 — full spec |
 | Synergy Measurement Framework | [`synergy/GAIA_Synergy_Measurement_Framework_Spec_v1.0.md`](synergy/GAIA_Synergy_Measurement_Framework_Spec_v1.0.md) | Draft v1.0 |
 
-## Security
+## Security & Governance
 
 | Spec | Path | Status |
 |---|---|---|
+| GUARDIAN Core Governance & Protective Enforcement | [`security/GAIA_GUARDIAN_Core_Governance_and_Protective_Enforcement_Spec_v1.0.md`](security/GAIA_GUARDIAN_Core_Governance_and_Protective_Enforcement_Spec_v1.0.md) | Active v1.0 — 🔴 Critical |
 | Post-Quantum Cryptography Deployment | [`security/pqc/GAIA_Post_Quantum_Cryptography_Production_Deployment_Spec_v1.0.md`](security/pqc/GAIA_Post_Quantum_Cryptography_Production_Deployment_Spec_v1.0.md) | Draft v1.0 |
 
 ## Packaging & Repository Governance
@@ -83,7 +84,7 @@ The following specs are **referenced** by existing documents but do not yet exis
 
 | Missing Spec | Referenced By | Priority |
 |---|---|---|
-| GUARDIAN LSM Spec | Kernel Modifications Spec | 🔴 Critical |
+| GUARDIAN LSM Spec | Kernel Modifications Spec | 🔴 Critical — see GAIA-SPEC-009 for governance layer; kernel LSM integration still needed |
 | Multimodal Memory Substrate Spec | Holographic Memory Spec (patched) | 🔴 Critical |
 | Consciousness Continuity / Identity Persistence Spec | Consciousness Measurement Spec, GAIA OS Thread | 🟠 High |
 | Digital Twin Synchronization Spec | GAIA-Meta scope, Multi-Agent Coordination Spec | 🟠 High |
@@ -94,4 +95,4 @@ The following specs are **referenced** by existing documents but do not yet exis
 
 ---
 
-*Last updated: 2026-03-11 — added full Planetary Multi-Agent Coordination Spec v1.0 (GAIA-SPEC-005), replacing prior stub*
+*Last updated: 2026-03-11 — added GUARDIAN Core Governance and Protective Enforcement Spec v1.0 (GAIA-SPEC-009)*
