@@ -1,0 +1,28 @@
+[package]
+name = "gaia-vmm"
+version = "1.0.0"
+edition = "2021"
+description = "GAIA L3 VMM — Rust-first hypervisor using rust-vmm/Cloud Hypervisor"
+license = "GPL-2.0"
+
+[[bin]]
+name = "gaia-vmm"
+path = "src/main.rs"
+
+[dependencies]
+# rust-vmm ecosystem
+kvm-ioctls = "0.14"
+kvm-bindings = "0.7"
+vm-memory = "0.14"
+vmm-sys-util = "0.12"
+
+# GAIA
+gaia-types = { path = "../gaia-types" }
+gaia-caps = { path = "../gaia-caps" }
+
+[features]
+default = ["virtio-net", "virtio-blk"]
+virtio-net = []
+virtio-blk = []
+virtio-gpu = []
+snapshot = []

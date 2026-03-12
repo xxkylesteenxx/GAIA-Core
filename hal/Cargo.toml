@@ -1,0 +1,19 @@
+[package]
+name = "gaia-hal"
+version = "1.0.0"
+edition = "2021"
+description = "GAIA L2 HAL — Rust-first hardware abstraction and device broker layer"
+license = "GPL-2.0"
+
+[lib]
+name = "gaia_hal"
+crate-type = ["staticlib"]
+
+[dependencies]
+gaia-types = { path = "../gaia-types" }
+gaia-caps = { path = "../gaia-caps" }
+
+[features]
+default = ["broker", "iommu"]
+broker = []
+iommu = []
