@@ -17,6 +17,9 @@
 #   3. Share your target Drive folder with the service account email (Editor role).
 #   4. base64-encode the key:  base64 -w 0 key.json
 #   5. Add GDRIVE_CREDENTIALS and GDRIVE_FOLDER_ID as GitHub repo secrets.
+#
+# NOTE: If secrets are not configured, this workflow exits cleanly (skipped, not failed).
+# This prevents spurious email failure notifications on forks or fresh clones.
 
 name: Backup to Google Drive
 
@@ -37,26 +40,44 @@ jobs:
       contents: read   # read-only — never writes back to repo
 
     steps:
+      - name: Check secrets are configured
+        id: secrets-check
+        env:
+          GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+        run: |
+          if [ -z "$GDRIVE_CREDENTIALS" ] || [ -z "$GDRIVE_FOLDER_ID" ]; then
+            echo "SKIP=true" >> $GITHUB_OUTPUT
+            echo "::notice title=Drive Backup Skipped::GDRIVE_CREDENTIALS or GDRIVE_FOLDER_ID secrets are not configured. Backup skipped. See workflow comments for setup instructions."
+          else
+            echo "SKIP=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Checkout full repository
+        if: steps.secrets-check.outputs.SKIP == 'false'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0   # full history so nothing is missed
 
       - name: Set up Python
+        if: steps.secrets-check.outputs.SKIP == 'false'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install Google Drive client
+        if: steps.secrets-check.outputs.SKIP == 'false'
         run: pip install --quiet google-api-python-client google-auth
 
       - name: Decode service account credentials
+        if: steps.secrets-check.outputs.SKIP == 'false'
         env:
           GDRIVE_CREDENTIALS: ${{ secrets.GDRIVE_CREDENTIALS }}
         run: |
           echo "$GDRIVE_CREDENTIALS" | base64 --decode > /tmp/gdrive_key.json
 
       - name: Upload repository to Google Drive
+        if: steps.secrets-check.outputs.SKIP == 'false'
         env:
           GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
         run: |
@@ -72,7 +93,6 @@ jobs:
           ROOT_FOLDER_ID = os.environ["GDRIVE_FOLDER_ID"]
           REPO_ROOT = pathlib.Path(".")
 
-          # Files and directories to exclude from backup
           EXCLUDE = {".git", "__pycache__", ".pytest_cache", ".mypy_cache",
                      ".ruff_cache", "*.pyc", "*.pyo", ".DS_Store", "node_modules"}
 
@@ -84,7 +104,6 @@ jobs:
               return any(fnmatch.fnmatch(name, pattern) for pattern in EXCLUDE)
 
           def get_or_create_folder(name: str, parent_id: str) -> str:
-              """Return the Drive folder ID, creating it if it doesn't exist."""
               query = (
                   f"name='{name}' and "
                   f"'{parent_id}' in parents and "
@@ -104,9 +123,7 @@ jobs:
               return folder["id"]
 
           def upload_file(local_path: pathlib.Path, parent_id: str) -> None:
-              """Upload or update a single file in Drive."""
               name = local_path.name
-              # Check if file already exists
               query = (
                   f"name='{name}' and "
                   f"'{parent_id}' in parents and "
@@ -125,7 +142,6 @@ jobs:
               print(f"  Synced: {local_path}")
 
           def sync_directory(local_dir: pathlib.Path, drive_folder_id: str) -> None:
-              """Recursively sync a local directory to Drive."""
               for item in sorted(local_dir.iterdir()):
                   if should_exclude(item.name):
                       continue
@@ -135,7 +151,6 @@ jobs:
                   elif item.is_file():
                       upload_file(item, drive_folder_id)
 
-          # Create or find a timestamped backup folder inside the target Drive folder
           import datetime
           timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d")
           backup_folder_name = f"GAIA-Core-backup-{timestamp}"

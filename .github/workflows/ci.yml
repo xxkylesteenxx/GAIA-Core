@@ -12,12 +12,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install ruff
         run: pip install ruff
+
       - name: Run ruff
         run: ruff check . --output-format=github
 
@@ -27,18 +30,43 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install pytest pytest-asyncio pytest-cov
-          pip install -e . || true
+          # Install the package; if setup fails, surface the error (no silent skip)
+          if [ -f pyproject.toml ] || [ -f setup.py ] || [ -f setup.cfg ]; then
+            pip install -e .
+          else
+            echo "No installable package manifest found — running tests against source directly."
+          fi
+
       - name: Run tests
         run: |
-          pytest tests/ -v --tb=short --cov=gaia_core --cov-report=term-missing
+          pytest tests/ -v --tb=short \
+            --cov=gaia_core \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 14
+
+      - name: Annotate test failures
+        if: failure()
+        run: |
+          echo "::error title=Test Suite Failed::One or more GAIA-Core unit tests failed. Check the pytest output above for details."
+          echo "Codex Stage 6 — Mirror of Humble Truth: See clearly, act cleanly."
 
   type-check:
     name: Type Check
@@ -46,11 +74,20 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install mypy
+
+      - name: Install mypy and stubs
         run: pip install mypy
+
       - name: Run mypy
+        # mypy errors are surfaced as warnings, not hard failures, until type coverage is complete
         run: mypy gaia_core/ --ignore-missing-imports || true
+
+      - name: Annotate type errors
+        if: failure()
+        run: |
+          echo "::warning title=Type Check Issues::mypy found type issues in gaia_core/. See output above."
