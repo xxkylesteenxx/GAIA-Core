@@ -7,8 +7,8 @@ class SophiaCore(SimpleGaiaCore):
     def __init__(self) -> None:
         super().__init__(
             core_id="SOPHIA",
-            domain="policy",
-            summary="Policy reasoning, ethics arbitration, and coordination hub",
+            domain="knowledge synthesis",
+            summary="Knowledge synthesis, reflection, and higher-order integration",
         )
 
     @property
