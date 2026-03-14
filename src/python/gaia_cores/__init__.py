@@ -1,6 +1,21 @@
 """GAIA Python orchestration layer."""
 
 from .base import GaiaCore
-from .models import CoreMessage, HealthStatus, StateSnapshot
+from .models import (
+    CoreMessage,
+    GaiaMessage,
+    HealthReport,
+    HealthStatus,
+    StateSnapshot,
+    StateUpdate,
+)
 
-__all__ = ["GaiaCore", "CoreMessage", "HealthStatus", "StateSnapshot"]
+__all__ = [
+    "GaiaCore",
+    "CoreMessage",
+    "GaiaMessage",
+    "HealthReport",
+    "HealthStatus",
+    "StateSnapshot",
+    "StateUpdate",
+]

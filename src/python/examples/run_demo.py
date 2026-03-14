@@ -1,76 +1,75 @@
 """GAIA Python orchestration demo.
 
-Boots all eight cores, sends a test message from TERRA to SOPHIA,
-and prints the registry health table and state snapshots.
+Boots all eight cores, broadcasts a planetary state update,
+sends a policy-check message from NEXUS to GUARDIAN, and
+prints the health table and state snapshots.
 
 Usage:
     cd src/python
     python examples/run_demo.py
 """
 
+from __future__ import annotations
+
 import asyncio
-import logging
 import sys
-import os
+from pathlib import Path
+from pprint import pprint
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from gaia_cores.bus import CoreMessageBus
-from gaia_cores.models import CoreMessage
+from gaia_cores.cores import (
+    AeroCore,
+    AquaCore,
+    EtaCore,
+    GuardianCore,
+    NexusCore,
+    SophiaCore,
+    TerraCore,
+    VitaCore,
+)
+from gaia_cores.models import GaiaMessage, StateUpdate
+from gaia_cores.propagation import StatePropagator
 from gaia_cores.registry import CoreRegistry
-from gaia_cores.cores.terra import TerraCore
-from gaia_cores.cores.aqua import AquaCore
-from gaia_cores.cores.aero import AeroCore
-from gaia_cores.cores.vita import VitaCore
-from gaia_cores.cores.sophia import SophiaCore
-from gaia_cores.cores.guardian import GuardianCore
-from gaia_cores.cores.nexus import NexusCore
-from gaia_cores.cores.eta import EtaCore
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
 
 async def main() -> None:
     registry = CoreRegistry()
-    bus = CoreMessageBus()
-
     cores = [
         TerraCore(), AquaCore(), AeroCore(), VitaCore(),
         SophiaCore(), GuardianCore(), NexusCore(), EtaCore(),
     ]
-    for core in cores:
-        registry.register(core)
-        bus.register(core)
+    await registry.register_many(cores)
+    await registry.boot_all()
 
-    # Allow TERRA -> SOPHIA on gaia.state.*
-    bus.allow("TERRA", "SOPHIA", "gaia.state.")
-    # Allow all cores to broadcast on gaia.state.*
-    for core in cores:
-        bus.allow(core.name, "*", "gaia.state.")
-
-    await registry.boot()
-
-    # Send a test message
-    msg = CoreMessage(
-        sender="TERRA",
-        recipient="SOPHIA",
-        topic="gaia.state.update/v1",
-        payload={"temperature_c": 14.2, "humidity_pct": 62.0},
-        trust_label="bounded",
+    propagator = StatePropagator(registry)
+    await propagator.broadcast(
+        StateUpdate(
+            source="planetary_ingest",
+            scope="global",
+            values={"temperature_anomaly_c": 1.29, "ocean_heat_content": "elevated"},
+            summary="Planetary baseline state loaded",
+        )
     )
-    await bus.dispatch(msg)
 
-    # Print health table
-    print("\n=== Health Table ===")
-    for name, status in registry.health_table().items():
-        print(f"  {name:<12} {status.value}")
+    await registry.send(
+        GaiaMessage(
+            sender="NEXUS",
+            recipient="GUARDIAN",
+            topic="policy_check",
+            payload={"operation": "synchronize_global_state", "risk_tier": "medium"},
+        )
+    )
 
-    # Print snapshots
-    print("\n=== State Snapshots ===")
-    for snap in registry.snapshot_all():
-        print(f"  {snap.core_name:<12} health={snap.health.value} state={snap.state}")
+    health = await registry.health_table()
+    print("== health ==")
+    pprint({k: v.status.value for k, v in health.items()})
 
-    await registry.shutdown()
+    print("\n== snapshots ==")
+    snapshots = registry.snapshot_all()
+    pprint({k: v.values for k, v in snapshots.items()})
+
+    await registry.stop_all()
     print("\n[gaia] shutdown complete")
 
 
