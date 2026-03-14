@@ -6,6 +6,17 @@ Fine-tuning hooks SHALL emit auditable events rather than
 mutating live models inline. No autonomous online fine-tuning,
 no direct production-model mutation, no unsafe tool execution.
 Training hooks are recorded as events for later reviewed processing.
+
+Event types
+-----------
+PREFERENCE_SIGNAL  — thumbs up/down or ranked preference pair
+CORRECTION         — explicit correction of a model output
+DOMAIN_EXAMPLE     — new knowledge-domain example
+SAFETY_ANNOTATION  — GUARDIAN-sourced safety signal
+CAPABILITY_PROBE   — structured capability evaluation
+SFT_PREPARE        — supervised fine-tuning job preparation request
+                     (dataset reference + output dir; no job is launched
+                      inline — event queued for reviewed processing)
 """
 
 from __future__ import annotations
@@ -29,6 +40,7 @@ class FinetuneEventType(str, Enum):
     DOMAIN_EXAMPLE    = "domain_example"
     SAFETY_ANNOTATION = "safety_annotation"
     CAPABILITY_PROBE  = "capability_probe"
+    SFT_PREPARE       = "sft_prepare"   # supervised fine-tuning preparation
 
 
 @dataclass
@@ -61,6 +73,9 @@ class InMemoryEventSink:
     def pending_approval(self) -> list[FinetuneEvent]:
         return [e for e in self._events if not e.approved]
 
+    def by_type(self, event_type: FinetuneEventType) -> list[FinetuneEvent]:
+        return [e for e in self._events if e.event_type == event_type]
+
     def approve(self, event_id: str) -> None:
         for event in self._events:
             if event.event_id == event_id:
@@ -79,6 +94,10 @@ class FineTuneEmitter:
     def __init__(self, sink: InMemoryEventSink | None = None) -> None:
         self._sink = sink or InMemoryEventSink()
 
+    # ------------------------------------------------------------------ #
+    # Core emit                                                            #
+    # ------------------------------------------------------------------ #
+
     def emit(
         self,
         event_type: FinetuneEventType,
@@ -92,6 +111,10 @@ class FineTuneEmitter:
         log.info("finetune: emitted %s for '%s' from '%s'",
                  event_type.value, model_id, source)
         return event
+
+    # ------------------------------------------------------------------ #
+    # Convenience emitters                                                 #
+    # ------------------------------------------------------------------ #
 
     def emit_preference(
         self, model_id: str, source: str,
@@ -113,6 +136,39 @@ class FineTuneEmitter:
     ) -> FinetuneEvent:
         return self.emit(FinetuneEventType.SAFETY_ANNOTATION, model_id, source,
                          {"prompt": prompt, "output": output, "annotation": annotation})
+
+    def emit_sft_prepare(
+        self,
+        model_id:    str,
+        source:      str,
+        dataset_ref: str,
+        output_dir:  str,
+        metadata:    dict[str, Any] | None = None,
+    ) -> FinetuneEvent:
+        """Emit a supervised fine-tuning preparation event.
+
+        Records the dataset reference and output directory for a proposed
+        SFT run. No training job is launched — the event is queued for
+        offline reviewed processing.
+
+        Canonical payload shape (GAIA-AI-INFERENCE-SPEC v1.0):
+        {
+            "event_type":   "sft_prepare",
+            "model_name":   <model_id>,
+            "dataset_ref":  <path or URI to training dataset>,
+            "metadata": {
+                "output_dir": <run output directory>,
+                ...           <any additional metadata>
+            }
+        }
+        """
+        payload: dict[str, Any] = {
+            "event_type":  FinetuneEventType.SFT_PREPARE.value,
+            "model_name":  model_id,
+            "dataset_ref": dataset_ref,
+            "metadata":    {"output_dir": output_dir, **(metadata or {})},
+        }
+        return self.emit(FinetuneEventType.SFT_PREPARE, model_id, source, payload)
 
     @property
     def sink(self) -> InMemoryEventSink:
