@@ -7,8 +7,8 @@ class GuardianCore(SimpleGaiaCore):
     def __init__(self) -> None:
         super().__init__(
             core_id="GUARDIAN",
-            domain="safety",
-            summary="Safety monitor, audit log, and deny-by-default enforcer",
+            domain="safety and ethics",
+            summary="Safety, ethics, and harm-prevention supervision",
         )
 
     @property
