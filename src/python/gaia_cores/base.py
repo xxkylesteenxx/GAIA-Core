@@ -6,57 +6,63 @@ Spec ref: PYTHON-ORCHESTRATION-SPEC §4
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
 
-from .models import CoreMessage, HealthStatus, StateSnapshot
+from .models import CoreState, GaiaMessage, HealthReport, StateUpdate
 
 
 class GaiaCore(ABC):
     """Abstract base for all eight GAIA cores.
 
-    Subclasses must implement every abstract method.
-    The registry calls startup() / shutdown() for lifecycle management.
+    Each core is identified by a (core_id, domain) pair.
+    The registry calls start() / stop() for lifecycle management.
+
+    Spec ref: PYTHON-ORCHESTRATION-SPEC §4
     """
 
-    # -- Identity ----------------------------------------------------------
+    def __init__(self, core_id: str, domain: str) -> None:
+        self.core_id = core_id
+        self.domain  = domain
 
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """Unique core identifier (e.g. 'TERRA')."""
+    # -- Identity ----------------------------------------------------------
 
     @property
     def protection_class(self) -> str:
         """'critical' or 'bounded'. Override in subclasses."""
         return "bounded"
 
+    def describe(self) -> dict[str, Any]:
+        """Return a plain-dict summary of this core's identity."""
+        return {"core_id": self.core_id, "domain": self.domain}
+
     # -- Lifecycle ---------------------------------------------------------
 
     @abstractmethod
-    async def startup(self) -> None:
+    async def start(self) -> None:
         """Initialise resources. Called by registry at boot."""
 
     @abstractmethod
-    async def shutdown(self) -> None:
+    async def stop(self) -> None:
         """Release resources. Called by registry at teardown."""
 
     # -- Health ------------------------------------------------------------
 
     @abstractmethod
-    def health(self) -> HealthStatus:
-        """Return current health status."""
+    async def health_check(self) -> HealthReport:
+        """Return the current health report for this core."""
 
     # -- Messaging ---------------------------------------------------------
 
     @abstractmethod
-    async def handle_message(self, msg: CoreMessage) -> None:
-        """Process an inbound CoreMessage."""
+    async def handle_message(self, message: GaiaMessage) -> None:
+        """Process an inbound GaiaMessage."""
 
     # -- State -------------------------------------------------------------
 
     @abstractmethod
-    def snapshot(self) -> StateSnapshot:
-        """Export current state as a serialisable record."""
+    async def ingest_state_update(self, update: StateUpdate) -> None:
+        """Receive and apply a StateUpdate from another core or the propagator."""
 
     @abstractmethod
-    async def ingest_update(self, update: StateSnapshot) -> None:
-        """Receive and apply a state update from another core."""
+    def snapshot_state(self) -> CoreState:
+        """Export current state as a CoreState record."""

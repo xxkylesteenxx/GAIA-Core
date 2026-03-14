@@ -3,6 +3,7 @@
 from .base import GaiaCore
 from .models import (
     CoreMessage,
+    CoreState,
     GaiaMessage,
     HealthReport,
     HealthStatus,
@@ -15,6 +16,7 @@ from .registry import CoreRegistry
 __all__ = [
     "GaiaCore",
     "CoreMessage",
+    "CoreState",
     "GaiaMessage",
     "HealthReport",
     "HealthStatus",

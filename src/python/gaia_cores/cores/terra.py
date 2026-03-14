@@ -2,37 +2,40 @@
 
 from __future__ import annotations
 from ..base import GaiaCore
-from ..models import CoreMessage, HealthStatus, StateSnapshot
+from ..models import CoreState, GaiaMessage, HealthReport, HealthStatus, StateUpdate
 
 
 class TerraCore(GaiaCore):
     def __init__(self) -> None:
+        super().__init__(core_id="TERRA", domain="environment")
         self._health = HealthStatus.STOPPED
-        self._state: dict = {}
+        self._values: dict = {}
 
     @property
     def name(self) -> str:
-        return "TERRA"
+        return self.core_id
 
-    async def startup(self) -> None:
+    async def start(self) -> None:
         self._health = HealthStatus.HEALTHY
 
-    async def shutdown(self) -> None:
+    async def stop(self) -> None:
         self._health = HealthStatus.STOPPED
 
-    def health(self) -> HealthStatus:
-        return self._health
+    async def health_check(self) -> HealthReport:
+        return HealthReport(core_id=self.core_id, domain=self.domain, status=self._health)
 
-    async def handle_message(self, msg: CoreMessage) -> None:
-        # Store under "msg::<topic>" so tests can assert by key
-        self._state[f"msg::{msg.topic}"] = msg.payload
+    async def handle_message(self, message: GaiaMessage) -> None:
+        self._values[f"msg::{message.topic}"] = message.payload
 
-    def snapshot(self) -> StateSnapshot:
-        return StateSnapshot(core_name=self.name, health=self._health, state=dict(self._state))
+    async def ingest_state_update(self, update: StateUpdate) -> None:
+        self._values[f"state::{update.scope}"] = update.values
 
-    async def ingest_update(self, update: StateSnapshot) -> None:
-        self._state[f"update_from_{update.core_name}"] = update.state
+    def snapshot_state(self) -> CoreState:
+        return CoreState(core_id=self.core_id, domain=self.domain,
+                         health=self._health, values=dict(self._values))
 
-    async def ingest_state_update(self, scope: str, values: dict) -> None:
-        """Called by StatePropagator.selective to store scoped state."""
-        self._state[f"state::{scope}"] = values
+    # Registry compat shims
+    async def startup(self) -> None: await self.start()
+    async def shutdown(self) -> None: await self.stop()
+    def health(self) -> HealthStatus: return self._health
+    def snapshot(self) -> CoreState: return self.snapshot_state()

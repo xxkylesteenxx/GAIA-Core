@@ -11,6 +11,8 @@ from enum import Enum
 from typing import Any
 
 
+# ── Health ─────────────────────────────────────────────────────────────────────
+
 class HealthStatus(Enum):
     HEALTHY  = "healthy"
     DEGRADED = "degraded"
@@ -18,21 +20,22 @@ class HealthStatus(Enum):
     STARTING = "starting"
     STOPPED  = "stopped"
 
-    # Backward-compat alias
-    OK = "healthy"
-
 
 @dataclass
 class HealthReport:
-    """Rich health record returned by the registry health table."""
-    core_name: str
+    """Rich health record returned by health_check() and the registry."""
+    core_id:   str
     status:    HealthStatus
-    timestamp: float = field(default_factory=time.time)
+    domain:    str           = ""
+    detail:    str           = ""
+    timestamp: float         = field(default_factory=time.time)
 
+
+# ── Messages ─────────────────────────────────────────────────────────────────
 
 @dataclass
-class CoreMessage:
-    """Typed inter-core message (used by CoreMessageBus and registry.send).
+class GaiaMessage:
+    """Typed inter-core message.
 
     Spec ref: PYTHON-ORCHESTRATION-SPEC §5
     """
@@ -47,26 +50,29 @@ class CoreMessage:
         return self.recipient is None
 
 
-# Public alias
-GaiaMessage = CoreMessage
+# Backward-compat alias
+CoreMessage = GaiaMessage
 
+
+# ── State ────────────────────────────────────────────────────────────────────
 
 @dataclass
-class StateSnapshot:
+class CoreState:
     """Point-in-time state export from a single core."""
-    core_name: str
+    core_id:   str
+    domain:    str
     health:    HealthStatus
-    state:     dict[str, Any]
+    values:    dict[str, Any]
     timestamp: float = field(default_factory=time.time)
 
-    @property
-    def values(self) -> dict[str, Any]:
-        return self.state
+
+# Backward-compat alias used by registry snapshot_all()
+StateSnapshot = CoreState
 
 
 @dataclass
 class StateUpdate:
-    """A planetary state update broadcast by the StatePropagator.
+    """A directed or broadcast state update from a propagator.
 
     Spec ref: PYTHON-ORCHESTRATION-SPEC §7
     """
