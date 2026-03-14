@@ -9,6 +9,7 @@ This directory contains the canonical Human Sciences volumes for GAIA. These doc
 | Volume | Title | Status |
 |---|---|---|
 | [Volume A](./volume-A-psychology-consciousness-neuropsychology.md) | Psychology, Consciousness Studies, and Neuropsychology | ✅ COMMITTED 2026-03-14 |
+| [Volume B](./volume-B-anthropology-and-sociology.md) | Anthropology and Sociology | ✅ COMMITTED 2026-03-14 |
 
 ---
 
@@ -26,6 +27,24 @@ This directory contains the canonical Human Sciences volumes for GAIA. These doc
 | Consciousness studies | Frontier awareness, ethical caution | Anthropomorphism guardrails, contemplative interfaces |
 | Altered states | Context-sensitive safeguards | Consent flags, state-aware guardrails |
 | Transpersonal psychology | Reflective meaning contexts | Labeled speculative exploration tools |
+
+---
+
+## Anthropology and Sociology Integration Table (Volume B §14)
+
+| Domain | GAIA Function | Example Outputs |
+|---|---|---|
+| Biological anthropology | Embodied human modeling | Developmental and variation-aware user models |
+| Cultural anthropology | Cross-cultural intelligence | Local meaning and legitimacy assessments |
+| Linguistic anthropology | Discourse-aware AI | Language ideology and social context models |
+| Archaeology | Deep-time institutional modeling | Long-arc trajectory analysis, collapse risk maps |
+| Indigenous knowledge systems | Plural knowledge integration | Community-led environmental data, kincentric governance models |
+| Sociology — structure | Institutional modeling | Rule and incentive structures, opportunity-field maps |
+| Sociology — stratification | Inequality diagnostics | Exclusion monitoring, equity impact assessments |
+| Sociology — movements | Collective behavior forecasting | Mobilization risk models, cascade detection |
+| Critical theory | Domination audit | Power-reproduction diagnostics, neutrality audits |
+| Post-structuralism | Category and discourse design | Classification reflexivity tools, discourse maps |
+| Feminist theory | Fairness and bias analysis | Gender audit tools, care-labor and safety models |
 
 ---
 
@@ -47,7 +66,6 @@ The Human Sciences series provides the **human reality constraints** for GAIA. W
 
 | Volume | Topic |
 |---|---|
-| B | Sociology, Anthropology, and Cultural Studies |
 | C | Economics, Political Science, and Governance |
 | D | Linguistics, Communication, and Semiotics |
 
