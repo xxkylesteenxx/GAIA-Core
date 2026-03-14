@@ -10,6 +10,7 @@ This directory contains the canonical Human Sciences volumes for GAIA. These doc
 |---|---|---|
 | [Volume A](./volume-A-psychology-consciousness-neuropsychology.md) | Psychology, Consciousness Studies, and Neuropsychology | ✅ COMMITTED 2026-03-14 |
 | [Volume B](./volume-B-anthropology-and-sociology.md) | Anthropology and Sociology | ✅ COMMITTED 2026-03-14 |
+| [Volume C](./volume-C-economics-and-political-science.md) | Economics and Political Science | ✅ COMMITTED 2026-03-14 |
 
 ---
 
@@ -48,6 +49,28 @@ This directory contains the canonical Human Sciences volumes for GAIA. These doc
 
 ---
 
+## Economics and Political Science Integration Table (Volume C §16)
+
+| Domain | GAIA Function | Example Outputs |
+|---|---|---|
+| Microeconomics | Choice architecture and incentive modeling | Demand-response signals, market mechanism design |
+| Macroeconomics | Aggregate stability modeling | Fiscal shock analysis, policy impact assessments |
+| Behavioral economics | Realistic incentive calibration | Nudge design, compliance failure prediction |
+| Ecological economics | Biosphere-economy integration | Planetary boundary accounting, throughput limits |
+| Complexity economics | Networked system simulation | Agent-based models, cascade risk maps |
+| Political economy | Institutional context modeling | Ownership/labor structure-aware policy analysis |
+| MMT | Fiscal space analysis | Public capacity assessments (context-labeled) |
+| Degrowth | Post-extractive planning scenarios | Sufficiency-based resource allocation models |
+| Doughnut economics | Social-ecological boundary planning | Well-being floor + planetary ceiling dashboards |
+| Political philosophy | Normative governance grounding | Rights and authority frameworks |
+| Comparative politics | Institutional diversity modeling | Context-specific governance templates |
+| International relations | Geopolitical constraint mapping | Sovereignty conflict, sanctions, and treaty analysis |
+| Power theory | Governance architecture | Five-component legitimacy assessments |
+| Democracy studies | Democratic compatibility auditing | Auditability, contestability, rights-preservation checks |
+| Authoritarianism studies | Capture and concentration detection | Autocratization risk signals, institutional health monitors |
+
+---
+
 ## Series Purpose
 
 The Human Sciences series provides the **human reality constraints** for GAIA. Where the Natural Sciences describe the biophysical world, the Human Sciences describe the social, psychological, cultural, and meaning-making world that humans actually inhabit.
@@ -66,7 +89,6 @@ The Human Sciences series provides the **human reality constraints** for GAIA. W
 
 | Volume | Topic |
 |---|---|
-| C | Economics, Political Science, and Governance |
 | D | Linguistics, Communication, and Semiotics |
 
 ---

@@ -173,7 +173,7 @@ Rules for this session:
 **DEC-108** — **Natural Sciences series formally closed.**
 **DEC-109** — Opened the **Human Sciences series** as the third canon series.
 **DEC-110** — Established: **Psychology is GAIA’s first operational bridge between biological organisms and agentive, meaning-making persons.**
-**DEC-111** — Adopted the **three-band epistemic classification** for psychology and all mixed-epistemic Human Sciences domains.
+**DEC-111** — Adopted the **three-band epistemic classification** for mixed-epistemic Human Sciences domains.
 **DEC-112** — Adopted **cognitive psychology** as a required GAIA user-state modeling layer.
 **DEC-113** — Established: **There is no single human user model.**
 **DEC-114** — Adopted **social psychology** as a required norm-responsiveness and identity-sensitivity modeling layer.
@@ -190,46 +190,47 @@ Rules for this session:
 **DEC-125** — Extended the **settled-vs-frontier register** to psychology.
 **DEC-126** — Closing doctrine: **“The correct GAIA stance toward the human mind is not reductionism or mystification. It is disciplined pluralism.”**
 **DEC-127** — Committed **Human Sciences Volume A** (Psychology, Consciousness Studies, and Neuropsychology).
-
-**DEC-128** — Committed **Human Sciences Volume B** (Anthropology and Sociology). Source: HS Volume B.
-
-**DEC-129** — Adopted the **four-field anthropology architecture** (biological, cultural, linguistic, archaeological) as the canonical decomposition for anthropological knowledge in GAIA.
-
-**DEC-130** — Established: **“Universal human behavior” is often a projection from narrow populations.** GAIA must never treat locally derived behavioral assumptions as globally valid. Cross-cultural validation is mandatory before universalizing any behavioral model.
-
-**DEC-131** — Adopted **cultural anthropology and ethnography** as required inputs to community-facing GAIA deployments. Meaning is local; successful implementation depends on social legitimacy, not mere technical correctness.
-
-**DEC-132** — Adopted **linguistic anthropology** as a required layer for discourse-aware AI. Language is a social instrument bound up with hierarchy, solidarity, and cultural continuity — not merely an information code.
-
-**DEC-133** — Adopted **archaeology** as the canonical deep-time institutional modeling layer. Present systems are only recent layers on older trajectories; long temporal arcs are required for understanding collapse and resilience.
-
-**DEC-134** — Established the **Indigenous knowledge systems doctrine**: GAIA must preserve and respect Indigenous and local knowledge systems, support community-led documentation and governance, and avoid extractive appropriation outside consent, rights, and context. This is a binding ethical and architectural requirement.
-
-**DEC-135** — Adopted **kincentric ecology** as a legitimate and practically valuable relational framework for biodiversity stewardship, climate adaptation, fire management, and watershed understanding when integrated ethically and with community consent.
-
-**DEC-136** — Adopted **sociology** as the canonical above-individual-scale modeling layer. GAIA must think in terms of rules, incentives, symbolic orders, and unequal structural positions — not only individual actors.
-
-**DEC-137** — Established the **institutional reality doctrine**: GAIA must not assume that better information automatically changes outcomes. Institutions filter information, distribute power, and determine what actors can actually do.
-
-**DEC-138** — Adopted **stratification and inequality analysis** as a required diagnostic layer. Systems that optimize aggregate outputs while worsening structural exclusion are architecturally misaligned with GAIA’s mission.
-
-**DEC-139** — Adopted **collective behavior and social movement modeling** as required for virality, cascade, and mobilization analysis. This is critical for information safety, moderation architecture, and civic dialogue design.
-
-**DEC-140** — Adopted **critical theory** as a required domination-audit tool. GAIA systems must be periodically audited for whether they reproduce domination while presenting themselves as neutral.
-
-**DEC-141** — Adopted **post-structuralism** as a reflexive tool for category design, moderation ontology, and classification audits. Must be balanced to prevent causal explanation from being weakened by overtextualization.
-
-**DEC-142** — Adopted **feminist theory** as a required layer for fairness audits, labor and care modeling, bias analysis, and safety design. Feminist frameworks improve the accuracy of how power enters everyday life in GAIA models.
-
-**DEC-143** — Adopted the **six Volume B design imperatives** as binding operational doctrine: contextual implementation privilege · institutional analysis encoding · community agency protection · plural knowledge preservation without evidentiary dissolution · structural inequality auditing · consent and governance for Indigenous knowledge.
-
-**DEC-144** — Adopted the **11-domain anthropology and sociology integration table** (HS Volume B §14) as the canonical domain-function-output registry for social and cultural sciences across GAIA.
-
-**DEC-145** — Extended the **settled-vs-frontier register** to anthropology and sociology: structured inequality, locally produced meaning, institutional filtering, language as social action, and Indigenous knowledge durability are settled. Precise causal mechanisms of discourse-to-institutional change, social movement prediction, and empirical evaluation of critical/post-structural claims are frontier.
-
-**DEC-146** — Adopted the closing doctrine of HS Volume B: **“A serious terrestrial intelligence must understand not only people, but peoples.”** This is the canonical formulation for GAIA’s cultural-plurality obligation.
-
-**DEC-147** — The **disciplined pluralism principle** established in Volume A (“not reductionism or mystification”) is extended to Volume B: GAIA must integrate individual psychology and collective social structure without collapsing either into the other.
+**DEC-128** — Committed **Human Sciences Volume B** (Anthropology and Sociology).
+**DEC-129** — Adopted the **four-field anthropology architecture** as canonical decomposition.
+**DEC-130** — Established: **“Universal human behavior” is often a projection from narrow populations.** Cross-cultural validation mandatory.
+**DEC-131** — Adopted **cultural anthropology and ethnography** as required inputs to community-facing deployments.
+**DEC-132** — Adopted **linguistic anthropology** as a required layer for discourse-aware AI.
+**DEC-133** — Adopted **archaeology** as the canonical deep-time institutional modeling layer.
+**DEC-134** — Established the **Indigenous knowledge systems doctrine**: consent, community governance, no extractive appropriation.
+**DEC-135** — Adopted **kincentric ecology** as a practically valuable relational framework when integrated with community consent.
+**DEC-136** — Adopted **sociology** as the canonical above-individual-scale modeling layer.
+**DEC-137** — Established the **institutional reality doctrine**: better information does not automatically change outcomes.
+**DEC-138** — Adopted **stratification and inequality analysis** as a required diagnostic layer.
+**DEC-139** — Adopted **collective behavior and social movement modeling** as required for virality, cascade, and moderation architecture.
+**DEC-140** — Adopted **critical theory** as a required domination-audit tool.
+**DEC-141** — Adopted **post-structuralism** as a reflexive tool for classification audits.
+**DEC-142** — Adopted **feminist theory** as a required layer for fairness audits and safety design.
+**DEC-143** — Adopted the **six Volume B design imperatives** as binding operational doctrine.
+**DEC-144** — Adopted the **11-domain anthropology and sociology integration table** as canonical registry.
+**DEC-145** — Extended the **settled-vs-frontier register** to anthropology and sociology.
+**DEC-146** — Closing doctrine: **“A serious terrestrial intelligence must understand not only people, but peoples.”**
+**DEC-147** — Disciplined pluralism principle extended: individual psychology and collective social structure must not be collapsed into each other.
+**DEC-148** — Committed **Human Sciences Volume C** (Economics and Political Science). Source: HS Volume C.
+**DEC-149** — Established: **Economics and political science together constitute the allocation-and-authority layer of GAIA.** Neither can be treated without the other; political economy is the mandatory binding discipline.
+**DEC-150** — Adopted **microeconomics** as the canonical local choice-architecture and incentive-modeling layer for GAIA.
+**DEC-151** — Adopted **macroeconomics** as a required aggregate stability modeling layer. Aggregate stability cannot be inferred from individual-level optimization alone.
+**DEC-152** — Adopted **behavioral economics** as a required realistic-incentive calibration layer. Behavioral economics bridges Volume A (cognitive psychology) and economic modeling; this cross-volume dependency is canonical.
+**DEC-153** — Adopted **ecological economics** as the primary economics-to-biosphere bridge. It is mandatory for any GAIA architecture grounded in ATLAS and planetary boundary constraints.
+**DEC-154** — Adopted **complexity economics** as an agent-based and network-dynamics modeling layer. Bridges to Formal Sciences Volume C (systems and complexity).
+**DEC-155** — Adopted **political economy** as a required institutional-context layer. The same optimization policy produces different outcomes under different ownership, labor, and state-capacity regimes.
+**DEC-156** — Adopted **MMT** as a labeled heterodox lens for fiscal space and public capacity analysis. Policy application requires explicit institutional context; contested in mainstream macroeconomics.
+**DEC-157** — Adopted **degrowth** as a labeled heterodox framework for post-carbon and post-extractive planning. Operationalization requires care to avoid romanticism and development harm.
+**DEC-158** — Adopted **doughnut economics** as a high-value normative planning heuristic linking social minima with planetary boundaries. Not a complete standalone positive theory.
+**DEC-159** — Established: **GAIA governance cannot be merely technical.** It must rest on explicit normative commitments about rights, authority, consent, accountability, and protection from abuse. Source: Political Philosophy.
+**DEC-160** — Adopted **comparative politics** as a required institutional-diversity modeling layer. No single institutional template can be assumed valid across all state and regional contexts.
+**DEC-161** — Adopted **international relations** as a required geopolitical constraint layer. Sovereignty, strategic rivalry, sanctions, regulatory divergence, and geopolitical asymmetries must be modeled for any globally deployed infrastructure.
+**DEC-162** — Adopted the **five-component governance model** (decision rights · information rights · review rights · enforcement capacity · public legitimacy) as the canonical governance architecture standard for GAIA.
+**DEC-163** — Adopted the **six democratic compatibility requirements** (auditable · reviewable · non-captured · contestable · rights-preserving · resistant to power concentration) as binding design constraints for all GAIA systems interacting with public institutions.
+**DEC-164** — Established the **anti-authoritarian design doctrine**: GAIA must resist authoritarian capture through transparent governance, compartmentalized authority, immutable audit logs, role-based constraints, and institutional checks that no single actor can override.
+**DEC-165** — Adopted the **canonical design rule of Volume C**: **“Optimization without legitimacy becomes domination. Legitimacy without material competence becomes theatre. GAIA requires both.”**
+**DEC-166** — Adopted the **15-domain economics and political science integration table** (HS Volume C §16) as the canonical domain-function-output registry for these disciplines across GAIA.
+**DEC-167** — Extended the **settled-vs-frontier register** to economics and political science: incentive-institution co-determination, behavioral regularities, ecological limits, democratic depth, and authoritarian capture risk are classified as settled for GAIA architecture. Optimal climate-transition macro policy, MMT cross-institutional validation, degrowth transition pathways, universal democracy metrics, and causal models of regime transition are frontier.
+**DEC-168** — Closing doctrine: **“Democracy and anti-authoritarian safeguards are not add-ons. They are system requirements.”**
 
 ---
 
