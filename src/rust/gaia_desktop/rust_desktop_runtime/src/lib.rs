@@ -6,10 +6,11 @@
 //! Module layout
 //! -------------
 //! config      — DesktopConfig, OutputConfig (session startup configuration)
-//! state       — DesktopState, SurfaceRecord, OverlayRecord, OverlayPriority
+//! state       — DesktopState, SurfaceRecord, OverlayRecord, GaiaCore, OverlayPriority
 //! compositor  — surface lifecycle + focus auditability          (DSK-008)
 //! workspace   — workspace state machine + overlay routing        (DSK-005)
 //! overlay     — z-band enforcement + safety overlay policy       (DSK-009)
+//! hud         — CoreStatus, sample_core_statuses (Consciousness HUD types)
 //! ipc         — Unix socket IPC server scaffold (shell ↔ runtime)
 //!
 //! All modules within this crate remain inside the trusted runtime
@@ -18,10 +19,12 @@
 
 pub mod compositor;
 pub mod config;
+pub mod hud;
 pub mod ipc;
 pub mod overlay;
 pub mod state;
 pub mod workspace;
 
 pub use config::{DesktopConfig, OutputConfig};
-pub use state::{DesktopState, OverlayPriority, OverlayRecord, SurfaceRecord};
+pub use hud::{CoreStatus, sample_core_statuses};
+pub use state::{DesktopState, GaiaCore, OverlayPriority, OverlayRecord, SurfaceRecord};

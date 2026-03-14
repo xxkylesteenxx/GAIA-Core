@@ -9,6 +9,73 @@
 
 use std::collections::HashMap;
 
+/// GAIA cognitive / operational cores surfaced in the Consciousness HUD.
+///
+/// Each variant corresponds to a named GAIA subsystem whose health
+/// status is reported via `CoreStatus` in the HUD module.
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum GaiaCore {
+    /// SOPHIA — knowledge synthesis and reasoning core.
+    Sophia,
+    /// GUARDIAN — safety posture and policy enforcement core.
+    Guardian,
+    /// TERRA — environmental data ingest and planetary state core.
+    Terra,
+    /// ATLAS — infrastructure, resource, and deployment core.
+    Atlas,
+    /// HERMES — inter-process communication and routing core.
+    Hermes,
+    /// MNEMOSYNE — memory and knowledge indexing core.
+    Mnemosyne,
+}
+
+impl GaiaCore {
+    /// Human-readable display name for the HUD.
+    pub fn display_name(&self) -> &'static str {
+        match self {
+            GaiaCore::Sophia    => "SOPHIA",
+            GaiaCore::Guardian  => "GUARDIAN",
+            GaiaCore::Terra     => "TERRA",
+            GaiaCore::Atlas     => "ATLAS",
+            GaiaCore::Hermes    => "HERMES",
+            GaiaCore::Mnemosyne => "MNEMOSYNE",
+        }
+    }
+}
+
+/// Priority tier for overlay surfaces and HUD core status indicators.
+///
+/// Overlay preemption rules (spec §6.2):
+///   Normal    — no visual indicator; nominal operation.
+///   Info      — blue tone, non-blocking, auto-dismisses after TTL.
+///   Warning   — amber tone, non-blocking, persists until acknowledged.
+///   Critical  — red tone, modal overlay, requires explicit operator action.
+///              Preempts all normal application chrome (DSK-005).
+///              Non-spoofable by untrusted applications (DSK-009).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum OverlayPriority {
+    /// Normal / nominal — no alert; nominal operation.
+    Normal,
+    /// Informational — blue tone, non-blocking, auto-dismisses after TTL.
+    Info,
+    /// Warning — amber tone, non-blocking, persists until acknowledged.
+    Warning,
+    /// Critical / blocking — red tone, modal, requires explicit operator action.
+    Critical,
+}
+
+impl OverlayPriority {
+    /// Returns true if this priority tier requires operator acknowledgement.
+    pub fn requires_acknowledgement(&self) -> bool {
+        matches!(self, OverlayPriority::Critical)
+    }
+
+    /// Returns true if this priority blocks normal surface presentation.
+    pub fn blocks_presentation(&self) -> bool {
+        matches!(self, OverlayPriority::Critical)
+    }
+}
+
 /// A registered Wayland surface.
 #[derive(Debug, Clone)]
 pub struct SurfaceRecord {
@@ -18,21 +85,6 @@ pub struct SurfaceRecord {
     pub workspace: usize,
     pub focused:   bool,
     pub floating:  bool,
-}
-
-/// Priority tier for overlay surfaces.
-///
-/// Critical overlays preempt all application chrome (DSK-005).
-/// Safety overlays are non-spoofable by untrusted applications (DSK-009).
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum OverlayPriority {
-    /// Informational — blue tone, non-blocking, auto-dismisses after TTL.
-    Info,
-    /// Warning — amber tone, non-blocking, persists until acknowledged.
-    Warning,
-    /// Critical / blocking — red tone, modal, requires explicit operator action.
-    /// Preempts all normal application chrome.
-    Critical,
 }
 
 /// An active overlay surface record.
@@ -70,5 +122,32 @@ impl DesktopState {
     pub fn record_focus_event(&mut self, surface_id: u64, gained: bool) {
         self.audit_seq += 1;
         self.focus_audit_log.push((surface_id, gained, self.audit_seq));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn critical_requires_acknowledgement() {
+        assert!(OverlayPriority::Critical.requires_acknowledgement());
+        assert!(!OverlayPriority::Warning.requires_acknowledgement());
+        assert!(!OverlayPriority::Normal.requires_acknowledgement());
+    }
+
+    #[test]
+    fn only_critical_blocks_presentation() {
+        assert!(OverlayPriority::Critical.blocks_presentation());
+        assert!(!OverlayPriority::Warning.blocks_presentation());
+        assert!(!OverlayPriority::Info.blocks_presentation());
+        assert!(!OverlayPriority::Normal.blocks_presentation());
+    }
+
+    #[test]
+    fn gaia_core_display_names() {
+        assert_eq!(GaiaCore::Sophia.display_name(),   "SOPHIA");
+        assert_eq!(GaiaCore::Guardian.display_name(), "GUARDIAN");
+        assert_eq!(GaiaCore::Terra.display_name(),    "TERRA");
     }
 }
