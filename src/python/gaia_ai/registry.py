@@ -2,84 +2,73 @@
 
 Spec ref: GAIA-AI-INFERENCE-SPEC v1.0 §3, §4
 
-ModelProfile is now defined in gaia_ai.models and re-exported here
-for backward compat. The registry stores and queries ModelProfile
-instances; callers may import ModelProfile from either module.
+ModelProfile is defined in gaia_ai.models and imported here.
+The registry is constructor-injected: pass an iterable of ModelProfile
+instances at creation time, or use the from_yaml() classmethod to load
+from a YAML file.
 
-Legacy types (Locality, HardwareMinima, RegistryModelProfile) are kept
-for code that predates the flat ModelProfile schema.
+YAML schema (profiles key):
+  profiles:
+    - name: llama3-8b-fast
+      backend: llama.cpp
+      family: llama3
+      locality: local
+      min_vram_gb: 6
+      tags: [fast]
+    - ...
 """
 
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any
+from pathlib import Path
+from typing import Iterable
+
+import yaml
 
 from .models import ModelProfile
 
 log = logging.getLogger(__name__)
 
-# Re-export so existing `from .registry import ModelProfile` still works.
 __all__ = [
-    "HardwareMinima",
-    "Locality",
     "ModelProfile",
     "ModelProfileRegistry",
 ]
 
 
-# ---------------------------------------------------------------------------
-# Legacy locality / hardware types (kept for backward compat)
-# ---------------------------------------------------------------------------
-
-class Locality(str, Enum):
-    LOCAL_FAST      = "local_fast"
-    LOCAL_EMBEDDING = "local_embedding"
-    LOCAL_DEEP      = "local_deep"
-    CLOUD           = "cloud"
-
-
-@dataclass
-class HardwareMinima:
-    ram_gb:    float = 0.0
-    vram_gb:   float = 0.0
-    cpu_cores: int   = 1
-
-
-# ---------------------------------------------------------------------------
-# ModelProfileRegistry
-# ---------------------------------------------------------------------------
-
 class ModelProfileRegistry:
-    """Register, approve, and query ModelProfile instances.
+    """Immutable-at-construction registry of ModelProfile instances.
 
-    Profiles are now flat ModelProfile (from models.py). The registry
-    uses profile.name as the key.
-
-    External / cloud routes should be tracked via trust_tier and tags;
-    the deny-by-default approval gate from the old schema is represented
-    by trust_tier == 'external' + the caller checking before use.
+    Keyed by profile.name. Use filter() for multi-criteria queries.
     """
 
-    def __init__(self) -> None:
-        self._profiles: dict[str, ModelProfile] = {}
+    def __init__(self, profiles: Iterable[ModelProfile]) -> None:
+        self._profiles: dict[str, ModelProfile] = {
+            profile.name: profile for profile in profiles
+        }
 
-    def register(self, profile: ModelProfile) -> None:
-        if profile.name in self._profiles:
-            raise ValueError(f"model already registered: {profile.name}")
-        if profile.locality == "cloud" or profile.trust_tier == "external":
-            log.warning(
-                "registry: external model '%s' registered (trust_tier=%s) — "
-                "verify approval before routing",
-                profile.name, profile.trust_tier,
-            )
-        self._profiles[profile.name] = profile
-        log.debug("registry: registered model '%s' [%s]",
-                  profile.name, profile.locality)
+    # ------------------------------------------------------------------ #
+    # Construction                                                         #
+    # ------------------------------------------------------------------ #
+
+    @classmethod
+    def from_yaml(cls, path: str | Path) -> "ModelProfileRegistry":
+        """Load and construct a registry from a YAML file.
+
+        The YAML file must have a top-level 'profiles' key containing
+        a list of objects whose fields match ModelProfile.
+        """
+        data = yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+        profiles = [ModelProfile(**item) for item in data.get("profiles", [])]
+        log.debug("registry: loaded %d profile(s) from '%s'", len(profiles), path)
+        return cls(profiles)
+
+    # ------------------------------------------------------------------ #
+    # Lookup                                                               #
+    # ------------------------------------------------------------------ #
 
     def get(self, name: str) -> ModelProfile:
+        """Return a profile by name; raises KeyError if not found."""
         return self._profiles[name]
 
     def all(self) -> list[ModelProfile]:
@@ -89,35 +78,47 @@ class ModelProfileRegistry:
         """
         return list(self._profiles.values())
 
-    def all_local(self) -> list[ModelProfile]:
-        """Return profiles whose locality is not 'cloud'."""
-        return [p for p in self._profiles.values() if p.locality != "cloud"]
+    # ------------------------------------------------------------------ #
+    # Filtering                                                            #
+    # ------------------------------------------------------------------ #
 
-    def by_tag(self, tag: str) -> list[ModelProfile]:
-        return [p for p in self._profiles.values() if tag in p.tags]
+    def filter(
+        self,
+        *,
+        locality: str | None = None,
+        supports_embeddings: bool | None = None,
+        supports_tool_use: bool | None = None,
+        tag: str | None = None,
+        trust_tier: str | None = None,
+    ) -> list[ModelProfile]:
+        """Return profiles matching ALL provided criteria.
 
-    def by_locality(self, locality: str) -> list[ModelProfile]:
-        return [p for p in self._profiles.values() if p.locality == locality]
-
-    def from_yaml(self, path: str) -> "ModelProfileRegistry":
-        """Load and register profiles from a YAML file.
-
-        Requires: pyyaml
-        See gaia_ai/README.md for the expected YAML schema.
+        All parameters are optional keyword-only. Passing no arguments
+        is equivalent to calling all().
         """
-        import yaml  # type: ignore[import]
-        with open(path) as f:
-            data = yaml.safe_load(f)
-        for entry in data.get("models", []):
-            tags = entry.pop("tags", [])
-            self.register(ModelProfile(tags=tags, **entry))
-        return self
+        results = self.all()
+        if locality is not None:
+            results = [p for p in results if p.locality == locality]
+        if supports_embeddings is not None:
+            results = [p for p in results if p.supports_embeddings is supports_embeddings]
+        if supports_tool_use is not None:
+            results = [p for p in results if p.supports_tool_use is supports_tool_use]
+        if tag is not None:
+            results = [p for p in results if tag in p.tags]
+        if trust_tier is not None:
+            results = [p for p in results if p.trust_tier == trust_tier]
+        return results
+
+    # ------------------------------------------------------------------ #
+    # Metadata                                                             #
+    # ------------------------------------------------------------------ #
 
     @property
     def model_names(self) -> tuple[str, ...]:
         return tuple(self._profiles.keys())
 
-    # Backward-compat alias
-    @property
-    def model_ids(self) -> tuple[str, ...]:
-        return self.model_names
+    def __len__(self) -> int:
+        return len(self._profiles)
+
+    def __repr__(self) -> str:
+        return f"ModelProfileRegistry({list(self._profiles.keys())})"
