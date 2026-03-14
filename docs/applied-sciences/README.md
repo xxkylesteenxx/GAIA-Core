@@ -7,7 +7,7 @@ This series documents the applied scientific and engineering disciplines that fo
 | Volume | Domain | Status |
 |--------|--------|--------|
 | A | Computer Science and AI Systems | ✅ Committed — 2026-03-14 |
-| B | Electrical Engineering & Embedded Systems | 🔲 Pending |
+| B | Biomedical Sciences and Public Health | ✅ Committed — 2026-03-14 |
 | C | Mechanical & Civil Engineering | 🔲 Pending |
 | D | Chemical & Materials Engineering | 🔲 Pending |
 | E | Biomedical & Environmental Engineering | 🔲 Pending |
