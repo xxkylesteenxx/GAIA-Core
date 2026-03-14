@@ -7,8 +7,8 @@ class NexusCore(SimpleGaiaCore):
     def __init__(self) -> None:
         super().__init__(
             core_id="NEXUS",
-            domain="routing",
-            summary="Routing fabric, federation, and cross-system IPC coordination",
+            domain="coordination",
+            summary="Cross-core federation, coordination, and synchronization",
         )
 
     @property
