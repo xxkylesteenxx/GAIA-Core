@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "gaia-python-cores"
-version = "0.1.0"
-description = "GAIA Python orchestration layer for eight planetary cores"
+name = "gaia-python"
+version = "0.2.0"
+description = "GAIA Layer 3 Python orchestration — cores, AI inference routing, embeddings, RAG, fine-tuning hooks, and robustness"
 requires-python = ">=3.11"
 readme = "README.md"
 authors = [{name = "Societas AI Research Team"}]
@@ -18,13 +18,25 @@ dev = [
     "mypy>=1.9",
     "ruff>=0.4",
 ]
+# Install to use OpenAI-compatible serving adapter (vLLM, OpenAI API, etc.)
+openai = ["openai>=1.0"]
+# Install for Triton Inference Server adapter
+triton = ["tritonclient[grpc]>=2.40"]
+# Install for production embedding backends
+embeddings = ["sentence-transformers>=3.0"]
+# Full optional stack
+all = [
+    "openai>=1.0",
+    "tritonclient[grpc]>=2.40",
+    "sentence-transformers>=3.0",
+]
 
 [tool.setuptools]
 include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["gaia_cores*"]
+include = ["gaia_cores*", "gaia_ai*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
