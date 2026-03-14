@@ -1,0 +1,35 @@
+# ── Python ───────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ── Rust ───────────────────────────────────────────────────────────────
+target/
+Cargo.lock
+
+# ── C / build artifacts ────────────────────────────────────────────
+*.o
+*.so
+*.a
+*.out
+
+# ── Editor / OS ──────────────────────────────────────────────────
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
