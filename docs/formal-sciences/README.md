@@ -4,19 +4,42 @@ This directory contains the canonical Formal Sciences volumes for GAIA. These do
 
 ---
 
-## Volume Index
+## Document Index
 
-| Volume | Title | Status |
+| Document | Title | Status |
 |---|---|---|
+| [MASTER-CANONICAL-REPORT.md](./MASTER-CANONICAL-REPORT.md) | Formal Sciences — Master Canonical Report | ✅ COMMITTED 2026-03-14 |
 | [Volume A](./volume-A-logic-language-proof.md) | Logic, Language, and Proof | ✅ COMMITTED 2026-03-14 |
 | [Volume B](./volume-B-mathematics-computation-information.md) | Mathematics, Computation, and Information | ✅ COMMITTED 2026-03-14 |
 | [Volume C](./volume-C-systems-cybernetics-control-chaos-emergence.md) | Systems Theory, Cybernetics, Control, Chaos, and Emergence | ✅ COMMITTED 2026-03-14 |
 
 ---
 
-## Systems Architecture Cross-Reference (Volume C §6)
+## Recommended Build Order (Master Report §4)
 
-### Closed-Loop Canonical Architecture
+| Phase | Focus | Formal Domains |
+|---|---|---|
+| I | Logical and semantic kernel | Predicate logic, typed ontology, modal/deontic/temporal policy, paraconsistent layer, proof/audit traces |
+| II | Mathematical foundations | Set theory, type theory, category theory, model theory |
+| III | Uncertainty and feasibility | Probability, statistics, information theory, algorithms, complexity |
+| IV | Systems, feedback, actuation | State-space models, cybernetic loops, estimation, control, chaos, emergence |
+
+---
+
+## Design Doctrine Summary (Master Report §5)
+
+| Doctrine | Principle |
+|---|---|
+| Logic before rhetoric | All critical policies must exist in explicit logical form |
+| Types before implementation | Invalid states must be unconstructable, not merely detectable |
+| Composition before scale | Interface design is not optional |
+| Uncertainty before confidence | All outputs carry uncertainty representations |
+| Control before actuation | Every intervention is bounded by formal control constraints |
+| Proof before trust | Compliance and safety claims produce machine-verifiable artifacts |
+
+---
+
+## Systems Architecture Cross-Reference (Volume C §6)
 
 | Layer | Function |
 |---|---|
@@ -28,16 +51,6 @@ This directory contains the canonical Formal Sciences volumes for GAIA. These do
 | 6. Actuation | Execution only under proper authorization |
 | 7. Audit | Proof/evidence of why intervention occurred |
 | 8. Learning | Recalibration after outcome observation |
-
-### Systems Hierarchy by Scale
-
-| Scale | Formal Concern |
-|---|---|
-| Local sensor/device | Estimation, noise, latency |
-| Regional subsystem | Control, resilience, routing |
-| Multi-domain sector | Cybernetic coordination |
-| City/biome | Nonlinear dynamics, adaptation |
-| Planetary layer | Emergence, stability, governance |
 
 ---
 
@@ -69,11 +82,8 @@ This directory contains the canonical Formal Sciences volumes for GAIA. These do
 
 ---
 
-## Series Purpose
+## Future Volumes
 
-The Formal Sciences series provides the **normative inferential, mathematical, and regulatory substrate** for GAIA. Each volume addresses a distinct family of formal disciplines required for safe, auditable, and meaning-preserving planetary coordination.
-
-Future volumes:
 - **Volume D** — Decision Theory, Game Theory, and Ethics
 - **Volume E** — Engineering and Systems Architecture
 - **Volume F** — Empirical Sciences: Physics, Chemistry, Biology, Earth Systems
