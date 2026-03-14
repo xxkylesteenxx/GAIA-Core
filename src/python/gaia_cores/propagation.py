@@ -1,74 +1,70 @@
 """Planetary state propagation.
 
 Spec ref: PYTHON-ORCHESTRATION-SPEC §7
+
+Uses asyncio.TaskGroup (Python 3.11+) for concurrent delivery with
+structured cancellation: if any ingest_state_update raises, all
+sibling tasks are cancelled and the exception propagates cleanly.
 """
 
 from __future__ import annotations
 
+import asyncio
 import logging
-from typing import TYPE_CHECKING
 
-from .models import CoreMessage, StateUpdate
-
-if TYPE_CHECKING:
-    from .registry import CoreRegistry
+from .models import StateUpdate
+from .registry import CoreRegistry
 
 log = logging.getLogger(__name__)
 
 
 class StatePropagator:
-    """Broadcasts or selectively delivers StateUpdates across cores."""
-
-    def __init__(self, registry: "CoreRegistry") -> None:
-        self._registry = registry
+    def __init__(self, registry: CoreRegistry) -> None:
+        self.registry = registry
 
     async def broadcast(self, update: StateUpdate) -> None:
-        """Deliver update to every registered core except the source.
+        """Deliver update concurrently to every registered core.
 
         Spec ref: PYTHON-ORCHESTRATION-SPEC §7 — full broadcast.
         """
-        cores = list(self._registry._cores.values())  # noqa: SLF001
-        for core in cores:
-            if core.name != update.source:
-                if hasattr(core, "ingest_state_update"):
-                    await core.ingest_state_update(update.scope, update.values)  # type: ignore[attr-defined]
-                else:
-                    msg = CoreMessage(
-                        sender=update.source,
-                        topic="gaia.state.broadcast/v1",
-                        payload={"scope": update.scope, "values": update.values,
-                                 "summary": update.summary},
-                        trust_label="bounded",
+        async with asyncio.TaskGroup() as tg:
+            for core_id in self.registry.core_ids:
+                core = self.registry.get(core_id)
+                if core is not None:
+                    tg.create_task(
+                        core.ingest_state_update(update),
+                        name=f"propagate-{core_id}",
                     )
-                    await core.handle_message(msg)
-        log.debug("propagation: broadcast from '%s' scope='%s'",
-                  update.source, update.scope)
+        log.debug("propagation: broadcast scope='%s' from '%s'",
+                  update.scope, update.source)
 
     async def selective(
         self,
         update: StateUpdate,
-        *,
         targets: list[str],
     ) -> None:
-        """Deliver update only to cores named in targets.
+        """Deliver update concurrently to named target cores only.
 
         Spec ref: PYTHON-ORCHESTRATION-SPEC §7 — selective delivery.
+        Unknown targets are logged and skipped; they do not abort delivery
+        to the remaining targets.
         """
-        for tag in targets:
-            core = self._registry.get(tag)
+        valid = []
+        for core_id in targets:
+            core = self.registry.get(core_id)
             if core is None:
-                log.warning("propagation: unknown target '%s'", tag)
-                continue
-            if hasattr(core, "ingest_state_update"):
-                await core.ingest_state_update(update.scope, update.values)  # type: ignore[attr-defined]
+                log.warning("propagation: unknown target '%s'", core_id)
             else:
-                msg = CoreMessage(
-                    sender=update.source,
-                    recipient=tag,
-                    topic="gaia.state.selective/v1",
-                    payload={"scope": update.scope, "values": update.values,
-                             "summary": update.summary},
-                    trust_label="bounded",
+                valid.append((core_id, core))
+
+        if not valid:
+            return
+
+        async with asyncio.TaskGroup() as tg:
+            for core_id, core in valid:
+                tg.create_task(
+                    core.ingest_state_update(update),
+                    name=f"propagate-{core_id}",
                 )
-                await core.handle_message(msg)
-            log.debug("propagation: selective -> '%s' scope='%s'", tag, update.scope)
+        log.debug("propagation: selective scope='%s' targets=%s",
+                  update.scope, [c for c, _ in valid])

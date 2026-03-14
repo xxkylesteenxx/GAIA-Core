@@ -34,7 +34,7 @@ class GuardianCore(GaiaCore):
         self._health = HealthStatus.STOPPED
 
     async def health_check(self) -> HealthReport:
-        return HealthReport(core_id=self.core_id, domain=self.domain, status=self._health)
+        return HealthReport(core_id=self.core_id, status=self._health)
 
     async def handle_message(self, message: GaiaMessage) -> None:
         log.debug("GUARDIAN: inspecting [%s] %s -> %s",
@@ -48,11 +48,12 @@ class GuardianCore(GaiaCore):
             log.warning("GUARDIAN: alert %s", alert)
 
     async def ingest_state_update(self, update: StateUpdate) -> None:
-        self._values[f"state::{update.scope}"] = update.values
+        self._values[f"state::{update.scope}"] = dict(update.values)
 
     def snapshot_state(self) -> CoreState:
         return CoreState(
-            core_id=self.core_id, domain=self.domain, health=self._health,
+            core_id=self.core_id, domain=self.domain,
+            summary=f"{self.core_id}: {self._health.value}, alerts={len(self._alerts)}",
             values={**self._values, "alerts": list(self._alerts)},
         )
 

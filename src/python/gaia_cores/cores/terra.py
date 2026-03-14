@@ -22,19 +22,21 @@ class TerraCore(GaiaCore):
         self._health = HealthStatus.STOPPED
 
     async def health_check(self) -> HealthReport:
-        return HealthReport(core_id=self.core_id, domain=self.domain, status=self._health)
+        return HealthReport(core_id=self.core_id, status=self._health)
 
     async def handle_message(self, message: GaiaMessage) -> None:
         self._values[f"msg::{message.topic}"] = message.payload
 
     async def ingest_state_update(self, update: StateUpdate) -> None:
-        self._values[f"state::{update.scope}"] = update.values
+        self._values[f"state::{update.scope}"] = dict(update.values)
 
     def snapshot_state(self) -> CoreState:
-        return CoreState(core_id=self.core_id, domain=self.domain,
-                         health=self._health, values=dict(self._values))
+        return CoreState(
+            core_id=self.core_id, domain=self.domain,
+            summary=f"{self.core_id}: {self._health.value}",
+            values=dict(self._values),
+        )
 
-    # Registry compat shims
     async def startup(self) -> None: await self.start()
     async def shutdown(self) -> None: await self.stop()
     def health(self) -> HealthStatus: return self._health

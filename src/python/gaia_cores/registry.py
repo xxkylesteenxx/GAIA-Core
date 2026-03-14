@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Iterable
 
-from .models import CoreState, GaiaMessage, HealthReport, HealthStatus
+from .models import CoreState, GaiaMessage, HealthReport
 
 if TYPE_CHECKING:
     from .base import GaiaCore
@@ -34,6 +34,19 @@ class CoreRegistry:
         for core in cores:
             self.register(core)
 
+    # -- Identity ----------------------------------------------------------
+
+    @property
+    def core_ids(self) -> list[str]:
+        """Return registered core IDs in boot order."""
+        return sorted(
+            self._cores.keys(),
+            key=lambda k: _BOOT_ORDER.index(k) if k in _BOOT_ORDER else 99,
+        )
+
+    def get(self, core_id: str) -> "GaiaCore | None":
+        return self._cores.get(core_id)
+
     # -- Lifecycle ---------------------------------------------------------
 
     def _ordered(self, reverse: bool = False) -> list["GaiaCore"]:
@@ -53,14 +66,12 @@ class CoreRegistry:
             log.info("registry: stopping %s", core.core_id)
             await core.stop()
 
-    # Backward-compat aliases
     async def boot(self) -> None: await self.boot_all()
     async def shutdown(self) -> None: await self.stop_all()
 
     # -- Messaging ---------------------------------------------------------
 
     async def send(self, msg: GaiaMessage) -> None:
-        """Deliver a GaiaMessage directly to its named recipient core."""
         if msg.recipient is None:
             log.warning("registry.send: use StatePropagator for broadcast")
             return
@@ -74,12 +85,9 @@ class CoreRegistry:
 
     async def health_table(self) -> dict[str, HealthReport]:
         result = {}
-        for name, core in self._cores.items():
-            result[name] = await core.health_check()
+        for core_id, core in self._cores.items():
+            result[core_id] = await core.health_check()
         return result
 
     def snapshot_all(self) -> dict[str, CoreState]:
         return {core.core_id: core.snapshot_state() for core in self._cores.values()}
-
-    def get(self, name: str) -> "GaiaCore | None":
-        return self._cores.get(name)
