@@ -1,0 +1,46 @@
+"""SOPHIA — policy reasoning and coordination hub.
+
+Spec ref: PYTHON-ORCHESTRATION-SPEC §8
+protection_class: critical
+"""
+
+from __future__ import annotations
+import logging
+from ..base import GaiaCore
+from ..models import CoreMessage, HealthStatus, StateSnapshot
+
+log = logging.getLogger(__name__)
+
+
+class SophiaCore(GaiaCore):
+    def __init__(self) -> None:
+        self._health = HealthStatus.STOPPED
+        self._state: dict = {}
+
+    @property
+    def name(self) -> str:
+        return "SOPHIA"
+
+    @property
+    def protection_class(self) -> str:
+        return "critical"
+
+    async def startup(self) -> None:
+        self._health = HealthStatus.OK
+        log.info("SOPHIA: policy engine online")
+
+    async def shutdown(self) -> None:
+        self._health = HealthStatus.STOPPED
+
+    def health(self) -> HealthStatus:
+        return self._health
+
+    async def handle_message(self, msg: CoreMessage) -> None:
+        log.debug("SOPHIA: received [%s] from %s", msg.topic, msg.sender)
+        self._state[msg.topic] = msg.payload
+
+    def snapshot(self) -> StateSnapshot:
+        return StateSnapshot(core_name=self.name, health=self._health, state=dict(self._state))
+
+    async def ingest_update(self, update: StateSnapshot) -> None:
+        self._state[f"update_from_{update.core_name}"] = update.state
