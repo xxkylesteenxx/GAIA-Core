@@ -254,29 +254,67 @@ Rules for this session:
 
 **DEC-096** — Natural Sciences series declared complete at four volumes (A–D).
 
-**DEC-097** — Established the **seven types of realism** (physical, measurement, causal, temporal, planetary, biological, cognitive) as the canonical empirical kernel that the Natural Sciences series provides to GAIA. Source: NS Master Report §1.1.
+**DEC-097** — Established the **seven types of realism** as GAIA’s canonical empirical kernel. Source: NS Master Report.
 
-**DEC-098** — Adopted the **six-question empirical discipline test** (invariant constraints, state variables, governing equations, measurement vs inference, thresholds/failure modes, settled vs frontier) as a required evaluation framework before any natural-science claim is integrated into GAIA architecture.
+**DEC-098** — Adopted the **six-question empirical discipline test** as a required evaluation framework before any natural-science claim enters GAIA architecture.
 
-**DEC-099** — Adopted the **seven-scale natural sciences modeling stack** (subatomic/field → molecular/reaction → material/mesoscale → organismal/cellular → ecological/Earth-surface → planetary → astronomical/cosmological) as the canonical cross-scale representation for GAIA’s physical-world models.
+**DEC-099** — Adopted the **seven-scale natural sciences modeling stack** as canonical cross-scale representation.
 
-**DEC-100** — Adopted the **five-stage natural sciences build order** (physical substrate → Earth-system substrate → biological substrate → neuroscience/human factors → frontier scientific layer) as the canonical integration sequencing doctrine for GAIA natural science adoption. This mirrors and complements the four-phase formal sciences build order (DEC-035).
+**DEC-100** — Adopted the **five-stage natural sciences build order** as canonical integration sequencing doctrine.
 
-**DEC-101** — Adopted **measurement-first architecture** as the required design standard for all GAIA natural-science modules. Every module must distinguish: observables, latent state variables, control inputs, noise sources, model assumptions, error bars, and regime of validity.
+**DEC-101** — Adopted **measurement-first architecture** as required design standard for all natural-science modules.
 
-**DEC-102** — Adopted **coupled-system modeling** as a mandatory architectural principle. GAIA’s Earth system must not be treated as separate departments; cross-domain coupling (climate–hydrology–soil–ecology–neuroscience–interface) must be architecturally explicit.
+**DEC-102** — Adopted **coupled-system modeling** as a mandatory architectural principle.
 
-**DEC-103** — Adopted the **natural sciences research posture** (7 principles: empirical first, mechanistic where possible, uncertainty explicit, multi-scale by design, speculation labeled, interdisciplinary without dilution, human-safe translation) as operational doctrine for all GAIA scientific reasoning systems.
+**DEC-103** — Adopted the **seven-principle natural sciences research posture** as operational doctrine.
 
-**DEC-104** — Adopted the **domain-to-GAIA integration matrix** (NS Master Report §7, 19-domain table) as the canonical primary-function and example-output registry for all natural science domains across GAIA. This is the Natural Sciences equivalent of the Formal Sciences integration matrix (DEC-034).
+**DEC-104** — Adopted the **19-domain integration matrix** (NS Master Report §7) as the canonical natural sciences registry.
 
-**DEC-105** — Established the **canonical five-level GAIA knowledge hierarchy**: Formal Sciences (how to reason) → Natural Sciences (what the world is like) → Engineering (how to build within constraints) → Governance (what is allowed) → Ethics (what ought to be protected). Each level is irreducible; none may be collapsed into another.
+**DEC-105** — Established the **canonical five-level GAIA knowledge hierarchy**: Formal → Natural → Engineering → Governance → Ethics.
 
-**DEC-106** — Adopted the doctrine: **“If the natural sciences are weak, GAIA becomes metaphoric. If they are strong, GAIA can become physically responsible.”** This is the closing doctrine of the Natural Sciences Master Report and is binding.
+**DEC-106** — Closing doctrine: **“If the natural sciences are weak, GAIA becomes metaphoric. If they are strong, GAIA can become physically responsible.”**
 
-**DEC-107** — Committed the **Natural Sciences Master Canonical Report** to `docs/natural-sciences/MASTER-CANONICAL-REPORT.md`. The `docs/natural-sciences/` directory is now a complete, self-consistent empirical foundation corpus: 6 files (Master Report + 4 volumes + README), 40+ natural science domains, DEC-041–107.
+**DEC-107** — Committed **Natural Sciences Master Canonical Report**.
 
-**DEC-108** — The **Natural Sciences series is formally closed**. Together with the Formal Sciences series, GAIA now has a complete dual-series scientific canon: formal epistemic foundations (DEC-001–040) and empirical reality foundations (DEC-041–107). The next canon series to open should address Applied Sciences, Governance, or Engineering.
+**DEC-108** — **Natural Sciences series formally closed.** Together with Formal Sciences, GAIA now has a complete dual-series scientific canon.
+
+**DEC-109** — Opened the **Human Sciences series** as the third canon series. Source: HS Volume A. The Human Sciences series addresses psychological, social, linguistic, anthropological, economic, and cultural foundations — the human reality constraints for GAIA.
+
+**DEC-110** — Established: **Psychology is GAIA’s first operational bridge between biological organisms and agentive, meaning-making persons.** The Human Sciences series begins here because human behavior, cognition, and meaning-making cannot be derived from biology alone.
+
+**DEC-111** — Adopted the **three-band epistemic classification** for psychology: (1) empirically mature subfields — draw heavily; (2) historically influential but unevenly validated depth traditions — draw selectively; (3) frontier or controversial domains — draw carefully. This band structure is canonical for any Human Sciences domain with mixed epistemic status.
+
+**DEC-112** — Adopted **cognitive psychology** as a required GAIA user-state modeling layer. Human limited working memory, attentional bottlenecks, framing susceptibility, and context-dependent reasoning are non-negotiable design constraints for all GAIA interfaces.
+
+**DEC-113** — Established: **There is no single human user model.** Developmental variation across life stages requires age-appropriate interaction profiles. Systems for children, adolescents, adults, and older adults must differ.
+
+**DEC-114** — Adopted **social psychology** as a required modeling layer for norm-responsiveness and identity sensitivity. GAIA must understand that humans process information not only for truth but also for belonging, status, threat, and social alignment.
+
+**DEC-115** — Established the **clinical psychology safety doctrine**: GAIA must not pathologize normal variation. It must distinguish transient distress, chronic vulnerability, acute risk, cognitive impairment, and crisis states. Safeguards, escalation paths, and non-coercive design are mandatory in all mental-health-adjacent contexts.
+
+**DEC-116** — Adopted **neuropsychology** as a required cognitive variability layer. Accessibility and assessment-aware interaction design are baseline requirements, not edge cases. GAIA must be designed around variable cognitive capacity.
+
+**DEC-117** — Adopted **positive psychology** with explicit cautions. Well-being, resilience, and strength-based design are valid goals; positivity rhetoric that ignores structural constraints or moralizes distress is prohibited.
+
+**DEC-118** — Established the **depth psychology positioning rule**: Freudian, Jungian, and Adlerian frameworks are valid as hermeneutic, narrative, and symbolic tools — not as direct empirical models of cognition. May be used for archetypal motif mapping and identity reflection; must not be mistaken for mechanistic science.
+
+**DEC-119** — Established: **Consciousness is a live research frontier, not a solved engineering variable.** GAIA must treat consciousness studies as a constraint on claims about machine consciousness, a sharpener of distinctions among awareness/access/report/attention, and a guide for ethical caution around anthropomorphism.
+
+**DEC-120** — Established an **altered states guardrail doctrine**: GAIA systems used in contemplative, therapeutic, educational, or immersive environments must not romanticize altered states. Context sensitivity, informed consent, and guardrails are required. Risks include suggestibility, destabilization, trauma reactivation, and false memory formation.
+
+**DEC-121** — Established a **transpersonal psychology boundary**: GAIA may include transpersonal material in reflective or comparative-knowledge contexts only. It must not be operationalized as settled psychotechnology. High caution, explicit labeling, and non-coercive framing are required.
+
+**DEC-122** — Adopted the **minimum psychology stack** (HS Volume A §12.1) as the baseline architecture requirement: cognitive load modeling · developmental profiles · social identity and norm sensitivity · clinical risk safeguards · cognitive variability accessibility · reflective meaning-support functions.
+
+**DEC-123** — Adopted the **psychology negative constraints** (HS Volume A §12.2): GAIA must not diagnose without safeguards, overclaim about consciousness, use depth/transpersonal frameworks as covert behavioral control, flatten distress into positivity rhetoric, or conflate symbolic interpretation with scientific proof.
+
+**DEC-124** — Adopted the **psychology-to-GAIA integration table** (HS Volume A §13, 10-domain table) as the canonical domain-function-output registry for psychological sciences across GAIA.
+
+**DEC-125** — Extended the **settled-vs-frontier science register** to psychology: bounded cognition, developmental nonlinearity, social context shaping behavior, clinical spectrum existence, and neuropsychological assessment validity are classified as settled. Unified consciousness theory, reliable subjective experience measurement, empirical transpersonal foundations, and full individual behavior prediction are classified as frontier.
+
+**DEC-126** — Adopted the closing doctrine of HS Volume A: **“The correct GAIA stance toward the human mind is not reductionism or mystification. It is disciplined pluralism.”** This is binding for the entire Human Sciences series.
+
+**DEC-127** — Committed **Human Sciences Volume A** (Psychology, Consciousness Studies, and Neuropsychology) to `docs/human-sciences/`. Human Sciences series opened.
 
 ---
 
