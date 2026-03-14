@@ -156,43 +156,65 @@ Rules for this session:
 
 **DEC-047** — Adopted **quantum-informed modeling** as standard for subsystems affected by quantum device behavior.
 
-**DEC-048** — Doctrine: **“No chemical intelligence without chemical measurement discipline.”** Analytical chemistry is a first-class component of all environmental and biosurveillance pipelines.
+**DEC-048** — Doctrine: **“No chemical intelligence without chemical measurement discipline.”**
 
 **DEC-049** — Mandated **polymer literacy** in GAIA’s sustainability and materials reasoning layers.
 
-**DEC-050** — Adopted the **five-part lower reality stack doctrine** (physics → chemistry → materials → analytical chemistry → thermodynamics) as binding design philosophy for all physical-world interfaces.
+**DEC-050** — Adopted the **five-part lower reality stack doctrine** as binding design philosophy for all physical-world interfaces.
 
 **DEC-051** — Established a **frontier physics tracking obligation** for quantum gravity, string theory, and LQC.
 
 **DEC-052** — Committed **Natural Sciences Volume A** (Physics and Chemistry). Natural Sciences series opened.
 
-**DEC-053** — Adopted the principle: **ATLAS is a dynamically coupled, nonlinear planetary system** — not a collection of independent departments. All Earth-system modeling must treat sphere-to-sphere coupling as primary, not optional. Source: NS Volume B.
+**DEC-053** — Adopted: **ATLAS is a dynamically coupled, nonlinear planetary system**. Sphere-to-sphere coupling is primary, not optional. Source: NS Volume B.
 
-**DEC-054** — Adopted the **six-sphere Earth model** (lithosphere, hydrosphere, cryosphere, atmosphere, pedosphere, biosphere) as the canonical decomposition for GAIA’s Earth-system state representation.
+**DEC-054** — Adopted the **six-sphere Earth model** (lithosphere, hydrosphere, cryosphere, atmosphere, pedosphere, biosphere) as the canonical Earth-state decomposition.
 
-**DEC-055** — Established **geology and geophysics** as required subsurface intelligence layers for all GAIA land-use, infrastructure siting, hazard mapping, and mineral-resource reasoning.
+**DEC-055** — Established **geology and geophysics** as required subsurface intelligence layers.
 
-**DEC-056** — Adopted **multi-signal fused geophysical inference** as the required approach for volcanic and seismic hazard monitoring. Single-sensor thresholds are prohibited for these systems.
+**DEC-056** — Adopted **multi-signal fused geophysical inference** as required for volcanic and seismic hazard monitoring.
 
-**DEC-057** — Mandated **ocean coupling** as a required component of all GAIA climate models. Uncoupled atmospheric-only climate models are classified as insufficient for planetary stewardship purposes.
+**DEC-057** — Mandated **ocean coupling** as a required component of all GAIA climate models.
 
-**DEC-058** — Adopted **hydrology** as the canonical water-security and flood/drought intelligence layer. Hydrologic modeling must link meteorology, geology, soil science, ecology, and human infrastructure explicitly.
+**DEC-058** — Adopted **hydrology** as the canonical water-security and flood/drought intelligence layer.
 
-**DEC-059** — Adopted **cryosphere science** as a required state-monitoring layer for sea-level contribution, freshwater storage, albedo feedback, and Arctic infrastructure risk.
+**DEC-059** — Adopted **cryosphere science** as a required state-monitoring layer.
 
-**DEC-060** — Established: **Soil is not inert substrate.** Soil science is a living-interface discipline linking geology, climate, hydrology, chemistry, and biology. All agricultural, land-use, and carbon-cycle reasoning must treat soil as a dynamic system.
+**DEC-060** — Established: **Soil is not inert substrate.** Soil science is a living-interface discipline; treated as a dynamic system in all agricultural, land-use, and carbon-cycle reasoning.
 
-**DEC-061** — Adopted the **weather-vs-climate distinction** as architectural doctrine: weather is local realization; climate is the statistical architecture. GAIA’s forecasting and planning systems must be engineered for the appropriate timescale and must not conflate the two.
+**DEC-061** — Adopted the **weather-vs-climate architectural distinction**: weather is local realization; climate is statistical architecture.
 
-**DEC-062** — Adopted **paleoclimatology** as a required long-baseline context layer. Short instrumental records are insufficient for full climate-state-space characterization; proxy reconstructions are first-class data inputs.
+**DEC-062** — Adopted **paleoclimatology** as a required long-baseline context layer.
 
-**DEC-063** — Adopted the GAIA rule: **“Forecast what is forecastable; bound what is not; never confuse uncertainty with ignorance or confidence with truth.”** This applies to all Earth-system modeling outputs.
+**DEC-063** — Adopted the GAIA rule: **“Forecast what is forecastable; bound what is not; never confuse uncertainty with ignorance or confidence with truth.”**
 
-**DEC-064** — Adopted the **12-domain Earth-system integration table** (NS Volume B §15) as the canonical state-variable and output registry for ATLAS. Each domain has defined key state variables and example GAIA outputs.
+**DEC-064** — Adopted the **12-domain Earth-system integration table** (NS Volume B §15) as the canonical ATLAS state-variable and output registry.
 
-**DEC-065** — Extended the **settled-vs-frontier science register** (DEC-045) to Earth sciences: plate tectonics, weather as initial-value problem, climate as coupled radiative-dynamical system, and ocean–atmosphere coupling are classified as settled. Tipping thresholds, ice-sheet collapse timing, earthquake prediction, and volcanic eruption timing are classified as frontier/bounded.
+**DEC-065** — Extended the **settled-vs-frontier science register** to Earth sciences with explicit domain classifications.
 
-**DEC-066** — Committed **Natural Sciences Volume B** (Earth System Sciences) to `docs/natural-sciences/`. Earth system science recognized as the core empirical ontology of ATLAS.
+**DEC-066** — Committed **Natural Sciences Volume B** (Earth System Sciences). Earth system science recognized as the core empirical ontology of ATLAS.
+
+**DEC-067** — Adopted **scale literacy** as a required property of GAIA’s scientific worldview: GAIA must be able to reason coherently from subatomic to cosmological scales, with appropriate model selection at each. Source: NS Volume C.
+
+**DEC-068** — Established: **Earth is one realization in a broader planetary design space.** Comparative planetology is a required input to GAIA’s Earth-habitability and sustainability reasoning. Single-planet reasoning without comparative context is insufficient.
+
+**DEC-069** — Adopted the **three-tier observational epistemic ladder** for all astronomy and cosmology claims: (1) observationally grounded, (2) strongly supported inference, (3) speculative or interpretation-dependent. Claims at tier 3 must be explicitly labeled as such in any GAIA output.
+
+**DEC-070** — Adopted **Big Bang cosmology** as settled scientific architecture at the level of large-scale cosmological history. This does not imply resolution of pre-inflationary, singularity, or ultimate-ontology questions.
+
+**DEC-071** — Adopted **dark matter** as a strong multi-observational inference that must be encoded in GAIA’s cosmological and astrophysical models. Particle identity remains open and must not be presumed in any model claiming settled status.
+
+**DEC-072** — Adopted **dark energy** (accelerated expansion) as observation-backed. Underlying ontology (cosmological constant, vacuum energy, modified gravity) remains open and must be treated as frontier.
+
+**DEC-073** — Established: **Multiverse models are research-horizon-only** for GAIA. They may be tracked and discussed but must never be used as settled explanatory backbones for practical architecture or decision systems.
+
+**DEC-074** — Extended the **settled-vs-frontier science register** to astronomy and cosmology. Settled: stellar physics, planetary science fundamentals, galactic structure, Big Bang cosmological history, dark matter/energy as observational summary. Frontier: dark matter identity, dark energy ontology, pre-Big-Bang physics, full quantum gravity, empirical status of multiverse proposals.
+
+**DEC-075** — Adopted the doctrine: **“The most honest scientific architecture is one that preserves the distinction between observation, inference, and speculation.”** This applies to all GAIA knowledge layers, not only astronomy.
+
+**DEC-076** — Adopted the **astronomy-to-GAIA integration table** (NS Volume C §9) as the canonical knowledge-class and relevance registry for astrophysical and cosmological domains.
+
+**DEC-077** — Committed **Natural Sciences Volume C** (Astronomy, Planetary Science, and Cosmology) to `docs/natural-sciences/`.
 
 ---
 

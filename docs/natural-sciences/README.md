@@ -10,6 +10,21 @@ This directory contains the canonical Natural Sciences volumes for GAIA. These d
 |---|---|---|
 | [Volume A](./volume-A-physics-and-chemistry.md) | Physics and Chemistry | ✅ COMMITTED 2026-03-14 |
 | [Volume B](./volume-B-earth-system-sciences.md) | Earth System Sciences | ✅ COMMITTED 2026-03-14 |
+| [Volume C](./volume-C-astronomy-planetary-science-cosmology.md) | Astronomy, Planetary Science, and Cosmology | ✅ COMMITTED 2026-03-14 |
+
+---
+
+## Astronomy-to-GAIA Integration Table (Volume C §9)
+
+| Domain | Knowledge Class | GAIA Relevance |
+|---|---|---|
+| Stellar physics | Strongly observational + theoretical | Solar/stellar context, habitability models |
+| Planetary science | Strongly observational + comparative | Earth comparison, space mission logic |
+| Galactic astronomy | Observational and model-driven | Cosmic context, long-horizon science |
+| Big Bang cosmology | High-confidence synthesis | Scientific worldview, cosmological baselines |
+| Dark matter | Observation-backed inference, identity unresolved | Frontier tracking |
+| Dark energy | Observation-backed inference, ontology unresolved | Frontier tracking |
+| Multiverse proposals | Speculative / interpretation-dependent | Research horizon only |
 
 ---
 
@@ -61,9 +76,8 @@ The Natural Sciences series provides the **empirical reality constraints** for G
 
 ## Future Volumes
 
-- **Volume C** — Biology and Life Sciences
-- **Volume D** — Ecology and Environmental Science
-- **Volume E** — Astronomy, Astrophysics, and Planetary Science
+- **Volume D** — Biology and Life Sciences
+- **Volume E** — Ecology and Environmental Science
 
 ---
 
