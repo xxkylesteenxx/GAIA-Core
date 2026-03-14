@@ -26,6 +26,12 @@ Rules for this session:
 - [ ] Implement GAIA Policy Language v0.1 scaffold (typed deontic-temporal DSL — see Volume A §10.1)
 - [ ] Build contradiction-scope handler module (paraconsistent containment layer — see Volume A §5.4)
 - [ ] Wire proof-object export to GUARDIAN core for high-stakes actuation audit trail
+- [ ] Implement typed quantity system for units, coordinates, and physical dimensions (Volume B §7.1)
+- [ ] Build canonical world graph: entities, regions, events, dependencies (Volume B §7.2)
+- [ ] Implement Bayesian sensor fusion layer for uncertain telemetry (Volume B §7.3)
+- [ ] Establish complexity budget framework for all production workflows (Volume B §7.4)
+- [ ] Establish information budget framework for sensing, storage, inter-core messaging (Volume B §7.5)
+- [ ] Build mathematical invariant registry for safety-critical state properties (Volume B §7.7)
 
 ---
 
@@ -57,7 +63,27 @@ Rules for this session:
 
 **DEC-010** — Mandated **proof objects** over opaque confidence statements for all rule-governed high-stakes decisions. GAIA must produce derivation traces and typed proof terms sufficient for independent auditor replay. Assigned to GUARDIAN core.
 
-**DEC-011** — Committed **Formal Sciences Volume A** (Logic, Language, and Proof) as a canonical GAIA-Core document under `docs/formal-sciences/`. This volume defines the minimum serious reasoning architecture for GAIA and seeds the formal sciences series (future Volumes B–E planned).
+**DEC-011** — Committed **Formal Sciences Volume A** (Logic, Language, and Proof) as a canonical GAIA-Core document under `docs/formal-sciences/`. This volume defines the minimum serious reasoning architecture for GAIA and seeds the formal sciences series.
+
+**DEC-012** — Adopted a **seven-layer mathematical architecture (M0–M6)** as the canonical mathematical substrate for GAIA, running from set-theoretic reference semantics (M0) through type-safe construction (M1), category-theoretic composition (M2), state modeling (M3), uncertainty (M4), network optimization (M5), to information-theoretic communication (M6). Source: Formal Sciences Volume B.
+
+**DEC-013** — Adopted **type-theoretic engineering posture** as mandatory for all GAIA implementations. Set theory provides reference semantics; type theory enforces machine-safe construction. “Correct-by-construction” is the required design standard, not an optional quality goal.
+
+**DEC-014** — Adopted **category theory** as the architectural language for GAIA’s compositional interfaces. All inter-core adapters, data pipelines, and cross-system transformations must respect structure-preserving map discipline. Reversibility must be explicitly tracked.
+
+**DEC-015** — Mandated **calibrated uncertainty outputs** as first-class system outputs. GAIA must never deploy inference on point estimates alone where calibration matters. Confidence intervals, posterior spreads, and uncertainty decomposition are required fields in all risk-sensitive outputs.
+
+**DEC-016** — Established **complexity governance** as a system ethics obligation. Complexity class must be documented for every production workflow. Architectural decisions that cannot bound their complexity are considered incomplete. Approximation is permitted only when formally justified.
+
+**DEC-017** — Established **information budget discipline** as a first-class engineering constraint alongside compute and memory budgets. Bandwidth, redundancy, and recoverability must be planned at the design stage for sensing, storage, and inter-core messaging.
+
+**DEC-018** — Adopted **graph theory** as the canonical representation for inter-core dependencies, knowledge graphs, provenance DAGs, ecological networks, and trust/authority hierarchies. All such structures must be formally modeled as typed graphs before implementation.
+
+**DEC-019** — Adopted a **five-class algorithm doctrine**: exact, approximation, heuristic, online, and anytime algorithms are all recognized first-class algorithm types for GAIA. Planetary systems require all five; conflating them is an architectural error.
+
+**DEC-020** — Adopted **topology** as the robustness analysis layer for planetary networks. Connectivity, structural invariants, and resilience under deformation/noise must be formally characterized for all distributed subsystems.
+
+**DEC-021** — Committed **Formal Sciences Volume B** (Mathematics, Computation, and Information) as a canonical GAIA-Core document under `docs/formal-sciences/`. Updated README to reflect Volumes A–B complete; seeded future Volumes C–E.
 
 ---
 
