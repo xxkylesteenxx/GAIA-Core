@@ -1,0 +1,37 @@
+[package]
+name    = "gaia_desktop_runtime"
+version = "0.1.0"
+edition = "2021"
+description = "GAIA trusted desktop runtime — compositor policy, workspace state, overlay enforcement, and IPC bridge."
+license = "MIT OR Apache-2.0"
+
+# Spec ref: GAIA Desktop Shell and Interaction Substrate Spec v1.0
+# docs/specs/platform/GAIA_Desktop_Shell_Interaction_Substrate_Spec_v1.0.md
+#
+# This crate owns the trusted runtime boundary (DSK-001):
+#   compositor   — surface lifecycle + focus auditability (DSK-008)
+#   workspace    — workspace state machine + overlay routing (DSK-005)
+#   overlay      — z-band enforcement + safety overlay policy (DSK-009)
+#   ipc          — Unix socket IPC server (shell ↔ runtime bridge)
+#
+# Integration
+# -----------
+# Replace facade modules with Smithay-based Wayland protocol handling:
+#   smithay = { version = "0.5", features = ["backend_udev", "backend_drm"] }
+#
+# Add serde + serde_json when IPC message types are stabilised:
+#   serde      = { version = "1", features = ["derive"] }
+#   serde_json = "1"
+#
+# Add tracing for structured audit logging:
+#   tracing            = "0.1"
+#   tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+#
+# No dependencies are declared in the scaffold so that `cargo check`
+# passes without a network connection or registry access.
+
+[dependencies]
+
+[dev-dependencies]
+# Uncomment for unit tests once facade stubs are replaced:
+# tokio = { version = "1", features = ["full", "test-util"] }
