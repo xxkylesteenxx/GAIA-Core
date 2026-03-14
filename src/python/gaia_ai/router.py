@@ -2,11 +2,28 @@
 
 Spec ref: GAIA-AI-INFERENCE-SPEC v1.0 §3, §4, §5
 
-The router selects among local_fast, local_embedding, and cloud_deep
-profiles based on latency, privacy, and task mode.
+Two router classes are provided:
 
-Private-data requests SHALL prefer approved local routes when available.
-External model routes SHALL be deny-by-default unless registered and approved.
+  InferenceRouter       —  canonical policy router (spec-primary)
+                           Sync. Uses InferenceMode + QueryContext + RouteDecision
+                           from gaia_ai.models. Returns a RouteDecision— the caller
+                           dispatches via a serving adapter.
+
+  InferenceRouterAsync  —  async variant that owns serving adapters and dispatches
+                           directly. Kept for backward compat with existing tests
+                           and async demo pipeline.
+
+Routing policy (InferenceRouter.decide)
+---------------------------------------
+  1. Embedding mode  →  supports_embeddings profile, local://embeddings
+  2. Private data    →  local non-embedding profile, retrieval + guard required
+  3. Fast / low latency (≤ 1200 ms budget)  →  "fast" tag, local
+  4. Default deep    →  "deep" tag, approved cloud
+
+Spec invariants
+---------------
+  - Private-data requests SHALL prefer approved local routes.
+  - External routes SHALL be deny-by-default unless registered and approved.
 """
 
 from __future__ import annotations
@@ -16,29 +33,123 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
+from .models import InferenceMode, QueryContext, RouteDecision
 from .registry import Locality, ModelProfile, ModelProfileRegistry
-from .serving import ServingAdapter
+from .serving.base import ServingAdapter
 
 log = logging.getLogger(__name__)
 
 
+# ---------------------------------------------------------------------------
+# InferenceRouter  —  canonical sync policy router (spec-primary)
+# ---------------------------------------------------------------------------
+
+class InferenceRouter:
+    """Policy router for local/cloud and fast/deep selection.
+
+    Spec ref: GAIA-AI-INFERENCE-SPEC v1.0 §4
+    """
+
+    def __init__(self, registry: ModelProfileRegistry) -> None:
+        self.registry = registry
+
+    def decide(self, query: QueryContext) -> RouteDecision:
+        profiles = self.registry.all()
+
+        if query.mode == InferenceMode.EMBEDDING:
+            candidate = next(
+                (p for p in profiles if p.supports_embeddings), None
+            )
+            if candidate is None:
+                raise RoutingError("No embedding-capable profile registered")
+            return RouteDecision(
+                profile=candidate,
+                endpoint="local://embeddings",
+                reason="Embedding request routed to local embedding-capable profile.",
+                retrieval_required=False,
+                guard_scan_required=False,
+            )
+
+        if query.requires_private_data:
+            local_candidates = [
+                p for p in profiles
+                if p.locality != Locality.CLOUD and not p.supports_embeddings
+            ]
+            if not local_candidates:
+                raise RoutingError(
+                    "No approved local route available for private-data request"
+                )
+            candidate = local_candidates[0]
+            return RouteDecision(
+                profile=candidate,
+                endpoint=candidate.endpoint or "http://127.0.0.1:8000/v1",
+                reason="Private-data request kept local.",
+                retrieval_required=True,
+                guard_scan_required=True,
+            )
+
+        if query.latency_budget_ms <= 1200 or query.mode == InferenceMode.FAST:
+            fast_local = next(
+                (p for p in profiles if "fast" in p.tags), None
+            )
+            if fast_local is None:
+                raise RoutingError("No fast-tagged profile registered")
+            return RouteDecision(
+                profile=fast_local,
+                endpoint=fast_local.endpoint or "http://127.0.0.1:8000/v1",
+                reason="Low-latency route selected.",
+                retrieval_required=False,
+                guard_scan_required=True,
+            )
+
+        deep = next(
+            (p for p in profiles if "deep" in p.tags and p.approved), None
+        )
+        if deep is None:
+            raise RoutingError(
+                "No approved deep profile registered. "
+                "Call registry.approve(<model_id>) to enable cloud/deep routes."
+            )
+        return RouteDecision(
+            profile=deep,
+            endpoint=deep.endpoint or "https://approved-cloud.example/v1",
+            reason="High-depth route selected.",
+            retrieval_required=True,
+            guard_scan_required=True,
+        )
+
+
+# ---------------------------------------------------------------------------
+# RoutingError
+# ---------------------------------------------------------------------------
+
+class RoutingError(Exception):
+    """Raised when no suitable route is available."""
+
+
+# ---------------------------------------------------------------------------
+# InferenceRouterAsync  —  async variant (backward compat)
+# ---------------------------------------------------------------------------
+
+# Legacy types kept for backward compat with existing tests and demo pipeline.
+
 class TaskMode(str, Enum):
-    CHAT          = "chat"
-    COMPLETION    = "completion"
-    EMBEDDING     = "embedding"
+    CHAT           = "chat"
+    COMPLETION     = "completion"
+    EMBEDDING      = "embedding"
     CLASSIFICATION = "classification"
-    SUMMARISATION = "summarisation"
-    CODE          = "code"
+    SUMMARISATION  = "summarisation"
+    CODE           = "code"
 
 
 @dataclass
 class InferenceRequest:
-    prompt:       str
-    task_mode:    TaskMode          = TaskMode.CHAT
-    private_data: bool              = False
-    preferred_model: str | None     = None
-    max_tokens:   int               = 512
-    metadata:     dict[str, Any]    = field(default_factory=dict)
+    prompt:          str
+    task_mode:       TaskMode        = TaskMode.CHAT
+    private_data:    bool            = False
+    preferred_model: str | None      = None
+    max_tokens:      int             = 512
+    metadata:        dict[str, Any]  = field(default_factory=dict)
 
 
 @dataclass
@@ -46,24 +157,15 @@ class InferenceResponse:
     model_id:  str
     locality:  str
     content:   str
-    metadata:  dict[str, Any]       = field(default_factory=dict)
-    truncated: bool                 = False
+    metadata:  dict[str, Any] = field(default_factory=dict)
+    truncated: bool           = False
 
 
-class RoutingError(Exception):
-    """Raised when no suitable route is available."""
+class InferenceRouterAsync:
+    """Async router that owns serving adapters and dispatches directly.
 
-
-class InferenceRouter:
-    """Select a model profile and dispatch an inference request.
-
-    Routing priority (highest to lowest):
-      1. Caller-specified preferred_model (if approved and available)
-      2. Local route matching task_mode capability tag
-      3. Any approved local route
-      4. Cloud route (only if private_data=False and route is approved)
-
-    Raises RoutingError if no route satisfies constraints.
+    Kept for backward compat with existing tests and async demo pipeline.
+    For new code, prefer InferenceRouter (sync) + explicit adapter dispatch.
     """
 
     def __init__(
@@ -75,12 +177,9 @@ class InferenceRouter:
         self._adapters: dict[str, ServingAdapter] = adapters or {}
 
     def bind_adapter(self, model_id: str, adapter: ServingAdapter) -> None:
-        """Attach a serving adapter to a registered model."""
         self._adapters[model_id] = adapter
 
     def select(self, request: InferenceRequest) -> ModelProfile:
-        """Return the best ModelProfile for request without executing it."""
-        # 1. Explicit preference
         if request.preferred_model:
             profile = self._registry.get(request.preferred_model)
             self._assert_routable(profile, request)
@@ -88,7 +187,6 @@ class InferenceRouter:
 
         candidates = self._registry.all_approved()
 
-        # 2. Private-data: filter to local only
         if request.private_data:
             candidates = [p for p in candidates if p.is_private_safe()]
             if not candidates:
@@ -96,18 +194,15 @@ class InferenceRouter:
                     "No approved local route available for private-data request"
                 )
 
-        # 3. Prefer capability-tagged match for task_mode
         task_tag = request.task_mode.value
         tagged = [p for p in candidates if p.has_capability(task_tag)]
         if tagged:
             return tagged[0]
 
-        # 4. Prefer local over cloud
         local = [p for p in candidates if p.is_private_safe()]
         if local:
             return local[0]
 
-        # 5. Cloud fallback (private_data already excluded above)
         cloud = [p for p in candidates if not p.is_private_safe()]
         if cloud:
             return cloud[0]
@@ -115,7 +210,6 @@ class InferenceRouter:
         raise RoutingError("No routable model profile found")
 
     async def route(self, request: InferenceRequest) -> InferenceResponse:
-        """Select a profile and dispatch via its bound serving adapter."""
         profile = self.select(request)
         adapter = self._adapters.get(profile.model_id)
         if adapter is None:
@@ -136,9 +230,7 @@ class InferenceRouter:
     @staticmethod
     def _assert_routable(profile: ModelProfile, request: InferenceRequest) -> None:
         if not profile.approved and not profile.is_private_safe():
-            raise RoutingError(
-                f"External model '{profile.model_id}' is not approved"
-            )
+            raise RoutingError(f"External model '{profile.model_id}' is not approved")
         if request.private_data and not profile.is_private_safe():
             raise RoutingError(
                 f"Model '{profile.model_id}' is a cloud route and cannot handle private data"

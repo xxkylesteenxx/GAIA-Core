@@ -37,15 +37,43 @@ class ModelProfile:
     """Declares everything needed to route, bind, and govern a model.
 
     Spec ref: GAIA-AI-INFERENCE-SPEC v1.0 §4
+
+    The `tags` field is the canonical router-facing tag list used by
+    InferenceRouter.decide() for fast/deep/embedding routing.
+    It is derived from `capability_tags` if not provided explicitly.
     """
-    model_id:        str
-    locality:        Locality
-    context_window:  int
-    capability_tags: list[str]           = field(default_factory=list)
-    hardware_minima: HardwareMinima      = field(default_factory=HardwareMinima)
-    approved:        bool                = False   # external routes deny-by-default
-    endpoint:        str                 = ""      # serving endpoint URL or path
-    metadata:        dict[str, Any]      = field(default_factory=dict)
+    model_id:           str
+    locality:           Locality
+    context_window:     int
+    capability_tags:    list[str]       = field(default_factory=list)
+    hardware_minima:    HardwareMinima  = field(default_factory=HardwareMinima)
+    approved:           bool            = False   # external routes deny-by-default
+    endpoint:           str             = ""      # serving endpoint URL or path
+    supports_embeddings: bool           = False   # True for embedding-specialised models
+    metadata:           dict[str, Any]  = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        # Auto-set supports_embeddings for LOCAL_EMBEDDING locality
+        if self.locality == Locality.LOCAL_EMBEDDING:
+            self.supports_embeddings = True
+
+    @property
+    def tags(self) -> list[str]:
+        """Router-facing tag list.
+
+        Includes capability_tags plus synthetic locality tags
+        ('fast', 'deep', 'embedding') so InferenceRouter.decide()
+        can query `'fast' in p.tags` without requiring callers to
+        declare those tags explicitly.
+        """
+        base = list(self.capability_tags)
+        if self.locality == Locality.LOCAL_FAST and "fast" not in base:
+            base.append("fast")
+        if self.locality == Locality.LOCAL_DEEP and "deep" not in base:
+            base.append("deep")
+        if self.supports_embeddings and "embedding" not in base:
+            base.append("embedding")
+        return base
 
     def is_private_safe(self) -> bool:
         """True if this route is safe for private-data requests."""
@@ -75,7 +103,8 @@ class ModelProfileRegistry:
                 profile.model_id,
             )
         self._profiles[profile.model_id] = profile
-        log.debug("registry: registered model '%s' [%s]", profile.model_id, profile.locality.value)
+        log.debug("registry: registered model '%s' [%s]",
+                  profile.model_id, profile.locality.value)
 
     def approve(self, model_id: str) -> None:
         """Explicitly approve an external (cloud) route."""
@@ -88,7 +117,16 @@ class ModelProfileRegistry:
     def get(self, model_id: str) -> ModelProfile:
         return self._profiles[model_id]
 
+    def all(self) -> list[ModelProfile]:
+        """Return all registered profiles (approved and unapproved).
+
+        The router is responsible for filtering by approval state.
+        Used by InferenceRouter.decide().
+        """
+        return list(self._profiles.values())
+
     def all_approved(self) -> list[ModelProfile]:
+        """Return only profiles that are approved or local (private-safe)."""
         return [p for p in self._profiles.values() if p.approved or p.is_private_safe()]
 
     def by_locality(self, locality: Locality) -> list[ModelProfile]:
@@ -96,6 +134,23 @@ class ModelProfileRegistry:
 
     def by_capability(self, tag: str) -> list[ModelProfile]:
         return [p for p in self._profiles.values() if p.has_capability(tag)]
+
+    def from_yaml(self, path: str) -> "ModelProfileRegistry":
+        """Load profiles from a YAML file and register them.
+
+        Requires: pyyaml
+        See gaia_ai/README.md for the expected YAML schema.
+        """
+        import yaml  # type: ignore[import]
+        with open(path) as f:
+            data = yaml.safe_load(f)
+        for entry in data.get("models", []):
+            locality_str = entry.pop("locality", "local_fast")
+            locality = Locality(locality_str)
+            hw_raw = entry.pop("hardware_minima", {})
+            hw = HardwareMinima(**hw_raw) if hw_raw else HardwareMinima()
+            self.register(ModelProfile(locality=locality, hardware_minima=hw, **entry))
+        return self
 
     @property
     def model_ids(self) -> tuple[str, ...]:
