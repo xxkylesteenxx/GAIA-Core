@@ -1,79 +1,108 @@
-"""Async inter-core message bus.
+"""GAIA async message bus.
 
 Spec ref: PYTHON-ORCHESTRATION-SPEC §6, §8
 
-Implements positive-authorization routing: a message is delivered
-only if an explicit allow entry exists for (sender, recipient, topic_prefix).
-All other routes are rejected by default.
+Implements a topic-keyed pub/sub bus.
+Handlers subscribe to a route string (core_id or topic).
+Publish delivers to all subscribers of message.recipient,
+or to all subscribers for a broadcast (recipient=None).
+
+Note: This bus does not enforce positive-authorization route rules
+internally — route policy enforcement is the caller's responsibility
+(e.g. via CoreRegistry.send or an external policy check by GUARDIAN).
 """
 
 from __future__ import annotations
 
 import asyncio
 import logging
-from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from collections import defaultdict
+from collections.abc import Awaitable, Callable
 
-from .models import CoreMessage
-
-if TYPE_CHECKING:
-    from .base import GaiaCore
+from .models import GaiaMessage
 
 log = logging.getLogger(__name__)
 
-
-@dataclass
-class RouteRule:
-    """A single positive-authorization route entry."""
-    sender: str
-    recipient: str          # "*" matches any recipient (broadcast allow)
-    topic_prefix: str
+Handler = Callable[[GaiaMessage], Awaitable[None]]
 
 
-class CoreMessageBus:
-    """Async message bus with positive-authorization route table."""
+class GaiaMessageBus:
+    """Async publish/subscribe message bus keyed by route string.
+
+    Routes are typically core_id values (e.g. 'GUARDIAN', 'SOPHIA')
+    or topic prefixes for wildcard subscribers.
+
+    Thread/task safety: all mutations are guarded by an asyncio.Lock.
+    """
 
     def __init__(self) -> None:
-        self._cores: dict[str, "GaiaCore"] = {}
-        self._rules: list[RouteRule] = []
+        self._subscribers: defaultdict[str, list[Handler]] = defaultdict(list)
+        self._lock = asyncio.Lock()
 
-    # -- Registration ------------------------------------------------------
+    # -- Subscription ------------------------------------------------------
 
-    def register(self, core: "GaiaCore") -> None:
-        self._cores[core.name] = core
+    async def subscribe(self, route: str, handler: Handler) -> None:
+        """Register handler to receive messages published to route."""
+        async with self._lock:
+            self._subscribers[route].append(handler)
+        log.debug("bus: subscribed handler to route '%s'", route)
 
-    def allow(self, sender: str, recipient: str, topic_prefix: str) -> None:
-        """Add a positive-authorization route rule."""
-        self._rules.append(RouteRule(sender=sender, recipient=recipient,
-                                      topic_prefix=topic_prefix))
+    async def unsubscribe(self, route: str, handler: Handler) -> None:
+        """Remove a previously registered handler from route."""
+        async with self._lock:
+            handlers = self._subscribers.get(route, [])
+            try:
+                handlers.remove(handler)
+            except ValueError:
+                pass
 
-    # -- Dispatch ----------------------------------------------------------
+    # -- Publish -----------------------------------------------------------
 
-    async def dispatch(self, msg: CoreMessage) -> None:
-        """Route msg to its recipient(s), enforcing the allow-list."""
-        if msg.is_broadcast():
-            for name, core in self._cores.items():
-                if name != msg.sender and self._authorized(msg.sender, name, msg.topic):
-                    await self._deliver(core, msg)
-        else:
-            if not self._authorized(msg.sender, msg.recipient, msg.topic):  # type: ignore[arg-type]
-                log.warning("bus: route denied %s -> %s [%s]",
-                            msg.sender, msg.recipient, msg.topic)
-                return
-            core = self._cores.get(msg.recipient)  # type: ignore[arg-type]
-            if core:
-                await self._deliver(core, msg)
+    async def publish(self, message: GaiaMessage) -> None:
+        """Deliver message to all matching subscribers.
 
-    async def _deliver(self, core: "GaiaCore", msg: CoreMessage) -> None:
-        try:
-            await core.handle_message(msg)
-        except Exception:
-            log.exception("bus: unhandled exception in %s.handle_message", core.name)
+        - If message.recipient is None: broadcast to ALL subscribers.
+        - Otherwise: deliver only to subscribers of message.recipient.
 
-    def _authorized(self, sender: str, recipient: str, topic: str) -> bool:
-        return any(
-            r.sender == sender
-            and (r.recipient == "*" or r.recipient == recipient)
-            and topic.startswith(r.topic_prefix)
-            for r in self._rules
+        Exceptions from individual handlers are logged but do not
+        prevent delivery to other subscribers.
+        """
+        recipients = await self._resolve_handlers(message)
+        if not recipients:
+            log.debug("bus: no subscribers for route '%s'", message.recipient or "<broadcast>")
+            return
+        results = await asyncio.gather(
+            *(handler(message) for handler in recipients),
+            return_exceptions=True,
         )
+        for handler, result in zip(recipients, results):
+            if isinstance(result, BaseException):
+                log.exception(
+                    "bus: handler %r raised on topic '%s': %s",
+                    handler, message.topic, result,
+                )
+
+    async def _resolve_handlers(self, message: GaiaMessage) -> list[Handler]:
+        async with self._lock:
+            if message.recipient is None:
+                # Broadcast: flatten all subscriber lists, deduplicate order-preserving
+                seen: set[int] = set()
+                flat: list[Handler] = []
+                for handlers in self._subscribers.values():
+                    for h in handlers:
+                        if id(h) not in seen:
+                            seen.add(id(h))
+                            flat.append(h)
+                return flat
+            return list(self._subscribers.get(message.recipient, []))
+
+    # -- Introspection -----------------------------------------------------
+
+    async def routes(self) -> list[str]:
+        """Return all currently registered route keys."""
+        async with self._lock:
+            return list(self._subscribers.keys())
+
+    async def subscriber_count(self, route: str) -> int:
+        async with self._lock:
+            return len(self._subscribers.get(route, []))
