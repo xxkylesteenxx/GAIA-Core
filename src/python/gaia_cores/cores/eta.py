@@ -7,6 +7,6 @@ class EtaCore(SimpleGaiaCore):
     def __init__(self) -> None:
         super().__init__(
             core_id="ETA",
-            domain="temporal",
-            summary="Temporal coordination, event sequencing, and scheduling",
+            domain="energy systems",
+            summary="Energy, thermodynamics, and resource optimization",
         )
