@@ -1,8 +1,9 @@
-# GAIA Governance Index v1.1 — Companion Adoption Matrix
+# GAIA Governance Index v1.1 — Companion Matrix
+**Quick Authority Crosswalk, Integration Register, and Implementation Hooks**
 
 *Compiled by: Societas AI Research Team*
 *Date: March 14, 2026*
-*Classification: Canonical Companion to GAIA Governance Index v1.1*
+*Classification: P1 Critical - Governance Companion*
 
 ---
 
@@ -12,7 +13,124 @@ This matrix provides a practical, repository- and CI/CD-oriented reference for e
 
 ---
 
-## Document × Repository Matrix
+## 1. Quick Authority Crosswalk
+
+| Domain / Situation | Highest Governing Document(s) | Blocking Controls Before Release |
+|---|---|---|
+| general repository architecture | Governance Index v1.1; Open-Source Governance Framework v1.0; Repository Architecture and Engineering Systems v1.0 | contract enforcement, auditability, deployment gating |
+| any safety-relevant feature | Safety-Critical Systems Policy v1.0 | hazard analysis, verification, safe-state design, release gate |
+| trusted production compute | Secure Compute and Verification Spec v1.0 | attestation, artifact provenance, signing, least privilege |
+| biomedical data / workflow / biosurveillance | Biomedical Interface and Biosafety Spec v1.0 | boundary review, human authority, refusal/escalation logic |
+| knowledge graph / ontology / canonical claims | Applied Sciences Knowledge Graph Spec v1.0 | provenance, ontology review, graph release management |
+| infrastructure twins / facilities / utilities / transport | Infrastructure Digital Twin Spec v1.0 | bounded trust, synchronization quality, scenario separation |
+| habitat / food / soil / water / One Health intelligence | Habitat and Food Systems Intelligence Spec v1.0 | locale-specific evidence, coupled-system review |
+
+---
+
+## 2. New Spec Registration Entries
+
+### 2.1 GAIA Safety-Critical Systems Policy v1.0
+- **tier:** 2
+- **classification:** P0
+- **binding scope:** all systems that can affect health, infrastructure, environment, emergencies, or critical resource allocation
+- **actuation stance:** restrictive
+- **release status effect:** may block release
+
+### 2.2 GAIA Secure Compute and Verification Spec v1.0
+- **tier:** 2
+- **classification:** P0
+- **binding scope:** protected build, deployment, runtime, and trust domains
+- **actuation stance:** indirect but mandatory for trusted operation
+- **release status effect:** may block admission to trusted environments
+
+### 2.3 GAIA Biomedical Interface and Biosafety Spec v1.0
+- **tier:** 2
+- **classification:** P0
+- **binding scope:** biomedical, clinical, biosurveillance, biological-model-adjacent systems
+- **actuation stance:** restrictive
+- **release status effect:** may block biomedical capability exposure
+
+### 2.4 GAIA Applied Sciences Knowledge Graph Spec v1.0
+- **tier:** 3
+- **classification:** P1
+- **binding scope:** canonical semantics, graph release, provenance, ontology
+- **actuation stance:** none by itself
+- **release status effect:** blocks incompatible ontology or provenance-breaking changes
+
+### 2.5 GAIA Infrastructure Digital Twin Spec v1.0
+- **tier:** 3
+- **classification:** P1
+- **binding scope:** built-environment and utility twin systems
+- **actuation stance:** bounded and non-authorizing
+- **release status effect:** blocks twin claims lacking trust, time, or scenario disclosure
+
+### 2.6 GAIA Habitat and Food Systems Intelligence Spec v1.0
+- **tier:** 3
+- **classification:** P1
+- **binding scope:** habitat, soil, water, agrifood, livability, One Health intelligence
+- **actuation stance:** advisory unless separately authorized
+- **release status effect:** blocks oversimplified or decontextualized decision logic
+
+---
+
+## 3. Machine-Readable Spec Registry
+
+```yaml
+gaia_spec_registry:
+  - document_id: "gaia-governance-index-v1.1"
+    title: "GAIA Governance Index v1.1"
+    tier: 2
+    classification: "P0"
+    status: "active"
+    canonical: true
+    blocking: true
+  - document_id: "gaia-safety-critical-systems-policy-v1.0"
+    title: "GAIA Safety-Critical Systems Policy v1.0"
+    tier: 2
+    classification: "P0"
+    status: "active"
+    canonical: true
+    blocking: true
+  - document_id: "gaia-secure-compute-and-verification-spec-v1.0"
+    title: "GAIA Secure Compute and Verification Spec v1.0"
+    tier: 2
+    classification: "P0"
+    status: "active"
+    canonical: true
+    blocking: true
+  - document_id: "gaia-biomedical-interface-and-biosafety-spec-v1.0"
+    title: "GAIA Biomedical Interface and Biosafety Spec v1.0"
+    tier: 2
+    classification: "P0"
+    status: "active"
+    canonical: true
+    blocking: true
+  - document_id: "gaia-applied-sciences-knowledge-graph-spec-v1.0"
+    title: "GAIA Applied Sciences Knowledge Graph Spec v1.0"
+    tier: 3
+    classification: "P1"
+    status: "active"
+    canonical: true
+    blocking: true
+  - document_id: "gaia-infrastructure-digital-twin-spec-v1.0"
+    title: "GAIA Infrastructure Digital Twin Spec v1.0"
+    tier: 3
+    classification: "P1"
+    status: "active"
+    canonical: true
+    blocking: true
+  - document_id: "gaia-habitat-and-food-systems-intelligence-spec-v1.0"
+    title: "GAIA Habitat and Food Systems Intelligence Spec v1.0"
+    tier: 3
+    classification: "P1"
+    status: "active"
+    canonical: true
+    blocking: true
+```
+
+---
+
+## 4. Document × Repository Matrix
 
 | Document | GAIA-Core | GAIA-Server | GAIA-IoT | GAIA-Apps | GAIA-Docs |
 |----------|:---------:|:-----------:|:--------:|:---------:|:---------:|
@@ -32,7 +150,7 @@ This matrix provides a practical, repository- and CI/CD-oriented reference for e
 
 ---
 
-## CI/CD Gate Requirements by Tier
+## 5. CI/CD Gate Requirements by Tier
 
 ### Tier 1 Gates (must block merge/deploy if failing)
 
@@ -67,7 +185,19 @@ This matrix provides a practical, repository- and CI/CD-oriented reference for e
 
 ---
 
-## Core × Document Responsibility Matrix
+## 6. Immediate Repository Hooks
+
+Add the following checks to CI/CD immediately:
+
+- verify every protected service declares governing document IDs;
+- block release if Tier 2 dependencies are missing from service metadata;
+- block graph schema changes without provenance and ontology review;
+- block biomedical service rollout without explicit boundary class and human authority declaration;
+- block trusted-environment deployment without attestation evidence.
+
+---
+
+## 7. Core × Document Responsibility Matrix
 
 | Core | Primary Docs | Key Obligations |
 |------|-------------|----------------|
@@ -83,9 +213,9 @@ This matrix provides a practical, repository- and CI/CD-oriented reference for e
 
 ---
 
-## Expected Baseline Artifacts — Readiness Tracker
+## 8. Expected Baseline Artifacts — Readiness Tracker
 
-These are the Tier 0 constitutional companions declared in the Governance Index but not yet physically present in the working corpus. This tracker supports the next governance cycle.
+These are the Tier 0 constitutional companions declared in the Governance Index but not yet physically present in the working corpus.
 
 | Artifact | Status | Priority | Owner |
 |----------|--------|----------|-------|
@@ -97,7 +227,7 @@ These are the Tier 0 constitutional companions declared in the Governance Index 
 
 ---
 
-## Document Adoption Priority Order
+## 9. Document Adoption Priority Order
 
 For teams beginning GAIA governance adoption, implement in this order:
 
@@ -112,7 +242,7 @@ For teams beginning GAIA governance adoption, implement in this order:
 
 ---
 
-## Next Governance Cycle Triggers
+## 10. Next Governance Cycle Triggers
 
 Governance Index v1.2 should be initiated when any of the following occur:
 
@@ -121,3 +251,9 @@ Governance Index v1.2 should be initiated when any of the following occur:
 - The Product Boundary and Actuation Scope Update is published
 - A new consciousness core (e.g., URBS, ETA) is formally ratified
 - A Tier 1 policy incident occurs requiring policy revision
+
+---
+
+## Release Note
+
+This companion file is subordinate to **GAIA Governance Index v1.1** and exists to accelerate repository adoption and policy-as-code implementation.
