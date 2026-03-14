@@ -1,0 +1,77 @@
+# GAIA Domain Launch Layout — Full Example
+# Spec ref: VIRT-MEM-IPC-SPEC §5, §9
+#
+# protection_class values:
+#   "critical"  — GAIA_WL_CRITICAL_SERVICE or above; strict isolation, audit required
+#   "bounded"   — GAIA_WL_INTERACTIVE or BACKGROUND; standard isolation
+#
+# kernel_image: path to guest bzImage on the host filesystem
+# cmdline: kernel command line passed via KVM_SET_BOOT_PARAMS / fw_cfg
+
+[[domains]]
+name             = "sophia"
+vcpu_count       = 2
+memory_mib       = 2048
+kernel_image     = "/var/lib/gaia/guests/sophia/bzImage"
+cmdline          = "console=ttyS0 ro quiet"
+protection_class = "critical"
+
+  [[domains.memory_region]]
+  guest_phys_mib = 0
+  size_mib       = 2048
+  kind           = "private"
+
+[[domains]]
+name             = "terra"
+vcpu_count       = 2
+memory_mib       = 2048
+kernel_image     = "/var/lib/gaia/guests/terra/bzImage"
+cmdline          = "console=ttyS0 ro quiet"
+protection_class = "bounded"
+
+  [[domains.memory_region]]
+  guest_phys_mib = 0
+  size_mib       = 2048
+  kind           = "private"
+
+[[domains]]
+name             = "guardian"
+vcpu_count       = 1
+memory_mib       = 1024
+kernel_image     = "/var/lib/gaia/guests/guardian/bzImage"
+cmdline          = "console=ttyS0 ro quiet"
+protection_class = "critical"
+
+  [[domains.memory_region]]
+  guest_phys_mib = 0
+  size_mib       = 1024
+  kind           = "private"
+
+# ── IPC routes ────────────────────────────────────────────────────────────────
+# All routes are positive-authorization. Unlisted routes are rejected.
+# Spec ref: VIRT-MEM-IPC-SPEC §6
+
+[[ipc_routes]]
+producer = "terra"
+consumer = "sophia"
+schema   = "gaia.event.state/v1"
+
+[[ipc_routes]]
+producer = "sophia"
+consumer = "terra"
+schema   = "gaia.policy.directive/v1"
+
+[[ipc_routes]]
+producer = "sophia"
+consumer = "guardian"
+schema   = "gaia.policy.directive/v1"
+
+[[ipc_routes]]
+producer = "guardian"
+consumer = "sophia"
+schema   = "gaia.safety.alert/v1"
+
+[[ipc_routes]]
+producer = "guardian"
+consumer = "terra"
+schema   = "gaia.safety.alert/v1"
