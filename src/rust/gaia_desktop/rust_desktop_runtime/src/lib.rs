@@ -5,7 +5,8 @@
 //!
 //! Module layout
 //! -------------
-//! state       — shared DesktopState, SurfaceRecord, OverlayRecord, OverlayPriority
+//! config      — DesktopConfig, OutputConfig (session startup configuration)
+//! state       — DesktopState, SurfaceRecord, OverlayRecord, OverlayPriority
 //! compositor  — surface lifecycle + focus auditability          (DSK-008)
 //! workspace   — workspace state machine + overlay routing        (DSK-005)
 //! overlay     — z-band enforcement + safety overlay policy       (DSK-009)
@@ -16,9 +17,11 @@
 //! through the IPC layer — no direct FFI or shared memory.
 
 pub mod compositor;
+pub mod config;
 pub mod ipc;
 pub mod overlay;
 pub mod state;
 pub mod workspace;
 
+pub use config::{DesktopConfig, OutputConfig};
 pub use state::{DesktopState, OverlayPriority, OverlayRecord, SurfaceRecord};
