@@ -1,95 +1,85 @@
-"""End-to-end demo of the GAIA AI inference and RAG pipeline.
+"""End-to-end demo: registry → router → RAG → fine-tune hooks.
 
-Run with:
-    python -m gaia_ai.examples.demo_pipeline
+Spec ref: GAIA-AI-INFERENCE-SPEC v1.0
 
-Uses StubAdapter throughout — no live model server required.
+Run from the repo root:
+  python -m gaia_ai.examples.demo_pipeline
+
+This script performs no real inference — it exercises the routing,
+retrieval, prompt-building, and training-event machinery using only
+pure-Python components (HashEmbeddingEngine, InMemoryVectorStore,
+FineTuneHookStore). No GPU or network required.
+
+Expected output (names / paths will match the example profile config):
+  ROUTE: gaia-deep-cloud https://... High-depth route selected.
+  TOP DOCS: ['doc1', 'doc2']
+  PROMPT PREVIEW: ...
+  TRAINING EVENT: _artifacts/...
 """
 
 from __future__ import annotations
 
-import asyncio
-import logging
+from pathlib import Path
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
-
-from gaia_ai.embeddings import EmbeddingEngine
-from gaia_ai.rag import Document, RAGPipeline
-from gaia_ai.registry import Locality, ModelProfile, ModelProfileRegistry
-from gaia_ai.robustness import RobustnessScanner
-from gaia_ai.router import InferenceRequest, InferenceRouter, TaskMode
-from gaia_ai.serving import StubAdapter
-from gaia_ai.training import FineTuneEmitter
+from gaia_ai.embeddings import HashEmbeddingEngine
+from gaia_ai.models import InferenceMode, QueryContext
+from gaia_ai.rag import RAGPipeline
+from gaia_ai.registry import ModelProfileRegistry
+from gaia_ai.router import InferenceRouter
+from gaia_ai.training.fine_tune_hooks import FineTuneHookStore
+from gaia_ai.vector_store import InMemoryVectorStore
 
 
-async def main() -> None:
-    print("\n=== GAIA AI Demo Pipeline ===")
-
-    # 1. Registry
-    registry = ModelProfileRegistry()
-    registry.register(ModelProfile(
-        model_id="local-chat",
-        locality=Locality.LOCAL_FAST,
-        context_window=4096,
-        capability_tags=["chat", "completion"],
-        approved=True,
-    ))
-    registry.register(ModelProfile(
-        model_id="local-embed",
-        locality=Locality.LOCAL_EMBEDDING,
-        context_window=512,
-        capability_tags=["embedding"],
-        approved=True,
-    ))
-    print(f"\n[1] Registry: {registry.model_ids}")
-
-    # 2. Router
-    adapter = StubAdapter(response="[GAIA-STUB]")
-    router  = InferenceRouter(registry, {"local-chat": adapter, "local-embed": adapter})
-    resp    = await router.route(InferenceRequest(
-        prompt="What is the current ocean heat content?",
-        task_mode=TaskMode.CHAT,
-        private_data=True,
-    ))
-    print(f"\n[2] Router response: model={resp.model_id} locality={resp.locality}")
-    print(f"    content: {resp.content[:80]}")
-
-    # 3. RAG pipeline
-    engine = EmbeddingEngine()
-    rag    = RAGPipeline(engine, adapter, top_k=2)
-    await rag.ingest([
-        Document("d1", "GAIA monitors ocean heat content via AQUA core."),
-        Document("d2", "Arctic ice loss accelerates permafrost thaw cycles."),
-        Document("d3", "Soil moisture anomalies are tracked by TERRA core."),
-        Document("d4", "Energy system efficiency is optimised by ETA core."),
-    ])
-    rag_result = await rag.query("What drives ocean heat uptake?")
-    print(f"\n[3] RAG answer: {rag_result.answer[:80]}")
-    print(f"    Retrieved {len(rag_result.chunks)} chunk(s):")
-    for chunk in rag_result.chunks:
-        print(f"      [{chunk.doc_id}] score={chunk.score:.3f} {chunk.content[:60]}")
-
-    # 4. Fine-tune event emission
-    emitter = FineTuneEmitter()
-    event   = emitter.emit_preference(
-        model_id="local-chat",
-        source="GUARDIAN",
-        prompt="Is deforestation increasing?",
-        chosen="Yes, according to TERRA core data, deforestation rates rose 12% last year.",
-        rejected="I don't have that information.",
+def main() -> None:
+    root = Path(__file__).resolve().parents[2]
+    registry = ModelProfileRegistry.from_yaml(
+        root / "gaia_ai" / "config" / "model_profiles.example.yaml"
     )
-    print(f"\n[4] Fine-tune event: {event.event_type.value} approved={event.approved}")
-    print(f"    Pending approval: {len(emitter.sink.pending_approval())} event(s)")
+    router = InferenceRouter(registry)
 
-    # 5. Robustness scan
-    scanner = RobustnessScanner(adapter)
-    report  = await scanner.run("local-chat")
-    print(f"\n[5] Robustness scan: {report.total} probes — "
-          f"{report.pass_count} pass / {report.fail_count} fail / "
-          f"{report.inconclusive_count} inconclusive")
+    query = QueryContext(
+        text="Summarize recent hydrology and climate interactions for Texas watersheds.",
+        mode=InferenceMode.DEEP,
+        latency_budget_ms=5000,
+        requires_private_data=False,
+    )
+    decision = router.decide(query)
+    print("ROUTE:", decision.profile.name, decision.endpoint, decision.reason)
 
-    print("\n=== Demo complete ===")
+    rag = RAGPipeline(HashEmbeddingEngine(dims=16), InMemoryVectorStore())
+    rag.index_documents(
+        [
+            (
+                "doc1",
+                "Watershed response depends on precipitation intensity, "
+                "soil condition, and basin morphology.",
+            ),
+            (
+                "doc2",
+                "Higher temperatures can intensify evaporation and change "
+                "runoff timing in some basins.",
+            ),
+            (
+                "doc3",
+                "Reservoir operations mediate drought and flood response "
+                "across managed systems.",
+            ),
+        ]
+    )
+    retrieved = rag.retrieve(query, top_k=2)
+    prompt = rag.build_augmented_prompt(query, retrieved)
+    print("TOP DOCS:", [chunk.doc_id for chunk in retrieved])
+    print("PROMPT PREVIEW:", prompt[:220].replace("\n", " "))
+
+    hooks = FineTuneHookStore(root / "_artifacts")
+    event = hooks.prepare_sft_job(
+        model_name="gaia-fast-local",
+        dataset_ref="datasets/curated_feedback.jsonl",
+        output_dir="runs/sft/gaia-fast-local",
+    )
+    path = hooks.record(event)
+    print("TRAINING EVENT:", path)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()

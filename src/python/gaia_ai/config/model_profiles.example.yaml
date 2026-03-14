@@ -1,0 +1,58 @@
+# GAIA AI Model Profile Registry — Example / Dev Config
+# Spec ref: GAIA-AI-INFERENCE-SPEC v1.0 §4
+#
+# This file is the example config loaded by demo_pipeline.py.
+# It mirrors src/python/gaia_ai/profiles.yaml exactly.
+# Copy or symlink to profiles.yaml for production use.
+#
+# Loaded by:
+#   ModelProfileRegistry.from_yaml(root / "gaia_ai" / "config" / "model_profiles.example.yaml")
+
+version: 1
+
+profiles:
+
+  - name: gaia-fast-local
+    backend: vllm
+    family: llama
+    locality: local
+    min_vram_gb: 16
+    min_system_ram_gb: 32
+    context_window: 8192
+    supports_streaming: true
+    supports_tool_use: false
+    supports_embeddings: false
+    supports_fine_tuning: true
+    trust_tier: internal
+    tags: [fast, local, low-latency]
+    notes: Local fast-response model for low-latency conversational traffic.
+
+  - name: gaia-deep-cloud
+    backend: openai_compatible
+    family: hybrid
+    locality: cloud
+    min_vram_gb: 0
+    min_system_ram_gb: 0
+    context_window: 128000
+    supports_streaming: true
+    supports_tool_use: true
+    supports_embeddings: false
+    supports_fine_tuning: false
+    trust_tier: approved_external
+    tags: [deep, cloud, synthesis]
+    notes: High-depth reasoning route for SOPHIA and synthesis workloads.
+
+  - name: gaia-embed-local
+    backend: sentence_transformers
+    family: embedding
+    locality: local
+    min_vram_gb: 8
+    min_system_ram_gb: 16
+    context_window: 4096
+    supports_streaming: false
+    supports_tool_use: false
+    supports_embeddings: true
+    supports_fine_tuning: true
+    trust_tier: internal
+    tags: [embedding, retrieval]
+    notes: Dense retrieval embedding model for memory and knowledge indexing.
