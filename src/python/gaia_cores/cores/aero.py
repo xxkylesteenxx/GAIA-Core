@@ -15,7 +15,7 @@ class AeroCore(GaiaCore):
         return "AERO"
 
     async def startup(self) -> None:
-        self._health = HealthStatus.OK
+        self._health = HealthStatus.HEALTHY
 
     async def shutdown(self) -> None:
         self._health = HealthStatus.STOPPED
@@ -24,10 +24,13 @@ class AeroCore(GaiaCore):
         return self._health
 
     async def handle_message(self, msg: CoreMessage) -> None:
-        self._state[msg.topic] = msg.payload
+        self._state[f"msg::{msg.topic}"] = msg.payload
 
     def snapshot(self) -> StateSnapshot:
         return StateSnapshot(core_name=self.name, health=self._health, state=dict(self._state))
 
     async def ingest_update(self, update: StateSnapshot) -> None:
         self._state[f"update_from_{update.core_name}"] = update.state
+
+    async def ingest_state_update(self, scope: str, values: dict) -> None:
+        self._state[f"state::{scope}"] = values

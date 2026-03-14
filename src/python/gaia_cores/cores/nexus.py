@@ -2,8 +2,6 @@
 
 Spec ref: PYTHON-ORCHESTRATION-SPEC §8
 protection_class: critical
-
-NEXUS coordinates routing but SHALL NOT bypass lower-layer isolation.
 """
 
 from __future__ import annotations
@@ -17,6 +15,7 @@ log = logging.getLogger(__name__)
 class NexusCore(GaiaCore):
     def __init__(self) -> None:
         self._health = HealthStatus.STOPPED
+        self._state: dict = {}
         self._routes: list[dict] = []
 
     @property
@@ -28,7 +27,7 @@ class NexusCore(GaiaCore):
         return "critical"
 
     async def startup(self) -> None:
-        self._health = HealthStatus.OK
+        self._health = HealthStatus.HEALTHY
         log.info("NEXUS: routing fabric online")
 
     async def shutdown(self) -> None:
@@ -38,15 +37,18 @@ class NexusCore(GaiaCore):
         return self._health
 
     async def handle_message(self, msg: CoreMessage) -> None:
-        log.debug("NEXUS: routing [%s] from %s", msg.topic, msg.sender)
+        self._state[f"msg::{msg.topic}"] = msg.payload
         self._routes.append({"topic": msg.topic, "sender": msg.sender})
 
     def snapshot(self) -> StateSnapshot:
         return StateSnapshot(
             core_name=self.name,
             health=self._health,
-            state={"routes_seen": len(self._routes)},
+            state={**self._state, "routes_seen": len(self._routes)},
         )
 
     async def ingest_update(self, update: StateSnapshot) -> None:
         pass
+
+    async def ingest_state_update(self, scope: str, values: dict) -> None:
+        self._state[f"state::{scope}"] = values

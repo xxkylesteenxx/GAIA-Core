@@ -5,7 +5,7 @@ protection_class: critical
 
 GUARDIAN observes all messages and state transitions.
 It does NOT mutate other cores' state directly.
-Alerts are emitted as CoreMessages to SOPHIA.
+Alerts are emitted as structured log entries.
 """
 
 from __future__ import annotations
@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 class GuardianCore(GaiaCore):
     def __init__(self) -> None:
         self._health = HealthStatus.STOPPED
+        self._state: dict = {}
         self._alerts: list[dict] = []
 
     @property
@@ -30,7 +31,7 @@ class GuardianCore(GaiaCore):
         return "critical"
 
     async def startup(self) -> None:
-        self._health = HealthStatus.OK
+        self._health = HealthStatus.HEALTHY
         log.info("GUARDIAN: safety monitor online")
 
     async def shutdown(self) -> None:
@@ -40,15 +41,15 @@ class GuardianCore(GaiaCore):
         return self._health
 
     async def handle_message(self, msg: CoreMessage) -> None:
-        """Inspect inbound message; record alert if trust_label is unexpected."""
+        """Inspect and store; alert on unexpected critical labels."""
         log.debug("GUARDIAN: inspecting [%s] %s -> %s",
                   msg.topic, msg.sender, msg.recipient or "*")
+        # Store under "msg::<topic>" for snapshot assertions
+        self._state[f"msg::{msg.topic}"] = msg.payload
+
         if msg.trust_label == "critical" and msg.sender not in ("SOPHIA", "GUARDIAN", "NEXUS"):
-            alert = {
-                "type": "unexpected_critical_label",
-                "sender": msg.sender,
-                "topic": msg.topic,
-            }
+            alert = {"type": "unexpected_critical_label",
+                     "sender": msg.sender, "topic": msg.topic}
             self._alerts.append(alert)
             log.warning("GUARDIAN: alert %s", alert)
 
@@ -56,8 +57,11 @@ class GuardianCore(GaiaCore):
         return StateSnapshot(
             core_name=self.name,
             health=self._health,
-            state={"alerts": list(self._alerts)},
+            state={**self._state, "alerts": list(self._alerts)},
         )
 
     async def ingest_update(self, update: StateSnapshot) -> None:
         log.debug("GUARDIAN: ingested update from %s", update.core_name)
+
+    async def ingest_state_update(self, scope: str, values: dict) -> None:
+        self._state[f"state::{scope}"] = values

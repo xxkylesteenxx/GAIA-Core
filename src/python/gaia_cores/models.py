@@ -11,14 +11,15 @@ from enum import Enum
 from typing import Any
 
 
-# ── Health ─────────────────────────────────────────────────────────────────────
-
 class HealthStatus(Enum):
-    OK       = "ok"
+    HEALTHY  = "healthy"
     DEGRADED = "degraded"
     FAILED   = "failed"
     STARTING = "starting"
     STOPPED  = "stopped"
+
+    # Backward-compat alias
+    OK = "healthy"
 
 
 @dataclass
@@ -29,31 +30,26 @@ class HealthReport:
     timestamp: float = field(default_factory=time.time)
 
 
-# ── Messages ─────────────────────────────────────────────────────────────────
-
 @dataclass
 class CoreMessage:
-    """Internal typed inter-core message (used by CoreMessageBus).
+    """Typed inter-core message (used by CoreMessageBus and registry.send).
 
     Spec ref: PYTHON-ORCHESTRATION-SPEC §5
     """
     sender:      str
     topic:       str
     payload:     dict[str, Any]
-    recipient:   str | None = None       # None = broadcast
-    trust_label: str        = "bounded"  # "bounded" | "critical" | "monitor"
+    recipient:   str | None = None
+    trust_label: str        = "bounded"
     timestamp:   float      = field(default_factory=time.time)
 
     def is_broadcast(self) -> bool:
         return self.recipient is None
 
 
-# GaiaMessage is the public-facing alias with an explicit payload field
-# for use in demo scripts and external integrations.
+# Public alias
 GaiaMessage = CoreMessage
 
-
-# ── State ────────────────────────────────────────────────────────────────────
 
 @dataclass
 class StateSnapshot:
@@ -63,7 +59,6 @@ class StateSnapshot:
     state:     dict[str, Any]
     timestamp: float = field(default_factory=time.time)
 
-    # Convenience alias so callers can use .values as well as .state
     @property
     def values(self) -> dict[str, Any]:
         return self.state
@@ -75,8 +70,8 @@ class StateUpdate:
 
     Spec ref: PYTHON-ORCHESTRATION-SPEC §7
     """
-    source:  str
-    scope:   str                    # e.g. "global", "regional", domain tag
-    values:  dict[str, Any]
-    summary: str = ""
+    source:    str
+    scope:     str
+    values:    dict[str, Any]
+    summary:   str   = ""
     timestamp: float = field(default_factory=time.time)

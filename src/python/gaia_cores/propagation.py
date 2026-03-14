@@ -1,9 +1,6 @@
 """Planetary state propagation.
 
 Spec ref: PYTHON-ORCHESTRATION-SPEC §7
-
-Supports full broadcast, selective (by domain tag), and
-policy-mediated delivery.
 """
 
 from __future__ import annotations
@@ -20,60 +17,58 @@ log = logging.getLogger(__name__)
 
 
 class StatePropagator:
-    """Broadcasts or selectively delivers StateUpdates across cores.
-
-    Accepts a CoreRegistry directly; does not require a separate bus
-    reference for broadcast delivery.
-    """
+    """Broadcasts or selectively delivers StateUpdates across cores."""
 
     def __init__(self, registry: "CoreRegistry") -> None:
         self._registry = registry
 
     async def broadcast(self, update: StateUpdate) -> None:
-        """Deliver update to every registered core.
+        """Deliver update to every registered core except the source.
 
         Spec ref: PYTHON-ORCHESTRATION-SPEC §7 — full broadcast.
         """
-        msg = CoreMessage(
-            sender=update.source,
-            topic="gaia.state.broadcast/v1",
-            payload={
-                "scope":   update.scope,
-                "values":  update.values,
-                "summary": update.summary,
-            },
-            trust_label="bounded",
-        )
         cores = list(self._registry._cores.values())  # noqa: SLF001
         for core in cores:
             if core.name != update.source:
-                await core.handle_message(msg)
+                if hasattr(core, "ingest_state_update"):
+                    await core.ingest_state_update(update.scope, update.values)  # type: ignore[attr-defined]
+                else:
+                    msg = CoreMessage(
+                        sender=update.source,
+                        topic="gaia.state.broadcast/v1",
+                        payload={"scope": update.scope, "values": update.values,
+                                 "summary": update.summary},
+                        trust_label="bounded",
+                    )
+                    await core.handle_message(msg)
         log.debug("propagation: broadcast from '%s' scope='%s'",
                   update.source, update.scope)
 
     async def selective(
         self,
         update: StateUpdate,
-        domain_tags: list[str],
+        *,
+        targets: list[str],
     ) -> None:
-        """Deliver update only to cores named in domain_tags.
+        """Deliver update only to cores named in targets.
 
         Spec ref: PYTHON-ORCHESTRATION-SPEC §7 — selective delivery.
         """
-        for tag in domain_tags:
+        for tag in targets:
             core = self._registry.get(tag)
             if core is None:
-                log.warning("propagation: unknown domain tag '%s'", tag)
+                log.warning("propagation: unknown target '%s'", tag)
                 continue
-            msg = CoreMessage(
-                sender=update.source,
-                recipient=tag,
-                topic="gaia.state.selective/v1",
-                payload={
-                    "scope":   update.scope,
-                    "values":  update.values,
-                    "summary": update.summary,
-                },
-                trust_label="bounded",
-            )
-            await core.handle_message(msg)
+            if hasattr(core, "ingest_state_update"):
+                await core.ingest_state_update(update.scope, update.values)  # type: ignore[attr-defined]
+            else:
+                msg = CoreMessage(
+                    sender=update.source,
+                    recipient=tag,
+                    topic="gaia.state.selective/v1",
+                    payload={"scope": update.scope, "values": update.values,
+                             "summary": update.summary},
+                    trust_label="bounded",
+                )
+                await core.handle_message(msg)
+            log.debug("propagation: selective -> '%s' scope='%s'", tag, update.scope)
