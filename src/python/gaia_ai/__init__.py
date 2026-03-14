@@ -1,38 +1,143 @@
-"""GAIA AI Inference Routing, Serving, Embeddings, RAG, Fine-Tuning, and Robustness.
+"""GAIA AI inference orchestration pack."""
 
-Spec ref: GAIA-AI-INFERENCE-SPEC v1.0
+from __future__ import annotations
 
-This layer is the semantic and policy orchestration layer above the low-level
-compute substrate and virtualisation isolation layer. It is NOT the hard
-security boundary — that is GUARDIAN.
+# ---------------------------------------------------------------------------
+# Models
+# ---------------------------------------------------------------------------
+from .models import (
+    InferenceMode,
+    QueryContext,
+    RetrievedChunk,
+    RouteDecision,
+)
 
-Public surface:
-  InferenceRouter       — select and execute an inference route
-  ModelProfileRegistry  — register and look up model profiles
-  EmbeddingEngine       — produce deterministic / production embedding vectors
-  RAGPipeline           — retrieval-augmented generation pipeline
-  FineTuneEmitter       — emit auditable fine-tune events (no live mutation)
-  RobustnessScanner     — adversarial robustness scans
-  OpenAIAdapter         — OpenAI-compatible serving adapter
-  TritonAdapter         — Triton placeholder adapter
-"""
+# ---------------------------------------------------------------------------
+# Registry
+# ---------------------------------------------------------------------------
+from .registry import (
+    HardwareMinima,
+    Locality,
+    ModelProfile,
+    ModelProfileRegistry,
+)
 
-from .embeddings import EmbeddingEngine
-from .finetune import FineTuneEmitter
-from .rag import RAGPipeline
-from .registry import ModelProfile, ModelProfileRegistry
-from .robustness import RobustnessScanner
-from .router import InferenceRouter
-from .serving import OpenAIAdapter, TritonAdapter
+# ---------------------------------------------------------------------------
+# Router
+# ---------------------------------------------------------------------------
+from .router import (
+    InferenceRequest,
+    InferenceResponse,
+    InferenceRouter,
+    InferenceRouterAsync,
+    RoutingError,
+    TaskMode,
+)
+
+# ---------------------------------------------------------------------------
+# Serving
+# ---------------------------------------------------------------------------
+from .serving import (
+    OpenAIAdapter,
+    ServingAdapter,
+    StubAdapter,
+    TritonAdapter,
+)
+
+# ---------------------------------------------------------------------------
+# Embeddings
+# ---------------------------------------------------------------------------
+from .embeddings import (
+    DeterministicEmbeddingBackend,
+    EmbeddingBackend,
+    EmbeddingEngine,
+    EmbeddingRecord,
+    HashEmbeddingEngine,
+)
+
+# ---------------------------------------------------------------------------
+# Vector store
+# ---------------------------------------------------------------------------
+from .vector_store import InMemoryVectorStore
+
+# ---------------------------------------------------------------------------
+# RAG
+# ---------------------------------------------------------------------------
+from .rag import (
+    Document,
+    RAGPipeline,
+    RAGPipelineAsync,
+    RAGResponse,
+)
+
+# ---------------------------------------------------------------------------
+# Training
+# ---------------------------------------------------------------------------
+from .training import (
+    FineTuneEmitter,
+    FinetuneEvent,
+    FinetuneEventType,
+    InMemoryEventSink,
+)
+
+# ---------------------------------------------------------------------------
+# Robustness
+# ---------------------------------------------------------------------------
+from .robustness import (
+    BUILTIN_PROBES,
+    RobustnessScan,
+    RobustnessScanner,
+    ScanCategory,
+    ScanReport,
+    ScanResult,
+)
 
 __all__ = [
-    "EmbeddingEngine",
-    "FineTuneEmitter",
-    "InferenceRouter",
+    # models
+    "InferenceMode",
+    "QueryContext",
+    "RetrievedChunk",
+    "RouteDecision",
+    # registry
+    "HardwareMinima",
+    "Locality",
     "ModelProfile",
     "ModelProfileRegistry",
+    # router
+    "InferenceRequest",
+    "InferenceResponse",
+    "InferenceRouter",
+    "InferenceRouterAsync",
+    "RoutingError",
+    "TaskMode",
+    # serving
     "OpenAIAdapter",
-    "RAGPipeline",
-    "RobustnessScanner",
+    "ServingAdapter",
+    "StubAdapter",
     "TritonAdapter",
+    # embeddings
+    "DeterministicEmbeddingBackend",
+    "EmbeddingBackend",
+    "EmbeddingEngine",
+    "EmbeddingRecord",
+    "HashEmbeddingEngine",
+    # vector store
+    "InMemoryVectorStore",
+    # rag
+    "Document",
+    "RAGPipeline",
+    "RAGPipelineAsync",
+    "RAGResponse",
+    # training
+    "FineTuneEmitter",
+    "FinetuneEvent",
+    "FinetuneEventType",
+    "InMemoryEventSink",
+    # robustness
+    "BUILTIN_PROBES",
+    "RobustnessScan",
+    "RobustnessScanner",
+    "ScanCategory",
+    "ScanReport",
+    "ScanResult",
 ]
