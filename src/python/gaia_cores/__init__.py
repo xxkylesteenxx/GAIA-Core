@@ -9,6 +9,8 @@ from .models import (
     StateSnapshot,
     StateUpdate,
 )
+from .propagation import StatePropagator
+from .registry import CoreRegistry
 
 __all__ = [
     "GaiaCore",
@@ -18,4 +20,6 @@ __all__ = [
     "HealthStatus",
     "StateSnapshot",
     "StateUpdate",
+    "StatePropagator",
+    "CoreRegistry",
 ]
