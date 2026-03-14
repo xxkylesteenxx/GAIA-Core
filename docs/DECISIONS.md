@@ -28,7 +28,7 @@ Rules for this session:
 
 ### Formal Sciences — Phase II (Mathematical Foundations)
 - [ ] Implement typed quantity system for units, coordinates, physical dimensions (FS-B §7.1)
-- [ ] Build canonical world graph: entities, regions, events, dependencies (FS-B ·7.2)
+- [ ] Build canonical world graph: entities, regions, events, dependencies (FS-B §7.2)
 - [ ] Category-theoretic adapter schema for core-to-core composition (FS-B §1.3)
 - [ ] Build mathematical invariant registry for safety-critical state properties (FS-B §7.7)
 
@@ -58,7 +58,7 @@ Rules for this session:
 
 ### Session: 2026-03-13
 
-**DEC-001** — Adopted one-task-at-a-time workflow rule with task queue capture to prevent context loss and rabbit holes.
+**DEC-001** — Adopted one-task-at-a-time workflow rule with task queue capture.
 
 **DEC-002** — `DECISIONS.md` established as the canonical cross-session memory file.
 
@@ -74,19 +74,19 @@ Rules for this session:
 
 **DEC-006** — Propositional logic locked as **L0 Boolean safety kernel**.
 
-**DEC-007** — Typed predicate logic locked as **L1 entity-world layer**. Untyped symbolic vocabularies prohibited.
+**DEC-007** — Typed predicate logic locked as **L1 entity-world layer**.
 
 **DEC-008** — Modal logic locked as **L2 governance and policy layer**.
 
 **DEC-009** — Paraconsistent logic adopted as **L3 containment chamber**.
 
-**DEC-010** — **Proof objects mandated** for all rule-governed high-stakes decisions. Assigned to GUARDIAN core.
+**DEC-010** — **Proof objects mandated** for all rule-governed high-stakes decisions. Assigned to GUARDIAN.
 
-**DEC-011** — Committed **Formal Sciences Volume A** to `docs/formal-sciences/`.
+**DEC-011** — Committed **Formal Sciences Volume A**.
 
 **DEC-012** — Adopted **seven-layer mathematical architecture (M0–M6)**. Source: FS Volume B.
 
-**DEC-013** — **Type-theoretic engineering posture** mandatory. “Correct-by-construction” is required.
+**DEC-013** — **Type-theoretic engineering posture** mandatory.
 
 **DEC-014** — **Category theory** adopted as architectural language for compositional interfaces.
 
@@ -96,59 +96,59 @@ Rules for this session:
 
 **DEC-017** — **Information budget discipline** established as a first-class constraint.
 
-**DEC-018** — **Graph theory** adopted as canonical representation for dependencies, provenance DAGs, and trust hierarchies.
+**DEC-018** — **Graph theory** adopted as canonical representation for dependencies and provenance.
 
 **DEC-019** — **Five-class algorithm doctrine** adopted.
 
 **DEC-020** — **Topology** adopted as the robustness analysis layer.
 
-**DEC-021** — Committed **Formal Sciences Volume B** to `docs/formal-sciences/`.
+**DEC-021** — Committed **Formal Sciences Volume B**.
 
 **DEC-022** — **Systems theory** adopted as domain decomposition and cross-scale integration discipline. Source: FS Volume C.
 
-**DEC-023** — **7-step GAIA cybernetic loop** is the required operational pattern for all adaptive governance systems.
+**DEC-023** — **7-step GAIA cybernetic loop** is the required operational pattern.
 
-**DEC-024** — All GAIA feedback pathways must be **explicit, latency-aware, and incentive-compatible**.
+**DEC-024** — All GAIA feedback pathways must be explicit, latency-aware, and incentive-compatible.
 
 **DEC-025** — **Control theory** adopted as mandatory bounding discipline for all authorized actuation.
 
 **DEC-026** — Doctrine: **“There is no ethical actuation without mathematically bounded control.”**
 
-**DEC-027** — **Hybrid-system modeling** mandated for all subsystems combining continuous dynamics with discrete events.
+**DEC-027** — **Hybrid-system modeling** mandated for subsystems combining continuous and discrete dynamics.
 
 **DEC-028** — **Chaos-Sensitive Subsystem Registry** established as a required operational artifact.
 
 **DEC-029** — **Chaos-aware intervention policy** mandated before any GAIA intervention.
 
-**DEC-030** — **Emergence monitoring** required at all scale tiers; emergent order must be modeled quantitatively.
+**DEC-030** — **Emergence monitoring** required at all scale tiers.
 
-**DEC-031** — **8-layer closed-loop canonical architecture** is the standard operational loop for planetary intervention workflows.
+**DEC-031** — **8-layer closed-loop canonical architecture** is the standard operational loop.
 
-**DEC-032** — Committed **Formal Sciences Volume C** to `docs/formal-sciences/`.
+**DEC-032** — Committed **Formal Sciences Volume C**.
 
-**DEC-033** — Established the **six roles of formal science for GAIA** as canonical doctrine.
+**DEC-033** — Established the **six roles of formal science** as canonical doctrine. Source: FS Master Report.
 
 **DEC-034** — Adopted the **GAIA integration matrix** (26-domain table) as the authoritative traceability register.
 
-**DEC-035** — Adopted the **four-phase formal sciences build order** as canonical implementation sequencing doctrine.
+**DEC-035** — Adopted the **four-phase formal sciences build order** as canonical sequencing doctrine.
 
 **DEC-036** — Adopted the **six design doctrines** as binding GAIA engineering principles.
 
 **DEC-037** — Registered the **seven critical research gaps** as formal open research tracks.
 
-**DEC-038** — Established that **every high-level GAIA promise must map to at least one named formal substrate**.
+**DEC-038** — Every high-level GAIA promise must map to at least one named formal substrate.
 
-**DEC-039** — Recognized the **Formal Sciences series** as the first irreducible technical foundation of the GAIA canon.
+**DEC-039** — Recognized the **Formal Sciences series** as the first irreducible technical foundation.
 
-**DEC-040** — Committed **Formal Sciences Master Canonical Report**. Formal Sciences corpus closed: 4 documents, 26 domains, DEC-001–040.
+**DEC-040** — Committed **Formal Sciences Master Canonical Report**. Series closed: 4 documents, 26 domains.
 
-**DEC-041** — Opened the **Natural Sciences series** as a distinct second canon series. Source: NS Volume A.
+**DEC-041** — Opened the **Natural Sciences series**. Source: NS Volume A.
 
-**DEC-042** — Adopted **regime-aware physics doctrine**: GAIA always asks “what regime are we in?” before selecting a physics model.
+**DEC-042** — Adopted **regime-aware physics doctrine**.
 
 **DEC-043** — Mandated **energy accounting as a first-class systems variable**.
 
-**DEC-044** — Adopted the **physics-chemistry integration stack** as canonical grounding model. Source: NS Volume A §3.
+**DEC-044** — Adopted the **physics-chemistry integration stack** as canonical grounding model.
 
 **DEC-045** — Established a **settled-vs-frontier science register** as a required operational artifact.
 
@@ -158,29 +158,29 @@ Rules for this session:
 
 **DEC-048** — Doctrine: **“No chemical intelligence without chemical measurement discipline.”**
 
-**DEC-049** — Mandated **polymer literacy** in GAIA’s sustainability and materials reasoning layers.
+**DEC-049** — Mandated **polymer literacy** in sustainability and materials reasoning layers.
 
-**DEC-050** — Adopted the **five-part lower reality stack doctrine** as binding design philosophy.
+**DEC-050** — Adopted the **five-part lower reality stack doctrine**.
 
-**DEC-051** — Established a **frontier physics tracking obligation** for quantum gravity, string theory, and LQC.
+**DEC-051** — Established a **frontier physics tracking obligation**.
 
 **DEC-052** — Committed **Natural Sciences Volume A** (Physics and Chemistry).
 
 **DEC-053** — Adopted: **ATLAS is a dynamically coupled, nonlinear planetary system**. Source: NS Volume B.
 
-**DEC-054** — Adopted the **six-sphere Earth model** as the canonical Earth-state decomposition.
+**DEC-054** — Adopted the **six-sphere Earth model** as canonical Earth-state decomposition.
 
-**DEC-055** — Established **geology and geophysics** as required subsurface intelligence layers.
+**DEC-055** — Established geology and geophysics as required subsurface intelligence layers.
 
-**DEC-056** — Adopted **multi-signal fused geophysical inference** as required for volcanic and seismic monitoring.
+**DEC-056** — Adopted **multi-signal fused geophysical inference** for volcanic and seismic monitoring.
 
-**DEC-057** — Mandated **ocean coupling** as a required component of all GAIA climate models.
+**DEC-057** — Mandated **ocean coupling** in all GAIA climate models.
 
-**DEC-058** — Adopted **hydrology** as the canonical water-security and flood/drought intelligence layer.
+**DEC-058** — Adopted **hydrology** as the canonical water-security layer.
 
 **DEC-059** — Adopted **cryosphere science** as a required state-monitoring layer.
 
-**DEC-060** — Established: **Soil is not inert substrate.** Treated as dynamic system in all land-use and carbon-cycle reasoning.
+**DEC-060** — Established: **Soil is not inert substrate.** Treated as dynamic system.
 
 **DEC-061** — Adopted the **weather-vs-climate architectural distinction**.
 
@@ -190,7 +190,7 @@ Rules for this session:
 
 **DEC-064** — Adopted the **12-domain Earth-system integration table** as the canonical ATLAS state-variable registry.
 
-**DEC-065** — Extended the **settled-vs-frontier register** to Earth sciences with explicit domain classifications.
+**DEC-065** — Extended the **settled-vs-frontier register** to Earth sciences.
 
 **DEC-066** — Committed **Natural Sciences Volume B** (Earth System Sciences).
 
@@ -198,11 +198,11 @@ Rules for this session:
 
 **DEC-068** — Established: **Earth is one realization in a broader planetary design space.**
 
-**DEC-069** — Adopted the **three-tier observational epistemic ladder** for all astronomy and cosmology claims.
+**DEC-069** — Adopted the **three-tier observational epistemic ladder** for astronomy/cosmology claims.
 
-**DEC-070** — Adopted **Big Bang cosmology** as settled scientific architecture for large-scale cosmological history.
+**DEC-070** — Adopted **Big Bang cosmology** as settled scientific architecture for large-scale history.
 
-**DEC-071** — Adopted **dark matter** as a strong multi-observational inference; particle identity remains open.
+**DEC-071** — Adopted **dark matter** as a strong multi-observational inference; identity remains open.
 
 **DEC-072** — Adopted **dark energy** (accelerated expansion) as observation-backed; ontology remains frontier.
 
@@ -212,47 +212,71 @@ Rules for this session:
 
 **DEC-075** — Doctrine: **“The most honest scientific architecture preserves the distinction between observation, inference, and speculation.”**
 
-**DEC-076** — Adopted the **astronomy-to-GAIA integration table** as the canonical knowledge-class registry for astrophysical domains.
+**DEC-076** — Adopted the **astronomy-to-GAIA integration table** as the canonical knowledge-class registry.
 
 **DEC-077** — Committed **Natural Sciences Volume C** (Astronomy, Planetary Science, and Cosmology).
 
-**DEC-078** — Established: **Biology is not reducible to health data or nature data.** For GAIA, biology is the empirical framework for how life persists, differentiates, regulates, competes, cooperates, and collapses. Source: NS Volume D.
+**DEC-078** — Established: **Biology is not reducible to health data or nature data.** Source: NS Volume D.
 
-**DEC-079** — Adopted: **Life cannot be modeled as static data.** All biological reasoning in GAIA must treat living systems as adaptive, historical, and path-dependent — not as fixed databases.
+**DEC-079** — Adopted: **Life cannot be modeled as static data.**
 
-**DEC-080** — Adopted **cell biology** as the unit-process layer of life. All organismal and pathological reasoning must trace to cellular organization and interaction.
+**DEC-080** — Adopted **cell biology** as the unit-process layer of life.
 
-**DEC-081** — Established: **Epigenetics is regulatory biology, not magic.** Epigenetic effects are scientifically important and context-sensitive, but must not be overstated into mystical or deterministic overclaiming.
+**DEC-081** — Established: **Epigenetics is regulatory biology, not magic.**
 
-**DEC-082** — Adopted **evolutionary biology** as a required interpretive layer for all biological reasoning. Structure, pathogen dynamics, ecosystem shifts, and biological design constraints are all historically contingent; they cannot be understood without evolutionary context.
+**DEC-082** — Adopted **evolutionary biology** as a required interpretive layer for all biological reasoning.
 
-**DEC-083** — Adopted **systems biology as the primary interface between biology and the formal-science/control-science stack**. Integration over fragmentation, mechanism over isolated markers, and coupled predictive models are the required design standards.
+**DEC-083** — Adopted **systems biology** as the primary interface between biology and the formal/control-science stack.
 
-**DEC-084** — Adopted **ecology** as the canonical biosphere intelligence layer. All conservation, agriculture, restoration, wildfire, and long-term survivability planning must ground in ecological modeling at the appropriate scale.
+**DEC-084** — Adopted **ecology** as the canonical biosphere intelligence layer.
 
-**DEC-085** — Established: **Taxonomy is the naming and organization backbone for biosphere intelligence.** No biodiversity monitoring, ecological database, or conservation prioritization system is valid without disciplined entity identity.
+**DEC-085** — Established: **Taxonomy is the naming backbone for biosphere intelligence.**
 
-**DEC-086** — Adopted **microbiology** as a required environmental monitoring and planetary biosurveillance layer. Microbiome and microbial ecosystem dynamics are first-class GAIA state variables.
+**DEC-086** — Adopted **microbiology** as a required environmental monitoring and biosurveillance layer.
 
-**DEC-087** — Established a **virology safety boundary**: GAIA supports defensive understanding, monitoring, and scientific literacy only. Operational misuse is explicitly prohibited. Viral surveillance is a public-health and ecological intelligence function.
+**DEC-087** — Established a **virology safety boundary**: defensive understanding only; operational misuse prohibited.
 
-**DEC-088** — Adopted **neuroscience** as a required scientific foundation for all human-facing GAIA interfaces. Cognitive load, attention, decision architecture, social cognition, and stress resilience are not optional considerations — they are design constraints.
+**DEC-088** — Adopted **neuroscience** as a required foundation for all human-facing GAIA interfaces.
 
-**DEC-089** — Adopted the **five-scale neuroscience architecture** (Cellular → Circuit → Systems → Cognitive → Social) as the canonical decomposition for GAIA’s brain-informed design layer.
+**DEC-089** — Adopted the **five-scale neuroscience architecture** (Cellular → Circuit → Systems → Cognitive → Social) as canonical.
 
-**DEC-090** — Established: **Cognition is not merely individual; it is socially embedded.** GAIA’s human-facing systems must account for social neuroscience — affect, affiliation, communication, and interpersonal stress — not only individual cognitive load.
+**DEC-090** — Established: **Cognition is not merely individual; it is socially embedded.**
 
-**DEC-091** — Adopted the **biology-to-GAIA integration table** (NS Volume D §14) as the canonical domain-function-output registry for biological sciences across GAIA.
+**DEC-091** — Adopted the **biology-to-GAIA integration table** as the canonical domain-function registry.
 
-**DEC-092** — Extended the **settled-vs-frontier science register** to biology: cells as living units, evolutionary theory, ecological network dynamics, and multi-scale neural function are classified as settled. Full genotype-to-phenotype prediction, causal brain decoding, consciousness unification, viral emergence forecasting, and omics-development-environment integration are classified as frontier.
+**DEC-092** — Extended the **settled-vs-frontier register** to biology with explicit classifications.
 
-**DEC-093** — Adopted the GAIA biology rule: **“Biology is powerful but context-dependent. Overclaiming is especially dangerous because living systems are adaptive, historical, and path-dependent.”**
+**DEC-093** — Doctrine: **“Biology is powerful but context-dependent. Overclaiming is especially dangerous.”**
 
-**DEC-094** — Established: **A terrestrial super-intelligence that hopes to serve life must understand life in its layered, evolving, embodied form.** This is the closing doctrine of the Natural Sciences series.
+**DEC-094** — Established: **A terrestrial super-intelligence that hopes to serve life must understand life in its layered, evolving, embodied form.**
 
-**DEC-095** — Committed **Natural Sciences Volume D** (Biology, Ecology, Evolution, Microbiology, Virology, and Neuroscience) to `docs/natural-sciences/`.
+**DEC-095** — Committed **Natural Sciences Volume D** (Biology, Ecology, Evolution, Microbiology, Virology, Neuroscience).
 
-**DEC-096** — The **Natural Sciences series is complete at four volumes** (A: Physics/Chemistry · B: Earth System Sciences · C: Astronomy/Planetary/Cosmology · D: Biology/Ecology/Neuroscience). The series covers all major empirical natural science domains required for GAIA’s planetary architecture. Series is closed unless new scope is explicitly added.
+**DEC-096** — Natural Sciences series declared complete at four volumes (A–D).
+
+**DEC-097** — Established the **seven types of realism** (physical, measurement, causal, temporal, planetary, biological, cognitive) as the canonical empirical kernel that the Natural Sciences series provides to GAIA. Source: NS Master Report §1.1.
+
+**DEC-098** — Adopted the **six-question empirical discipline test** (invariant constraints, state variables, governing equations, measurement vs inference, thresholds/failure modes, settled vs frontier) as a required evaluation framework before any natural-science claim is integrated into GAIA architecture.
+
+**DEC-099** — Adopted the **seven-scale natural sciences modeling stack** (subatomic/field → molecular/reaction → material/mesoscale → organismal/cellular → ecological/Earth-surface → planetary → astronomical/cosmological) as the canonical cross-scale representation for GAIA’s physical-world models.
+
+**DEC-100** — Adopted the **five-stage natural sciences build order** (physical substrate → Earth-system substrate → biological substrate → neuroscience/human factors → frontier scientific layer) as the canonical integration sequencing doctrine for GAIA natural science adoption. This mirrors and complements the four-phase formal sciences build order (DEC-035).
+
+**DEC-101** — Adopted **measurement-first architecture** as the required design standard for all GAIA natural-science modules. Every module must distinguish: observables, latent state variables, control inputs, noise sources, model assumptions, error bars, and regime of validity.
+
+**DEC-102** — Adopted **coupled-system modeling** as a mandatory architectural principle. GAIA’s Earth system must not be treated as separate departments; cross-domain coupling (climate–hydrology–soil–ecology–neuroscience–interface) must be architecturally explicit.
+
+**DEC-103** — Adopted the **natural sciences research posture** (7 principles: empirical first, mechanistic where possible, uncertainty explicit, multi-scale by design, speculation labeled, interdisciplinary without dilution, human-safe translation) as operational doctrine for all GAIA scientific reasoning systems.
+
+**DEC-104** — Adopted the **domain-to-GAIA integration matrix** (NS Master Report §7, 19-domain table) as the canonical primary-function and example-output registry for all natural science domains across GAIA. This is the Natural Sciences equivalent of the Formal Sciences integration matrix (DEC-034).
+
+**DEC-105** — Established the **canonical five-level GAIA knowledge hierarchy**: Formal Sciences (how to reason) → Natural Sciences (what the world is like) → Engineering (how to build within constraints) → Governance (what is allowed) → Ethics (what ought to be protected). Each level is irreducible; none may be collapsed into another.
+
+**DEC-106** — Adopted the doctrine: **“If the natural sciences are weak, GAIA becomes metaphoric. If they are strong, GAIA can become physically responsible.”** This is the closing doctrine of the Natural Sciences Master Report and is binding.
+
+**DEC-107** — Committed the **Natural Sciences Master Canonical Report** to `docs/natural-sciences/MASTER-CANONICAL-REPORT.md`. The `docs/natural-sciences/` directory is now a complete, self-consistent empirical foundation corpus: 6 files (Master Report + 4 volumes + README), 40+ natural science domains, DEC-041–107.
+
+**DEC-108** — The **Natural Sciences series is formally closed**. Together with the Formal Sciences series, GAIA now has a complete dual-series scientific canon: formal epistemic foundations (DEC-001–040) and empirical reality foundations (DEC-041–107). The next canon series to open should address Applied Sciences, Governance, or Engineering.
 
 ---
 
