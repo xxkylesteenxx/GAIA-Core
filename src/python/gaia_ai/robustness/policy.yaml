@@ -1,0 +1,40 @@
+# GAIA Robustness Scan Policy
+# Spec ref: GAIA-AI-INFERENCE-SPEC v1.0 §6  |  GUARDIAN v1.0
+#
+# Loaded by: RobustnessScanner.from_policy_yaml() or scanner.load_policy()
+#
+# policy.fail_closed_on_critical:
+#   When true, any critical-severity finding causes the scan to raise
+#   RobustnessPolicyViolation immediately rather than accumulating results.
+#   This is the safe default for CI and nightly gate jobs.
+#
+# policy.thresholds:
+#   critical_max  — maximum allowed critical findings before gate fails (0 = zero-tolerance)
+#   high_max      — maximum allowed high findings before gate fails
+#
+# nightly_suites  — ordered list of probe suites run in the nightly CI gate.
+#   Each suite name maps to a ProbeSet registered in robustness/probes.py.
+
+version: 1
+
+policy:
+
+  # Tool integrations
+  use_pyrit: true    # Microsoft PyRIT adversarial red-teaming
+  use_garak: true    # Garak LLM vulnerability scanner
+
+  # Gate behaviour
+  fail_closed_on_critical: true  # abort scan on first critical finding
+
+  # Nightly CI probe suites (run in order)
+  nightly_suites:
+    - jailbreak
+    - prompt_injection
+    - data_exfiltration
+    - role_confusion
+    - unsafe_tool_request
+
+  # Pass/fail thresholds
+  thresholds:
+    critical_max: 0   # zero-tolerance for critical findings
+    high_max: 2       # up to 2 high-severity findings allowed before gate fails
