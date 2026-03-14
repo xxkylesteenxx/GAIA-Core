@@ -11,6 +11,27 @@ This directory contains the canonical Natural Sciences volumes for GAIA. These d
 | [Volume A](./volume-A-physics-and-chemistry.md) | Physics and Chemistry | ✅ COMMITTED 2026-03-14 |
 | [Volume B](./volume-B-earth-system-sciences.md) | Earth System Sciences | ✅ COMMITTED 2026-03-14 |
 | [Volume C](./volume-C-astronomy-planetary-science-cosmology.md) | Astronomy, Planetary Science, and Cosmology | ✅ COMMITTED 2026-03-14 |
+| [Volume D](./volume-D-biology-ecology-evolution-microbiology-virology-neuroscience.md) | Biology, Ecology, Evolution, Microbiology, Virology, and Neuroscience | ✅ COMMITTED 2026-03-14 |
+
+---
+
+## Biology-to-GAIA Integration Table (Volume D §14)
+
+| Biological Domain | Primary GAIA Function | Example Outputs |
+|---|---|---|
+| Cell biology | Biological state abstraction | Cellular-state and tissue-interaction models |
+| Molecular biology | Mechanism grounding | Regulatory-network representations |
+| Genetics | Hereditary inference | Variant and population-structure interpretation |
+| Epigenetics | Context-sensitive regulation | Regulatory-state maps |
+| Developmental biology | Organismal construction logic | Developmental-stage modeling |
+| Evolutionary biology | Adaptation and change | Evolutionary-risk reasoning |
+| Systems biology | Multi-scale integration | Pathway/network dynamical models |
+| Ecology | Biosphere intelligence | Resilience and biodiversity indicators |
+| Ethology | Behavior-in-context understanding | Wildlife and animal behavior models |
+| Taxonomy | Entity identity and interoperability | Canonical species knowledge graphs |
+| Microbiology | Microbial ecosystem monitoring | Microbiome and environmental surveillance |
+| Virology | Pathogen and viral ecology tracking | Defensive monitoring pipelines |
+| Neuroscience | Cognition-aware interfaces | Cognitive load, attention, and behavior-aware design |
 
 ---
 
@@ -76,8 +97,7 @@ The Natural Sciences series provides the **empirical reality constraints** for G
 
 ## Future Volumes
 
-- **Volume D** — Biology and Life Sciences
-- **Volume E** — Ecology and Environmental Science
+*The Natural Sciences series is now complete at four volumes unless new scope is added.*
 
 ---
 
