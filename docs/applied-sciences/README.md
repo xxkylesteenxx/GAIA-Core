@@ -9,8 +9,8 @@ This series documents the applied scientific and engineering disciplines that fo
 | A | Computer Science and AI Systems | ✅ Committed — 2026-03-14 |
 | B | Biomedical Sciences and Public Health | ✅ Committed — 2026-03-14 |
 | C | Engineering Systems and Materials | ✅ Committed — 2026-03-14 |
-| D | Chemical & Materials Engineering | 🔲 Pending |
-| E | Biomedical & Environmental Engineering | 🔲 Pending |
+| D | Architecture, Urban Design, Agriculture, and Food Systems | ✅ Committed — 2026-03-14 |
+| E | Pending next volume | 🔲 Pending |
 
 ## Relationship to Other Series
 
