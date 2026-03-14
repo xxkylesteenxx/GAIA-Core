@@ -112,7 +112,7 @@ Rules for this session:
 
 **DEC-025** — **Control theory** adopted as mandatory bounding discipline for all authorized actuation. Four-layer control stack is canonical.
 
-**DEC-026** — Doctrine locked: **“There is no ethical actuation without mathematically bounded control.”**
+**DEC-026** — Doctrine: **“There is no ethical actuation without mathematically bounded control.”**
 
 **DEC-027** — **Hybrid-system modeling** mandated for all subsystems combining continuous dynamics with discrete events.
 
@@ -122,7 +122,7 @@ Rules for this session:
 
 **DEC-030** — **Emergence monitoring** required at all scale tiers; emergent order must be modeled quantitatively.
 
-**DEC-031** — **8-layer closed-loop canonical architecture** is the standard operational loop for all planetary intervention workflows.
+**DEC-031** — **8-layer closed-loop canonical architecture** is the standard operational loop for planetary intervention workflows.
 
 **DEC-032** — Committed **Formal Sciences Volume C** to `docs/formal-sciences/`.
 
@@ -140,31 +140,59 @@ Rules for this session:
 
 **DEC-039** — Recognized the **Formal Sciences series** as the first irreducible technical foundation of the GAIA canon.
 
-**DEC-040** — Committed **Formal Sciences Master Canonical Report** to `docs/formal-sciences/`. Formal Sciences corpus closed: 4 documents, 26 formal domains, DEC-001–040.
+**DEC-040** — Committed **Formal Sciences Master Canonical Report**. Formal Sciences corpus closed: 4 documents, 26 domains, DEC-001–040.
 
-**DEC-041** — Opened the **Natural Sciences series** as a distinct second canon series under `docs/natural-sciences/`. Natural Sciences define empirical reality constraints; Formal Sciences define inference and computation constraints. The two series are complementary and non-overlapping. Source: NS Volume A.
+**DEC-041** — Opened the **Natural Sciences series** as a distinct second canon series under `docs/natural-sciences/`. Source: NS Volume A.
 
-**DEC-042** — Adopted a **regime-aware physics doctrine**: GAIA shall always ask “what regime are we in?” before selecting a physics model. Classical, relativistic, quantum, and quantum-field regimes are each valid in their applicable domain; conflating them is an architectural error.
+**DEC-042** — Adopted **regime-aware physics doctrine**: GAIA always asks “what regime are we in?” before selecting a physics model.
 
-**DEC-043** — Mandated **energy accounting as a first-class systems variable**. Energy budgets must be tracked for computation, actuation, sensing, data-center cooling, and physical processes. Energy is not an afterthought.
+**DEC-043** — Mandated **energy accounting as a first-class systems variable** across computation, actuation, sensing, cooling, and physical processes.
 
-**DEC-044** — Adopted the **physics-chemistry integration stack** (Device physics → Energy layer → Environmental layer → Manufacturing layer → Life interface) as the canonical five-layer model for grounding GAIA’s physical-digital twin in empirical reality. Source: NS Volume A §3.
+**DEC-044** — Adopted the **physics-chemistry integration stack** (Device → Energy → Environmental → Manufacturing → Life Interface) as canonical grounding model. Source: NS Volume A §3.
 
-**DEC-045** — Established a **settled-vs-frontier science register** as a required GAIA operational artifact. All physics and chemistry claims used in production must be classified as either “settled enough for engineering” or “active scientific frontier.” Frontier claims must not be treated as engineering constraints. Source: NS Volume A §4.
+**DEC-045** — Established a **settled-vs-frontier science register** as a required operational artifact. All production physics/chemistry claims must be classified.
 
-**DEC-046** — Adopted the doctrine: **“Vision systems are never just software.”** All GAIA sensing pipelines are joint products of physical transduction, optical physics, sensor physics, calibration, and inference. Each layer must be explicitly modeled.
+**DEC-046** — Doctrine: **“Vision systems are never just software.”** All sensing pipelines are joint products of physical transduction, optics, calibration, and inference.
 
-**DEC-047** — Adopted **quantum-informed modeling** as the standard for GAIA subsystems affected by quantum device behavior. Full quantum simulation is not required where not material; but quantum effects that materially affect device or material behavior must be explicitly represented.
+**DEC-047** — Adopted **quantum-informed modeling** as standard for subsystems affected by quantum device behavior.
 
-**DEC-048** — Adopted the principle: **“No chemical intelligence without chemical measurement discipline.”** All GAIA environmental, biosurveillance, food-safety, and water-safety pipelines must include analytical chemistry — calibrated measurement, uncertainty estimation, and QC — as first-class components.
+**DEC-048** — Doctrine: **“No chemical intelligence without chemical measurement discipline.”** Analytical chemistry is a first-class component of all environmental and biosurveillance pipelines.
 
-**DEC-049** — Mandated **polymer literacy** in GAIA’s sustainability and materials reasoning layers. Polymer science covers a dominant fraction of modern manufactured infrastructure; abstracting it away produces planning errors.
+**DEC-049** — Mandated **polymer literacy** in GAIA’s sustainability and materials reasoning layers.
 
-**DEC-050** — Adopted the doctrine: **“Physics tells GAIA what is allowed; chemistry tells it what matter can become; materials science tells it how that matter will perform; analytical chemistry tells it what is actually present; thermodynamics tells it what it will cost.”** This five-part lower reality stack is binding as a design philosophy for all physical-world interfaces.
+**DEC-050** — Adopted the **five-part lower reality stack doctrine** (physics → chemistry → materials → analytical chemistry → thermodynamics) as binding design philosophy for all physical-world interfaces.
 
-**DEC-051** — Established a **frontier physics tracking obligation**: GAIA shall maintain awareness of quantum gravity, string theory, and loop quantum cosmology as scientifically active research programs. These must not be operationalized as settled engineering constraints, but must not be ignored as irrelevant either.
+**DEC-051** — Established a **frontier physics tracking obligation** for quantum gravity, string theory, and LQC.
 
-**DEC-052** — Committed **Natural Sciences Volume A** (Physics and Chemistry) to `docs/natural-sciences/`. Opened the Natural Sciences series with future Volumes B (Biology), C (Earth Systems/Climate/Ecology), and D (Astronomy/Astrophysics) planned.
+**DEC-052** — Committed **Natural Sciences Volume A** (Physics and Chemistry). Natural Sciences series opened.
+
+**DEC-053** — Adopted the principle: **ATLAS is a dynamically coupled, nonlinear planetary system** — not a collection of independent departments. All Earth-system modeling must treat sphere-to-sphere coupling as primary, not optional. Source: NS Volume B.
+
+**DEC-054** — Adopted the **six-sphere Earth model** (lithosphere, hydrosphere, cryosphere, atmosphere, pedosphere, biosphere) as the canonical decomposition for GAIA’s Earth-system state representation.
+
+**DEC-055** — Established **geology and geophysics** as required subsurface intelligence layers for all GAIA land-use, infrastructure siting, hazard mapping, and mineral-resource reasoning.
+
+**DEC-056** — Adopted **multi-signal fused geophysical inference** as the required approach for volcanic and seismic hazard monitoring. Single-sensor thresholds are prohibited for these systems.
+
+**DEC-057** — Mandated **ocean coupling** as a required component of all GAIA climate models. Uncoupled atmospheric-only climate models are classified as insufficient for planetary stewardship purposes.
+
+**DEC-058** — Adopted **hydrology** as the canonical water-security and flood/drought intelligence layer. Hydrologic modeling must link meteorology, geology, soil science, ecology, and human infrastructure explicitly.
+
+**DEC-059** — Adopted **cryosphere science** as a required state-monitoring layer for sea-level contribution, freshwater storage, albedo feedback, and Arctic infrastructure risk.
+
+**DEC-060** — Established: **Soil is not inert substrate.** Soil science is a living-interface discipline linking geology, climate, hydrology, chemistry, and biology. All agricultural, land-use, and carbon-cycle reasoning must treat soil as a dynamic system.
+
+**DEC-061** — Adopted the **weather-vs-climate distinction** as architectural doctrine: weather is local realization; climate is the statistical architecture. GAIA’s forecasting and planning systems must be engineered for the appropriate timescale and must not conflate the two.
+
+**DEC-062** — Adopted **paleoclimatology** as a required long-baseline context layer. Short instrumental records are insufficient for full climate-state-space characterization; proxy reconstructions are first-class data inputs.
+
+**DEC-063** — Adopted the GAIA rule: **“Forecast what is forecastable; bound what is not; never confuse uncertainty with ignorance or confidence with truth.”** This applies to all Earth-system modeling outputs.
+
+**DEC-064** — Adopted the **12-domain Earth-system integration table** (NS Volume B §15) as the canonical state-variable and output registry for ATLAS. Each domain has defined key state variables and example GAIA outputs.
+
+**DEC-065** — Extended the **settled-vs-frontier science register** (DEC-045) to Earth sciences: plate tectonics, weather as initial-value problem, climate as coupled radiative-dynamical system, and ocean–atmosphere coupling are classified as settled. Tipping thresholds, ice-sheet collapse timing, earthquake prediction, and volcanic eruption timing are classified as frontier/bounded.
+
+**DEC-066** — Committed **Natural Sciences Volume B** (Earth System Sciences) to `docs/natural-sciences/`. Earth system science recognized as the core empirical ontology of ATLAS.
 
 ---
 
