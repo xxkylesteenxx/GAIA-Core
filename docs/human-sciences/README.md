@@ -11,6 +11,9 @@ This directory contains the canonical Human Sciences volumes for GAIA. These doc
 | [Volume A](./volume-A-psychology-consciousness-neuropsychology.md) | Psychology, Consciousness Studies, and Neuropsychology | ✅ COMMITTED 2026-03-14 |
 | [Volume B](./volume-B-anthropology-and-sociology.md) | Anthropology and Sociology | ✅ COMMITTED 2026-03-14 |
 | [Volume C](./volume-C-economics-and-political-science.md) | Economics and Political Science | ✅ COMMITTED 2026-03-14 |
+| [Volume D](./volume-D-history-and-linguistics.md) | History and Linguistics | ✅ COMMITTED 2026-03-14 |
+
+**Series status: COMPLETE — 4 volumes, 52 domains, 193 decisions**
 
 ---
 
@@ -71,6 +74,29 @@ This directory contains the canonical Human Sciences volumes for GAIA. These doc
 
 ---
 
+## History and Linguistics Integration Table (Volume D §18)
+
+| Domain | GAIA Function | Example Outputs |
+|---|---|---|
+| History | Temporal depth modeling | Long-arc institutional trajectory maps |
+| Historiography | Evidence and bias audit | Archive provenance assessments, narrative bias detection |
+| World history | Global entanglement modeling | Trade, migration, ecological exchange maps |
+| Deep history | Long-run adaptation modeling | Prehistoric human-environment co-evolution data |
+| History of science | Scientific process modeling | Paradigm-shift and institution-embedding analysis |
+| Civilizational theory | Macro-pattern heuristics | Labeled long-run cycle analysis, solidarity/state models |
+| Phonology | Speech and sound system modeling | Accent adaptation, low-resource phoneme systems |
+| Morphology | Word structure modeling | Morphologically-aware multilingual NLP |
+| Syntax | Sentence structure parsing | Cross-linguistic compositional parsers |
+| Semantics | Meaning precision | Hallucination safeguards, category stability tools |
+| Pragmatics | Contextual communication | Dialogue systems, register and intent modeling |
+| Historical linguistics | Language genealogy and drift | Archival translation, family reconstruction |
+| Sociolinguistics | Language variation and fairness | Dialect-aware systems, non-stigmatizing NLP |
+| Psycholinguistics | Cognitive language modeling | Processing-realistic interfaces, learning tools |
+| Language acquisition | Developmental language support | Child/learner-adapted language tools |
+| Endangered languages | Language preservation | Documentation systems, community-owned revitalization tools |
+
+---
+
 ## Series Purpose
 
 The Human Sciences series provides the **human reality constraints** for GAIA. Where the Natural Sciences describe the biophysical world, the Human Sciences describe the social, psychological, cultural, and meaning-making world that humans actually inhabit.
@@ -85,13 +111,20 @@ The Human Sciences series provides the **human reality constraints** for GAIA. W
 
 ---
 
-## Future Volumes (Planned)
+## Cross-Volume Dependencies
 
-| Volume | Topic |
-|---|---|
-| D | Linguistics, Communication, and Semiotics |
+| Dependency | From | To |
+|---|---|---|
+| Behavioral economics bridges cognitive psychology | Volume C | Volume A |
+| Psycholinguistics bridges cognitive/developmental psychology | Volume D | Volume A |
+| Deep history bridges human and biological sciences | Volume D | NS Volume D |
+| Ecological economics bridges biosphere-economy | Volume C | NS Volume B/D |
+| Complexity economics bridges systems theory | Volume C | FS Volume C |
+| Sociolinguistics connects to language ideology (linguistic anthropology) | Volume D | Volume B |
+| Language acquisition connects to developmental psychology | Volume D | Volume A |
+| Endangered languages connects to Indigenous knowledge systems doctrine | Volume D | Volume B |
 
 ---
 
 *Maintained by: GAIA-Core / docs / human-sciences*  
-*Last updated: 2026-03-14*
+*Series complete. 4 volumes · 52 domains · 193 decisions. Last updated: 2026-03-14*
