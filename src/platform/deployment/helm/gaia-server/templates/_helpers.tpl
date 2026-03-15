@@ -3,16 +3,15 @@ GAIA Server Helm helpers.
 Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §6
 */}}
 
-{{/* Chart name */}}
+{{/* Chart name — always gaia-server */}}
 {{- define "gaia-server.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+gaia-server
+{{- end -}}
 
-{{/* Fully qualified app name */}}
+{{/* Fully qualified app name — delegates to name */}}
 {{- define "gaia-server.fullname" -}}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{ include "gaia-server.name" . }}
+{{- end -}}
 
 {{/* Common labels */}}
 {{- define "gaia-server.labels" -}}
