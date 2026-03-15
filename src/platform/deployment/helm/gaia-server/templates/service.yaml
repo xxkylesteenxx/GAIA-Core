@@ -1,13 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "gaia-server.fullname" . }}
-  labels: {{- include "gaia-server.labels" . | nindent 4 }}
+  name: gaia-router
+  namespace: {{ .Values.namespace }}
 spec:
-  type: {{ .Values.service.type }}
-  selector: {{- include "gaia-server.selectorLabels" . | nindent 4 }}
+  selector:
+    app: gaia-router
   ports:
     - name: http
-      port: {{ .Values.service.port }}
-      targetPort: http
-      protocol: TCP
+      port: {{ .Values.router.servicePort }}
+      targetPort: {{ .Values.router.containerPort }}
