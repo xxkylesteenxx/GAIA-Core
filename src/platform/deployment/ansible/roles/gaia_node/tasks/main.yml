@@ -1,56 +1,34 @@
-# GAIA node bootstrap tasks.
-# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
+# gaia_node role — GAIA directory layout and node configuration.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7, DEP-003
+#
+# Preconditions (satisfied by earlier roles in bootstrap.yml play):
+#   - bootstrap  : gaia_user and gaia_group already exist
+#   - container_runtime: container runtime installed and running
+#
 # Idempotent — safe to re-run on a converged host.
 ---
-- name: Create GAIA system group
-  ansible.builtin.group:
-    name:   "{{ gaia_group }}"
-    gid:    "{{ gaia_gid }}"
-    system: true
-    state:  present
-
-- name: Create GAIA system user
-  ansible.builtin.user:
-    name:       "{{ gaia_user }}"
-    uid:        "{{ gaia_uid }}"
-    group:      "{{ gaia_group }}"
-    system:     true
-    shell:      /sbin/nologin
-    create_home: false
-    state:      present
-
-- name: Create GAIA directory tree
+# --- Directory layout ---
+- name: Ensure GAIA directories exist
   ansible.builtin.file:
     path:  "{{ item }}"
     state: directory
     owner: "{{ gaia_user }}"
     group: "{{ gaia_group }}"
-    mode:  "0750"
+    mode:  '0755'
   loop:
-    - "{{ gaia_base_dir }}"
-    - "{{ gaia_config_dir }}"
-    - "{{ gaia_log_dir }}"
-    - "{{ gaia_run_dir }}"
+    - "{{ gaia_root }}"
+    - "{{ gaia_root }}/config"
+    - "{{ gaia_root }}/data"
+    - "{{ gaia_root }}/identity"
 
-- name: Install container runtime (Docker)
-  when: container_runtime == 'docker'
-  ansible.builtin.package:
-    name:  "docker-ce={{ docker_version }}.*"
-    state: present
-  notify: restart docker
-
-- name: Add GAIA user to docker group
-  when: container_runtime == 'docker'
-  ansible.builtin.user:
-    name:   "{{ gaia_user }}"
-    groups: docker
-    append: true
-
-- name: Deploy GAIA node config
-  ansible.builtin.template:
-    src:   gaia-node.conf.j2
-    dest:  "{{ gaia_config_dir }}/node.conf"
+# --- Node environment file ---
+- name: Place GAIA node environment file
+  ansible.builtin.copy:
+    dest:  "{{ gaia_root }}/config/node.env"
     owner: "{{ gaia_user }}"
     group: "{{ gaia_group }}"
-    mode:  "0640"
-  notify: reload gaia-node
+    mode:  '0640'
+    content: |
+      GAIA_NODE_ROLE={{ gaia_role }}
+      SPIFFE_TRUST_DOMAIN={{ gaia_spiffe_trust_domain }}
+      GAIA_IDENTITY_MODE={{ gaia_identity_mode }}
