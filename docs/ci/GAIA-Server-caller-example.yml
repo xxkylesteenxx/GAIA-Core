@@ -1,19 +1,25 @@
-# GAIA-Server — thin CI caller example.
-# Copy this file to .github/workflows/ci.yml in the GAIA-Server repo.
+# GAIA-Server — thin CI caller.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
+#
+# Deploy instructions:
+#   1. Copy this file to .github/workflows/ci.yml in the GAIA-Server repo.
+#   2. Reusable workflow is sourced from:
+#      xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+#   3. Add a Dockerfile at the repo root, or update the dockerfile input.
+#   4. Set push_image: true and add ghcr_token secret when ready to publish.
+name: server-ci
+
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
-  server:
+  call-shared:
     uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
     with:
-      image:             gaia-server
-      dockerfile:        docker/Dockerfile.python-core
-      language:          python
-      working_directory: src
-      publish:           ${{ github.ref == 'refs/heads/main' }}
+      image_name: gaia-server
+      workdir:    .
+      dockerfile: Dockerfile
+      push_image: false
     secrets: inherit
