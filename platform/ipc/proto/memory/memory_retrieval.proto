@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package gaia.ipc.memory;
+
+message MemoryVector {
+  string memory_id = 1;
+  repeated float embedding = 2;
+  map<string, string> metadata = 3;
+}
+
+message MemoryRetrievalRequest {
+  string query_id = 1;
+  string requester = 2;
+  repeated float query_embedding = 3;
+  uint32 top_k = 4;
+  repeated string namespaces = 5;
+}
+
+message MemoryMatch {
+  string memory_id = 1;
+  float score = 2;
+  map<string, string> metadata = 3;
+  bytes serialized_record = 4;
+}
+
+message MemoryRetrievalResponse {
+  string query_id = 1;
+  repeated MemoryMatch matches = 2;
+}
+
+service MemoryRetrievalService {
+  rpc Retrieve(MemoryRetrievalRequest) returns (MemoryRetrievalResponse);
+}
