@@ -1,0 +1,45 @@
+# GAIA Python core service — multi-stage image.
+# Shared base for gaia-router, gaia-hud-bridge, and other Python services.
+#
+# Build context is the deployment root (src/platform/deployment/).
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §4, DEP-001
+#
+# The GAIA_ROLE environment variable selects the service entrypoint
+# at runtime — a single image runs multiple roles.
+
+# ---- Stage 1: build --------------------------------------------------------
+FROM python:3.12-slim AS builder
+
+WORKDIR /app
+
+COPY docker/requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+# ---- Stage 2: runtime ------------------------------------------------------
+FROM python:3.12-slim
+
+LABEL org.opencontainers.image.title="gaia-python-core" \
+      org.opencontainers.image.description="GAIA Python core service (router, hud-bridge)" \
+      org.opencontainers.image.source="https://github.com/xxkylesteenxx/GAIA-Core"
+
+WORKDIR /app
+
+COPY --from=builder /install /usr/local
+COPY . .
+
+# Non-root runtime user (spec §4: non-root runtime users)
+RUN useradd --system --uid 1001 --no-create-home gaia
+USER gaia
+
+HEALTHCHECK \
+  --interval=30s \
+  --timeout=5s  \
+  --start-period=10s \
+  --retries=3   \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"
+
+EXPOSE 8080
+
+# Entrypoint delegates to GAIA_ROLE at runtime.
+# e.g. GAIA_ROLE=router starts the routing service.
+ENTRYPOINT ["python", "-m", "gaia_server"]

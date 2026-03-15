@@ -1,0 +1,84 @@
+# GAIA local development stack.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §4, §9
+#
+# Usage:
+#   docker compose up                  — start all services
+#   docker compose up gaia-router      — start router only
+#   docker compose up --build          — rebuild images before starting
+#   docker compose down -v             — stop and remove volumes
+#
+# This file is for local development only.
+# Do NOT use in production — use the Kubernetes manifests or Helm chart.
+
+services:
+
+  # --- GAIA Router ---
+  # Stateless coordination and inference routing layer.
+  # Spec ref: §2 (stateless Deployment workload type)
+  gaia-router:
+    build:
+      context:    .
+      dockerfile: docker/Dockerfile.python-core
+    ports:
+      - "8080:8080"
+    environment:
+      GAIA_ROLE:           router
+      GAIA_ENV:            local
+      GAIA_LOG_LEVEL:      debug
+      GAIA_SPIFFE_SOCKET:  unix:///run/spire/sockets/agent.sock
+    volumes:
+      - spire-sockets:/run/spire/sockets:ro
+    depends_on:
+      spire-agent:
+        condition: service_healthy
+    healthcheck:
+      test:         ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      interval:     30s
+      timeout:      5s
+      start_period: 10s
+      retries:      3
+    restart: unless-stopped
+
+  # --- GAIA HUD Bridge ---
+  # Serves the IPC snapshot consumed by the TypeScript HUD shell.
+  # Spec ref: GAIA Desktop Shell and Interaction Substrate Spec v1.0 §2.4
+  gaia-hud-bridge:
+    build:
+      context:    .
+      dockerfile: docker/Dockerfile.python-core
+    ports:
+      - "4174:4174"
+    environment:
+      GAIA_ROLE:       hud-bridge
+      GAIA_ENV:        local
+      GAIA_LOG_LEVEL:  debug
+      GAIA_HUD_PORT:   "4174"
+    depends_on:
+      - gaia-router
+    restart: unless-stopped
+
+  # --- SPIRE Agent (dev join-token mode) ---
+  # Issues workload SVIDs to co-located services via the shared socket.
+  # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §9, DEP-006
+  #
+  # IMPORTANT: join_token attestation is for local dev only.
+  # Use k8s_psat or tpm_devid in production (spec §9 table).
+  spire-agent:
+    image: ghcr.io/spiffe/spire-agent:1.9.6
+    volumes:
+      - ./spire/agent:/etc/spire/agent:ro
+      - spire-sockets:/run/spire/sockets
+    command: ["-config", "/etc/spire/agent/agent.conf"]
+    healthcheck:
+      test:         ["CMD", "/opt/spire/bin/spire-agent", "healthcheck"]
+      interval:     15s
+      timeout:      5s
+      start_period: 20s
+      retries:      5
+    restart: unless-stopped
+
+volumes:
+  spire-sockets:
+    driver: local
+    # Named volume shared between gaia-router and spire-agent
+    # so the SPIFFE workload API socket is accessible to all GAIA services.
