@@ -1,0 +1,17 @@
+# GAIA Python service — version-pinned runtime dependencies.
+# Update with `pip-compile requirements.in` (pip-tools).
+# Spec ref: DEP-001 (reproducible, version-pinned)
+
+# Core
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+httpx==0.27.2
+
+# Observability
+opentelemetry-api==1.27.0
+opentelemetry-sdk==1.27.0
+opentelemetry-exporter-otlp==1.27.0
+
+# SPIFFE/SPIRE workload API
+pyspiffe==0.1.0

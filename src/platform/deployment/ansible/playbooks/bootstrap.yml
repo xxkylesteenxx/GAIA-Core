@@ -1,0 +1,46 @@
+# GAIA fleet bootstrap playbook.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7, DEP-003
+#
+# Targets all GAIA nodes. Safe to re-run (idempotent).
+# High-risk destructive imaging steps are intentionally excluded.
+#
+# Usage:
+#   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap.yml
+#   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap.yml --limit gaia_servers
+---
+- name: Bootstrap GAIA nodes
+  hosts: gaia_nodes
+  become: true
+  gather_facts: true
+
+  pre_tasks:
+    - name: Assert supported OS
+      ansible.builtin.assert:
+        that:
+          - ansible_os_family in ['Debian', 'RedHat']
+        fail_msg: "Unsupported OS family: {{ ansible_os_family }}"
+
+    - name: Update package cache (Debian)
+      when: ansible_os_family == 'Debian'
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+  roles:
+    - role: gaia_node
+
+  post_tasks:
+    - name: Verify GAIA directory tree
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /opt/gaia
+        - /etc/gaia
+        - /var/log/gaia
+      register: gaia_dirs
+
+    - name: Assert directories exist
+      ansible.builtin.assert:
+        that: item.stat.exists
+        fail_msg: "Expected directory missing: {{ item.item }}"
+      loop: "{{ gaia_dirs.results }}"

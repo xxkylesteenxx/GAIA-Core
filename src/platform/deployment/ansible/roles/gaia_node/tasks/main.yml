@@ -1,0 +1,56 @@
+# GAIA node bootstrap tasks.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
+# Idempotent — safe to re-run on a converged host.
+---
+- name: Create GAIA system group
+  ansible.builtin.group:
+    name:   "{{ gaia_group }}"
+    gid:    "{{ gaia_gid }}"
+    system: true
+    state:  present
+
+- name: Create GAIA system user
+  ansible.builtin.user:
+    name:       "{{ gaia_user }}"
+    uid:        "{{ gaia_uid }}"
+    group:      "{{ gaia_group }}"
+    system:     true
+    shell:      /sbin/nologin
+    create_home: false
+    state:      present
+
+- name: Create GAIA directory tree
+  ansible.builtin.file:
+    path:  "{{ item }}"
+    state: directory
+    owner: "{{ gaia_user }}"
+    group: "{{ gaia_group }}"
+    mode:  "0750"
+  loop:
+    - "{{ gaia_base_dir }}"
+    - "{{ gaia_config_dir }}"
+    - "{{ gaia_log_dir }}"
+    - "{{ gaia_run_dir }}"
+
+- name: Install container runtime (Docker)
+  when: container_runtime == 'docker'
+  ansible.builtin.package:
+    name:  "docker-ce={{ docker_version }}.*"
+    state: present
+  notify: restart docker
+
+- name: Add GAIA user to docker group
+  when: container_runtime == 'docker'
+  ansible.builtin.user:
+    name:   "{{ gaia_user }}"
+    groups: docker
+    append: true
+
+- name: Deploy GAIA node config
+  ansible.builtin.template:
+    src:   gaia-node.conf.j2
+    dest:  "{{ gaia_config_dir }}/node.conf"
+    owner: "{{ gaia_user }}"
+    group: "{{ gaia_group }}"
+    mode:  "0640"
+  notify: reload gaia-node

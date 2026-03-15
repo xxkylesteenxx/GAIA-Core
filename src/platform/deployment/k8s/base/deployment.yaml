@@ -1,0 +1,77 @@
+# GAIA Server — Kubernetes Deployment (stateless coordination/API layer).
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §5, DEP-001
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gaia-server
+  namespace: gaia
+  labels:
+    app.kubernetes.io/name: gaia-server
+    app.kubernetes.io/part-of: gaia
+    app.kubernetes.io/version: "0.1.0"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gaia-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gaia-server
+        app.kubernetes.io/part-of: gaia
+    spec:
+      serviceAccountName: gaia-server
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: gaia-server
+          image: gaia-server:0.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: gaia-server-config
+          env:
+            - name: GAIA_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gaia-server-secret
+                  key: secret-key
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: DoNotSchedule
+          labelSelector:
+            matchLabels:
+              app.kubernetes.io/name: gaia-server

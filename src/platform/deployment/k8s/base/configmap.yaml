@@ -1,0 +1,18 @@
+# GAIA Server — ConfigMap (non-secret runtime configuration).
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §5
+#
+# Secret values (API keys, tokens) MUST NOT appear here — use Secret resources.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gaia-server-config
+  namespace: gaia
+  labels:
+    app.kubernetes.io/name: gaia-server
+    app.kubernetes.io/part-of: gaia
+data:
+  GAIA_ENV:            "production"
+  GAIA_LOG_LEVEL:      "info"
+  GAIA_PORT:           "8080"
+  GAIA_SPIFFE_SOCKET:  "unix:///run/spire/sockets/agent.sock"
+  GAIA_OTEL_ENDPOINT:  "http://otel-collector.monitoring.svc.cluster.local:4317"

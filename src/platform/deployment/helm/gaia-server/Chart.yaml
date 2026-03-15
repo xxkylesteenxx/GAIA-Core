@@ -1,0 +1,17 @@
+# GAIA Server — Helm chart metadata.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §6
+apiVersion: v2
+name: gaia-server
+description: GAIA inference/coordination server — Helm packaging
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - gaia
+  - consciousness
+  - ai
+  - server
+home: https://github.com/xxkylesteenxx/GAIA-Core
+maintainers:
+  - name: GAIA Core
+    url: https://github.com/xxkylesteenxx/GAIA-Core

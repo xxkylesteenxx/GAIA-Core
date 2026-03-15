@@ -1,0 +1,18 @@
+# GAIA node role — default variables.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
+
+gaia_user:            gaia
+gaia_group:           gaia
+gaia_uid:             1001
+gaia_gid:             1001
+
+gaia_base_dir:        /opt/gaia
+gaia_config_dir:      /etc/gaia
+gaia_log_dir:         /var/log/gaia
+gaia_run_dir:         /run/gaia
+
+container_runtime:    docker   # docker | containerd | podman
+docker_version:       "26.1"
+
+gaia_spire_socket:    /run/spire/sockets/agent.sock
+gaia_node_tag:        scaffold

@@ -1,0 +1,9 @@
+---
+- name: restart docker
+  ansible.builtin.service:
+    name:  docker
+    state: restarted
+
+- name: reload gaia-node
+  ansible.builtin.debug:
+    msg: "gaia-node config reloaded (implement service reload here)"

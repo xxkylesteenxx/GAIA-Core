@@ -1,0 +1,71 @@
+# GAIA reusable workflow — lint and syntax validation.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
+#
+# Called by repository-local callers; never triggered directly.
+# Caller pattern:
+#   uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-lint.yml@main
+#   with:
+#     language: python
+on:
+  workflow_call:
+    inputs:
+      language:
+        description: "Service language: python | rust | typescript | yaml"
+        required: true
+        type: string
+      working_directory:
+        description: "Working directory for lint commands"
+        required: false
+        default: "."
+        type: string
+
+jobs:
+  lint:
+    name: Lint (${{ inputs.language }})
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.working_directory }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- Python ---
+      - name: Set up Python
+        if: inputs.language == 'python'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Python lint (ruff + mypy)
+        if: inputs.language == 'python'
+        run: |
+          pip install ruff mypy --quiet
+          ruff check .
+          mypy . --ignore-missing-imports
+
+      # --- Rust ---
+      - name: Rust lint (clippy)
+        if: inputs.language == 'rust'
+        run: |
+          rustup component add clippy
+          cargo clippy --all-targets --all-features -- -D warnings
+
+      # --- TypeScript ---
+      - name: TypeScript lint (eslint + tsc)
+        if: inputs.language == 'typescript'
+        run: |
+          npm ci
+          npm run typecheck
+          npm run lint
+
+      # --- YAML / Kubernetes ---
+      - name: YAML lint (yamllint + kubeconform)
+        if: inputs.language == 'yaml'
+        run: |
+          pip install yamllint --quiet
+          yamllint .
+          curl -sSLo kubeconform.tar.gz \
+            https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
+          tar xf kubeconform.tar.gz
+          find . -name '*.yaml' | xargs ./kubeconform -strict -ignore-missing-schemas

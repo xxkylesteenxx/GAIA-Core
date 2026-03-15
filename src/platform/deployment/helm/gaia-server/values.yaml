@@ -1,0 +1,44 @@
+# GAIA Server — Helm default values.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §6
+#
+# This file is the primary release configuration surface (DEP-002).
+# Live secret material MUST NOT be stored here — inject via sealed-secret
+# or external-secrets-operator.
+
+replicaCount: 2
+
+image:
+  repository: gaia-server
+  tag:        "0.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu:    "100m"
+    memory: "128Mi"
+  limits:
+    cpu:    "500m"
+    memory: "512Mi"
+
+config:
+  env:           "production"
+  logLevel:      "info"
+  spiffeSocket:  "unix:///run/spire/sockets/agent.sock"
+  otelEndpoint:  "http://otel-collector.monitoring.svc.cluster.local:4317"
+
+# External secret name containing GAIA_SECRET_KEY
+externalSecretName: gaia-server-secret
+
+nodeSelector:   {}
+tolerations:    []
+affinity:       {}
+
+podAnnotations: {}
+
+serviceAccount:
+  create: true
+  automountServiceAccountToken: false

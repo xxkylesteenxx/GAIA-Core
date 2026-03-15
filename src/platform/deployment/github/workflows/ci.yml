@@ -1,0 +1,50 @@
+# GAIA-Core — repository CI caller workflow.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
+#
+# Calls shared reusable workflows; contains no duplicated job logic.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-python:
+    uses: ./.github/workflows/reusable-lint.yml
+    with:
+      language: python
+      working_directory: src/python/gaia_server
+
+  lint-rust:
+    uses: ./.github/workflows/reusable-lint.yml
+    with:
+      language: rust
+      working_directory: src/rust/gaia_desktop/rust_desktop_runtime
+
+  lint-typescript:
+    uses: ./.github/workflows/reusable-lint.yml
+    with:
+      language: typescript
+      working_directory: src/typescript/ui_shell
+
+  lint-yaml:
+    uses: ./.github/workflows/reusable-lint.yml
+    with:
+      language: yaml
+      working_directory: src/platform/deployment/k8s
+
+  build-python:
+    needs: lint-python
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      image:      gaia-server
+      dockerfile: src/platform/deployment/docker/python/Dockerfile
+      push:       false
+
+  build-rust:
+    needs: lint-rust
+    uses: ./.github/workflows/reusable-build.yml
+    with:
+      image:      gaia-desktop-runtime
+      dockerfile: src/platform/deployment/docker/rust/Dockerfile
+      push:       false

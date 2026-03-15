@@ -1,0 +1,53 @@
+# GAIA — default deny-all NetworkPolicy.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §5.1, DEP-005
+#
+# Apply this policy first, then layer explicit allow policies on top.
+# This ensures no inter-core channel is open without a declared policy.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gaia-default-deny
+  namespace: gaia
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# Allow gaia-server to receive HTTP from within the cluster (ingress)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gaia-server-allow-ingress
+  namespace: gaia
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: gaia-server
+  policyTypes:
+    - Ingress
+  ingress:
+    - ports:
+        - port: 8080
+          protocol: TCP
+---
+# Allow gaia-server egress to SPIRE agent socket and OTEL collector
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: gaia-server-allow-egress
+  namespace: gaia
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: gaia-server
+  policyTypes:
+    - Egress
+  egress:
+    - ports:
+        - port: 4317   # OTEL gRPC
+          protocol: TCP
+        - port: 8081   # SPIRE agent workload API (if TCP-exposed)
+          protocol: TCP
+        - port: 53     # DNS
+          protocol: UDP
