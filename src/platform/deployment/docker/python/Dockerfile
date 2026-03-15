@@ -1,46 +1,36 @@
-# GAIA Python service — multi-stage container image.
+# syntax=docker/dockerfile:1
+# GAIA Python service — canonical single-stage image.
+# Dedicated variant for services with a custom requirements.txt.
+#
+# Build context: src/platform/deployment/
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §4, DEP-001
 #
-# Build:   docker build -t gaia-server:dev -f docker/python/Dockerfile .
-# Run:     docker run --rm -p 8080:8080 gaia-server:dev
+# Usage:
+#   docker build -t gaia-server:dev -f docker/python/Dockerfile .
 
-# ---- Stage 1: build --------------------------------------------------------
-FROM python:3.12-slim AS builder
-
-WORKDIR /app
-
-# Install build dependencies in an isolated prefix so they are copyable
-COPY requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
-
-# ---- Stage 2: runtime ------------------------------------------------------
-FROM python:3.12-slim
+FROM python:3.12-slim AS runtime
 
 LABEL org.opencontainers.image.title="gaia-server" \
       org.opencontainers.image.description="GAIA Python inference/coordination service" \
-      org.opencontainers.image.vendor="GAIA Project" \
       org.opencontainers.image.source="https://github.com/xxkylesteenxx/GAIA-Core"
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-# Copy installed packages from build stage only (DEP-001: no build toolchain in runtime)
-COPY --from=builder /install /usr/local
+RUN addgroup --system gaia && adduser --system --ingroup gaia gaia
 
-# Copy application source
-COPY . .
+COPY docker/python/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm -f /tmp/requirements.txt
 
-# Non-root runtime user (spec §4: non-root runtime users)
-RUN useradd --system --uid 1001 --no-create-home gaia
+COPY src/ /app/
+
 USER gaia
-
-# Health check — liveness probe for Kubernetes (spec §4)
-HEALTHCHECK \
-  --interval=30s \
-  --timeout=5s  \
-  --start-period=10s \
-  --retries=3   \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"
 
 EXPOSE 8080
 
-ENTRYPOINT ["python", "-m", "gaia_server"]
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD python -c "import socket; s=socket.create_connection(('127.0.0.1',8080),2); s.close()"
+
+CMD ["python", "-m", "gaia_server"]

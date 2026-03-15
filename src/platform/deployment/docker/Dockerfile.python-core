@@ -1,45 +1,42 @@
-# GAIA Python core service — multi-stage image.
+# syntax=docker/dockerfile:1
+# GAIA Python core service — canonical single-stage image.
 # Shared base for gaia-router, gaia-hud-bridge, and other Python services.
 #
-# Build context is the deployment root (src/platform/deployment/).
+# Build context: src/platform/deployment/
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §4, DEP-001
 #
-# The GAIA_ROLE environment variable selects the service entrypoint
-# at runtime — a single image runs multiple roles.
+# Usage:
+#   docker build -t gaia-python-core:dev -f docker/Dockerfile.python-core .
+#   docker run --rm -e GAIA_ROLE=router -p 8080:8080 gaia-python-core:dev
 
-# ---- Stage 1: build --------------------------------------------------------
-FROM python:3.12-slim AS builder
-
-WORKDIR /app
-
-COPY docker/requirements.txt .
-RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
-
-# ---- Stage 2: runtime ------------------------------------------------------
-FROM python:3.12-slim
+FROM python:3.12-slim AS runtime
 
 LABEL org.opencontainers.image.title="gaia-python-core" \
       org.opencontainers.image.description="GAIA Python core service (router, hud-bridge)" \
       org.opencontainers.image.source="https://github.com/xxkylesteenxx/GAIA-Core"
 
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
 WORKDIR /app
 
-COPY --from=builder /install /usr/local
-COPY . .
+# Non-root system user/group (spec §4: non-root runtime users)
+RUN addgroup --system gaia && adduser --system --ingroup gaia gaia
 
-# Non-root runtime user (spec §4: non-root runtime users)
-RUN useradd --system --uid 1001 --no-create-home gaia
+# Install Python dependencies — temp copy avoids leaving requirements.txt in image
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm -f /tmp/requirements.txt
+
+# Copy application source
+COPY src/ /app/
+
 USER gaia
-
-HEALTHCHECK \
-  --interval=30s \
-  --timeout=5s  \
-  --start-period=10s \
-  --retries=3   \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"
 
 EXPOSE 8080
 
-# Entrypoint delegates to GAIA_ROLE at runtime.
-# e.g. GAIA_ROLE=router starts the routing service.
-ENTRYPOINT ["python", "-m", "gaia_server"]
+# Socket-level healthcheck — validates TCP port reachability without
+# requiring an HTTP /health endpoint in the base image (spec §4).
+HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
+  CMD python -c "import socket; s=socket.create_connection(('127.0.0.1',8080),2); s.close()"
+
+CMD ["python", "-m", "gaia_service"]
