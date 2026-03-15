@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gaia-router
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: gaia-router
+  ports:
+    - name: http
+      port: {{ .Values.router.servicePort }}
+      targetPort: {{ .Values.router.containerPort }}

@@ -1,0 +1,15 @@
+{{- if .Values.ragStore.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: gaia-rag-store
+  namespace: {{ .Values.namespace }}
+spec:
+  clusterIP: None
+  selector:
+    app: gaia-rag-store
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: 5432
+{{- end }}
