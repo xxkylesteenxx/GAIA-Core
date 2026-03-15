@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GAIA xattr schema",
+  "description": "Defines the permitted extended attribute keys and value constraints for GAIA substrate object files.",
+  "type": "object",
+  "properties": {
+    "user.gaia.object_id": {
+      "type": "string",
+      "description": "Stable object identity: <kind>:<hash16>:<uid8>",
+      "pattern": "^[a-z-]+:[0-9a-f]{16}:[0-9a-f]{8}$"
+    },
+    "user.gaia.kind": {
+      "type": "string",
+      "description": "Object kind from ObjectKind enum.",
+      "enum": [
+        "identity", "memory-event", "checkpoint", "model-blob",
+        "sensor-artifact", "snapshot", "policy", "manifest",
+        "semantic-record", "unknown"
+      ]
+    },
+    "trusted.gaia.trust_level": {
+      "type": "string",
+      "enum": ["standard", "high", "verified"],
+      "description": "Trust level assigned at write time."
+    },
+    "trusted.gaia.origin_core": {
+      "type": "string",
+      "description": "Name of the GAIA core that produced this object."
+    },
+    "security.gaia.policy_class": {
+      "type": "string",
+      "description": "MAC / GAIA policy label for access control."
+    }
+  },
+  "additionalProperties": false
+}

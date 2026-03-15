@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GAIA view schema",
+  "description": "Schema for view definition manifests used by the projection filesystem.",
+  "type": "object",
+  "required": ["view_id", "virtual_prefix", "policy"],
+  "properties": {
+    "view_id": {
+      "type": "string",
+      "description": "Stable unique identifier for this view."
+    },
+    "virtual_prefix": {
+      "type": "string",
+      "description": "Mount-relative virtual path prefix, e.g. /gaia/views/by-core/SOPHIA"
+    },
+    "description": {
+      "type": "string"
+    },
+    "read_only": {
+      "type": "boolean",
+      "default": true
+    },
+    "policy": {
+      "type": "object",
+      "description": "Inline ProjectionPolicy.",
+      "properties": {
+        "name": { "type": "string" },
+        "allowed_kinds":        { "type": "array", "items": { "type": "string" } },
+        "allowed_cores":        { "type": "array", "items": { "type": "string" } },
+        "allowed_tenants":      { "type": "array", "items": { "type": "string" } },
+        "allowed_trust_levels": { "type": "array", "items": { "type": "string" } },
+        "required_tags":        { "type": "array", "items": { "type": "string" } },
+        "deny_trust_levels":    { "type": "array", "items": { "type": "string" } },
+        "deny_kinds":           { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
