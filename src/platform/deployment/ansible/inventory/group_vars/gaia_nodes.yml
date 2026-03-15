@@ -1,0 +1,14 @@
+# GAIA Ansible group variables — gaia_nodes.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
+#
+# These vars apply to every host in the gaia_nodes group.
+# They mirror the [gaia_nodes:vars] block from hosts.ini and are the
+# authoritative source when using the YAML inventory (hosts.yml).
+#
+# Connection
+ansible_user:   gaia-admin
+ansible_become: true
+
+# GAIA node role defaults (override per-host in hosts.yml if needed)
+gaia_role:      node
+gaia_node_tag:  scaffold

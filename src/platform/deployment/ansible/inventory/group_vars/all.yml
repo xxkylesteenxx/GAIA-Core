@@ -1,0 +1,17 @@
+# GAIA Ansible group variables — all hosts.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
+#
+# Values here apply to every inventory host.
+# Override in group_vars/<group>.yml or host_vars/<host>.yml.
+
+# Python interpreter — explicit to avoid deprecation warnings
+ansible_python_interpreter: /usr/bin/python3
+
+# SSH hardening: strict host key checking is enabled in CI via
+# ANSIBLE_HOST_KEY_CHECKING=false override; do not disable here.
+
+# GAIA directory layout — matches role defaults
+gaia_base_dir:    /opt/gaia
+gaia_config_dir:  /etc/gaia
+gaia_log_dir:     /var/log/gaia
+gaia_run_dir:     /run/gaia
