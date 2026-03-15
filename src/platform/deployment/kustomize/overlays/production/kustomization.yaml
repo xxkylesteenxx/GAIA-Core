@@ -1,0 +1,13 @@
+resources:
+  - ../../base
+patches:
+  - target:
+      kind: Deployment
+      name: gaia-router
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 4
+images:
+  - name: ghcr.io/example/gaia-router
+    newTag: v1.0.0
