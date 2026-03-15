@@ -1,8 +1,6 @@
-"""Integration test: dual-plane storage is wired into GaiaSubstrate."""
+"""Integration: dual-plane storage is wired into GaiaSubstrate via bootstrap."""
 from __future__ import annotations
-
 import pytest
-
 from gaia_core.bootstrap import build_default_gaia, get_object_substrate
 from gaia_core.storage.schemas import PlaneLayout, StorageCapability
 
@@ -16,15 +14,15 @@ def test_substrate_has_storage(substrate):
     assert substrate.has_storage is True
 
 
-def test_object_store_field(substrate):
+def test_object_store_field_present(substrate):
     assert substrate.object_store is not None
 
 
-def test_view_registry_field(substrate):
+def test_view_registry_field_present(substrate):
     assert substrate.view_registry is not None
 
 
-def test_view_registry_has_standard_views(substrate):
+def test_standard_views_registered(substrate):
     view_ids = [v.view_id for v in substrate.view_registry.list_views()]
     assert "by-trust-high" in view_ids
     assert "planetary" in view_ids
@@ -45,7 +43,7 @@ def test_all_plane_dirs_created(substrate, tmp_path):
         layout.objects, layout.semantic, layout.views,
         layout.system, layout.data,
     ):
-        assert plane.is_dir(), f"Expected directory: {plane}"
+        assert plane.is_dir(), f"Missing: {plane}"
 
 
 def test_consciousness_snapshot_includes_storage(substrate):
@@ -55,35 +53,24 @@ def test_consciousness_snapshot_includes_storage(substrate):
     assert "CONTENT_ADDRESSED" in snap["storage"]["capabilities"]
 
 
-def test_substrate_without_storage_is_safe():
-    """GaiaSubstrate remains constructable without storage fields (backward compat)."""
-    from gaia_core.core.registry import CoreRegistry
-    from gaia_core.continuity.identity import IdentityRoot
+def test_backward_compat_no_storage():
+    """GaiaSubstrate without storage fields still constructs cleanly."""
     import tempfile
     from pathlib import Path
+    from gaia_core.core.substrate import GaiaSubstrate
+    from gaia_core.core.registry import CoreRegistry
+    from gaia_core.continuity.identity import IdentityRoot
     from gaia_core.continuity.causal_memory import CausalMemoryLog
     from gaia_core.continuity.checkpoints import CheckpointStore
     from gaia_core.federation.workspace import CollectiveWorkspace
-    from gaia_core.core.substrate import GaiaSubstrate
-
     with tempfile.TemporaryDirectory() as d:
         p = Path(d)
-        identity = IdentityRoot.create()
-        registry = CoreRegistry()
-        memory = CausalMemoryLog(p / "events.jsonl")
-        checkpoints = CheckpointStore(p / "checkpoints")
-        workspace = CollectiveWorkspace(
-            workspace_id="test",
-            problem_frame="test",
-            goals=[],
-        )
         sub = GaiaSubstrate(
-            registry=registry,
-            identity=identity,
-            memory=memory,
-            checkpoints=checkpoints,
-            workspace=workspace,
-            # no object_store, no view_registry
+            registry=CoreRegistry(),
+            identity=IdentityRoot.create(),
+            memory=CausalMemoryLog(p / "events.jsonl"),
+            checkpoints=CheckpointStore(p / "checkpoints"),
+            workspace=CollectiveWorkspace(workspace_id="t", problem_frame="t", goals=[]),
         )
         assert sub.has_storage is False
         assert sub.storage_capabilities() == []
