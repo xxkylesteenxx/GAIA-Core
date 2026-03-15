@@ -22,26 +22,25 @@
       "
     />
 
-    <!-- Accessibility: reduced-motion preference applied via CSS before first paint (DSK-007) -->
+    <!-- Reduced-motion applied before first paint, no JS required (DSK-007) -->
     <style>
       @media (prefers-reduced-motion: reduce) {
         *, *::before, *::after {
-          animation-duration:   0.01ms !important;
-          animation-iteration-count: 1  !important;
-          transition-duration:  0.01ms !important;
-          scroll-behavior:      auto   !important;
+          animation-duration:        0.01ms !important;
+          animation-iteration-count: 1      !important;
+          transition-duration:       0.01ms !important;
+          scroll-behavior:           auto   !important;
         }
       }
-
-      /* Prevent flash of unstyled content before React hydration */
-      html, body, #gaia-shell-root {
-        margin:  0;
-        padding: 0;
-        width:   100%;
-        height:  100%;
-        overflow: hidden;
+      /* Prevent FOUC before React hydration */
+      html, body, #root {
+        margin:     0;
+        padding:    0;
+        width:      100%;
+        height:     100%;
+        overflow:   hidden;
         background: #0a0a0f;
-        color: #e8e8f0;
+        color:      #e8e8f0;
         font-family: system-ui, -apple-system, sans-serif;
       }
     </style>
@@ -50,29 +49,20 @@
   </head>
 
   <body>
-    <!--
-      #gaia-shell-root  — primary React shell mount (Panel, LaunchSurface, WorkspaceSwitcher)
-      #gaia-hud-root    — Consciousness HUD mount (floated above shell, aria-live region)
-
-      Both roots are siblings so the HUD can be positioned independently
-      of the shell layout without z-index battles inside a shared tree.
-      Spec ref: GAIA Desktop Shell and Interaction Substrate Spec v1.0 §2.3, §2.4
-    -->
-
-    <!-- Skip-to-main link for keyboard users (DSK-003: accessibility designed in) -->
+    <!-- Skip-to-main link for keyboard navigation (DSK-003) -->
     <a
-      href="#gaia-shell-root"
+      href="#root"
       class="skip-link"
       style="
-        position: absolute;
-        top: -40px;
-        left: 0;
-        background: #1a1a2e;
-        color: #e8e8f0;
-        padding: 8px 16px;
-        z-index: 9999;
+        position:      absolute;
+        top:           -40px;
+        left:          0;
+        background:    #1a1a2e;
+        color:         #e8e8f0;
+        padding:       8px 16px;
+        z-index:       9999;
         border-radius: 0 0 4px 0;
-        transition: top 0.1s;
+        transition:    top 0.1s;
       "
       onfocus="this.style.top='0'"
       onblur="this.style.top='-40px'"
@@ -80,33 +70,20 @@
       Skip to main content
     </a>
 
-    <!-- Consciousness HUD — floating above shell, ARIA live region (DSK-004) -->
-    <div
-      id="gaia-hud-root"
-      role="region"
-      aria-label="Consciousness HUD"
-      aria-live="polite"
-      aria-atomic="false"
-      style="
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 40px;          /* matches DesktopConfig.hud_reserved_top_px */
-        z-index: 1000;
-        pointer-events: none;  /* HUD is read-only by default; enable per-alert */
-      "
-    ></div>
+    <!--
+      #gaia-hud-portal — Consciousness HUD portal target.
+      Rendered into by ConsciousnessHUD via ReactDOM.createPortal().
+      Kept as a sibling of #root so it is visually fixed above the
+      shell layer without z-index conflicts inside the React tree.
+      aria-live and role are set by the ConsciousnessHUD component.
+      Spec ref: GAIA Desktop Shell and Interaction Substrate Spec v1.0 §2.4
+    -->
+    <div id="gaia-hud-portal"></div>
 
-    <!-- Primary shell mount -->
-    <main
-      id="gaia-shell-root"
-      role="main"
-      aria-label="GAIA Shell"
-      style="padding-top: 40px;" <!-- offset for HUD band -->
-    ></main>
+    <!-- Primary React root -->
+    <div id="root" role="main" aria-label="GAIA Shell"></div>
 
-    <!-- React entry point -->
+    <!-- Vite / React entry -->
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

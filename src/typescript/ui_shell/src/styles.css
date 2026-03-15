@@ -1,0 +1,109 @@
+/*
+ * GAIA UI Shell — global styles.
+ *
+ * Design tokens are exposed as CSS custom properties on :root.
+ * AccessibilityProvider.tsx sets --gaia-text-scale, --gaia-reduced-motion,
+ * and --gaia-high-contrast at runtime; defaults below apply before hydration.
+ *
+ * Spec ref: GAIA Desktop Shell and Interaction Substrate Spec v1.0 §2.5
+ */
+
+/* --- Design tokens --- */
+:root {
+  /* Typography */
+  --gaia-text-scale:     1;
+  --gaia-font-size-base: calc(1rem * var(--gaia-text-scale));
+
+  /* Palette — dark operator theme */
+  --gaia-bg:             #0a0a0f;
+  --gaia-bg-surface:     #12121a;
+  --gaia-bg-elevated:    #1a1a28;
+  --gaia-border:         #2a2a40;
+  --gaia-text:           #e8e8f0;
+  --gaia-text-muted:     #8888a8;
+
+  /* Alert tiers — mirrors Rust OverlayPriority (spec §6.2) */
+  --gaia-color-normal:   #4a9fff;   /* blue  — informational */
+  --gaia-color-warning:  #f0a030;   /* amber — operator attention */
+  --gaia-color-critical: #e84040;   /* red   — blocking, modal */
+
+  /* HUD band height — matches Rust DesktopConfig.hud_reserved_top_px */
+  --gaia-hud-height:     40px;
+
+  /* Motion */
+  --gaia-reduced-motion: 0;
+  --gaia-transition:     0.15s ease;
+
+  /* High contrast */
+  --gaia-high-contrast:  0;
+}
+
+/* --- Reduced-motion override (runtime, via AccessibilityProvider) --- */
+@media (prefers-reduced-motion: reduce),
+       (--gaia-reduced-motion: 1) {
+  *, *::before, *::after {
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+  }
+}
+
+/* --- High-contrast override --- */
+@media (prefers-contrast: more) {
+  :root {
+    --gaia-bg:          #000000;
+    --gaia-bg-surface:  #0a0a0a;
+    --gaia-text:        #ffffff;
+    --gaia-border:      #ffffff;
+    --gaia-text-muted:  #cccccc;
+  }
+}
+
+/* --- Base resets --- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin:      0;
+  background:  var(--gaia-bg);
+  color:       var(--gaia-text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size:   var(--gaia-font-size-base);
+  line-height: 1.5;
+  -webkit-font-smoothing:  antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- HUD portal — fixed top band --- */
+#gaia-hud-portal {
+  position:       fixed;
+  top:            0;
+  left:           0;
+  right:          0;
+  height:         var(--gaia-hud-height);
+  z-index:        1000;
+  pointer-events: none; /* individual alert banners re-enable as needed */
+  background:     var(--gaia-bg-surface);
+  border-bottom:  1px solid var(--gaia-border);
+}
+
+/* --- Primary shell root — offset below HUD band --- */
+#root {
+  position:   relative;
+  padding-top: var(--gaia-hud-height);
+  height:      100vh;
+  overflow:    auto;
+}
+
+/* --- Focus ring — visible for keyboard users (DSK-003) --- */
+:focus-visible {
+  outline:        2px solid var(--gaia-color-normal);
+  outline-offset: 2px;
+  border-radius:  2px;
+}
+
+/* --- Skip link (shown on focus, hidden otherwise) --- */
+.skip-link:focus {
+  top: 0 !important;
+}
