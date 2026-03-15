@@ -3,40 +3,19 @@
 #
 # All job logic lives in reusable-build-and-publish.yml.
 # This file passes repo-specific inputs only.
+name: core-ci
+
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
-  python-service:
-    uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+  call-shared:
+    uses: ./.github/workflows/reusable-build-and-publish.yml
     with:
-      image:             gaia-core-python
-      dockerfile:        src/platform/deployment/docker/Dockerfile.python-core
-      context:           src/platform/deployment
-      language:          python
-      working_directory: src/python/gaia_server
-      publish:           false
-    secrets: inherit
-
-  rust-service:
-    uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
-    with:
-      image:             gaia-core-rust
-      dockerfile:        src/platform/deployment/docker/rust/Dockerfile
-      language:          rust
-      working_directory: src/rust/gaia_desktop/rust_desktop_runtime
-      publish:           false
-    secrets: inherit
-
-  typescript-shell:
-    uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
-    with:
-      image:             gaia-ui-shell
-      dockerfile:        src/typescript/ui_shell/Dockerfile   # scaffold — add when containerising shell
-      language:          typescript
-      working_directory: src/typescript/ui_shell
-      publish:           false
+      image_name:  gaia-core
+      workdir:     .
+      dockerfile:  Dockerfile
+      push_image:  false
     secrets: inherit
