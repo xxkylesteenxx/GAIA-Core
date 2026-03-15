@@ -1,52 +1,60 @@
 //! Shared desktop state types.
 //!
-//! DesktopState is the single source of truth for the compositor,
-//! window manager, and overlay subsystems. All mutations go through
-//! the facade modules (compositor, workspace, overlay) — state is
-//! never mutated directly by the IPC layer.
-//!
 //! Spec ref: GAIA Desktop Shell and Interaction Substrate Spec v1.0 §2
 
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 
-/// GAIA cognitive / operational cores surfaced in the Consciousness HUD.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+/// GAIA cognitive / operational cores.
+///
+/// Ordered by `Ord` so they sort consistently in BTreeMap / display.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum GaiaCore {
+    Terra,
+    Aqua,
+    Aero,
+    Vita,
     Sophia,
     Guardian,
-    Terra,
-    Atlas,
-    Hermes,
-    Mnemosyne,
+    Nexus,
+    Eta,
 }
 
 impl GaiaCore {
-    pub fn display_name(&self) -> &'static str {
+    pub fn display_name(self) -> &'static str {
         match self {
-            GaiaCore::Sophia    => "SOPHIA",
-            GaiaCore::Guardian  => "GUARDIAN",
-            GaiaCore::Terra     => "TERRA",
-            GaiaCore::Atlas     => "ATLAS",
-            GaiaCore::Hermes    => "HERMES",
-            GaiaCore::Mnemosyne => "MNEMOSYNE",
+            GaiaCore::Terra    => "TERRA",
+            GaiaCore::Aqua     => "AQUA",
+            GaiaCore::Aero     => "AERO",
+            GaiaCore::Vita     => "VITA",
+            GaiaCore::Sophia   => "SOPHIA",
+            GaiaCore::Guardian => "GUARDIAN",
+            GaiaCore::Nexus    => "NEXUS",
+            GaiaCore::Eta      => "ETA",
         }
     }
 }
 
-/// Priority tier for overlay surfaces and HUD core status indicators.
-#[derive(Debug, Clone, PartialEq, Eq)]
+/// Priority tier for overlay surfaces and HUD status indicators.
+///
+/// Info removed from the canonical surface type — use Normal for
+/// non-alerting status and Warning/Critical for operator-visible tiers.
+/// The full four-tier taxonomy (Normal/Info/Warning/Critical) is
+/// preserved in the HUD presentation layer.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum OverlayPriority {
+    /// Nominal operation — no alert indicator.
     Normal,
-    Info,
+    /// Operator-visible warning — amber tone, persists until acknowledged.
     Warning,
+    /// Blocking alert — red tone, modal, operator action required (DSK-005).
     Critical,
 }
 
 impl OverlayPriority {
-    pub fn requires_acknowledgement(&self) -> bool {
+    pub fn requires_acknowledgement(self) -> bool {
         matches!(self, OverlayPriority::Critical)
     }
-    pub fn blocks_presentation(&self) -> bool {
+    pub fn blocks_presentation(self) -> bool {
         matches!(self, OverlayPriority::Critical)
     }
 }
@@ -62,33 +70,43 @@ pub struct SurfaceRecord {
     pub floating:  bool,
 }
 
-/// An active overlay surface record.
+/// An active overlay record.
+///
+/// `id` is a stable string key (e.g. "guardian-warning") so overlays
+/// can be upserted by name without a separate id counter.
 #[derive(Debug, Clone)]
 pub struct OverlayRecord {
-    pub id:       u64,
-    pub label:    String,
+    /// Stable string identifier — used as upsert key.
+    pub id:       String,
+    /// The GAIA core that owns this overlay.
+    pub owner:    GaiaCore,
     pub priority: OverlayPriority,
     pub visible:  bool,
-    /// Optional GAIA core this overlay belongs to.
-    pub core:     Option<GaiaCore>,
+    /// Human-readable alert message shown in the HUD.
+    pub message:  String,
 }
 
 /// Top-level shared desktop state.
 #[derive(Debug, Default)]
 pub struct DesktopState {
+    /// All registered surfaces keyed by numeric surface id.
     pub surfaces:         HashMap<u64, SurfaceRecord>,
-    pub workspace_focus:  HashMap<usize, Option<u64>>,
-    pub active_workspace: usize,
+    /// Focused surface per workspace, ordered by workspace index.
+    pub workspace_focus:  BTreeMap<usize, Option<u64>>,
+    /// Active overlay records.
     pub overlays:         Vec<OverlayRecord>,
+    /// Index of the currently active workspace.
+    pub active_workspace: usize,
+    /// Append-only focus audit log: (surface_id, gained, seq).
     pub focus_audit_log:  Vec<(u64, bool, u64)>,
     pub audit_seq:        u64,
 }
 
 impl DesktopState {
-    /// Pre-allocate workspace focus slots for `count` workspaces (0-indexed).
+    /// Pre-allocate workspace focus slots for workspaces 0..count.
     pub fn reserve_workspaces(&mut self, count: usize) {
-        for i in 0..count {
-            self.workspace_focus.entry(i).or_insert(None);
+        for idx in 0..count {
+            self.workspace_focus.entry(idx).or_insert(None);
         }
     }
 
@@ -108,30 +126,35 @@ mod tests {
         let mut state = DesktopState::default();
         state.reserve_workspaces(6);
         assert_eq!(state.workspace_focus.len(), 6);
-        for i in 0..6 {
-            assert_eq!(state.workspace_focus[&i], None);
-        }
+        for i in 0..6 { assert_eq!(state.workspace_focus[&i], None); }
     }
 
     #[test]
-    fn critical_requires_acknowledgement() {
+    fn overlay_priority_semantics() {
         assert!(OverlayPriority::Critical.requires_acknowledgement());
         assert!(!OverlayPriority::Warning.requires_acknowledgement());
         assert!(!OverlayPriority::Normal.requires_acknowledgement());
-    }
-
-    #[test]
-    fn only_critical_blocks_presentation() {
         assert!(OverlayPriority::Critical.blocks_presentation());
         assert!(!OverlayPriority::Warning.blocks_presentation());
-        assert!(!OverlayPriority::Info.blocks_presentation());
-        assert!(!OverlayPriority::Normal.blocks_presentation());
     }
 
     #[test]
     fn gaia_core_display_names() {
-        assert_eq!(GaiaCore::Sophia.display_name(),   "SOPHIA");
-        assert_eq!(GaiaCore::Guardian.display_name(), "GUARDIAN");
         assert_eq!(GaiaCore::Terra.display_name(),    "TERRA");
+        assert_eq!(GaiaCore::Guardian.display_name(), "GUARDIAN");
+        assert_eq!(GaiaCore::Sophia.display_name(),   "SOPHIA");
+        assert_eq!(GaiaCore::Aqua.display_name(),     "AQUA");
+        assert_eq!(GaiaCore::Nexus.display_name(),    "NEXUS");
+        assert_eq!(GaiaCore::Eta.display_name(),      "ETA");
+    }
+
+    #[test]
+    fn gaia_core_is_ordered() {
+        // Ord must be stable for BTreeMap keying.
+        let mut cores = vec![
+            GaiaCore::Sophia, GaiaCore::Terra, GaiaCore::Guardian,
+        ];
+        cores.sort();
+        assert_eq!(cores[0], GaiaCore::Terra);
     }
 }
