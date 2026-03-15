@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "GAIA PQC Audit Record",
+  "type": "object",
+  "required": [
+    "recorded_at_utc",
+    "component",
+    "control",
+    "status"
+  ],
+  "properties": {
+    "recorded_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "component": {
+      "type": "string"
+    },
+    "control": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "warn"
+      ]
+    },
+    "details": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
