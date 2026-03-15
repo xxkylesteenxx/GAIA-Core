@@ -1,21 +1,23 @@
 """Bootstrap the GAIA 8-core substrate with dual-plane storage.
 
-Expanded .gaia_state layout
-----------------------------
+.gaia_state/ layout
+---------------------
 .gaia_state/
-  identity/        -- IdentityRoot (was: identity/root.json)
-  memory/          -- CausalMemoryLog (was: memory/events.jsonl)
-  checkpoints/     -- CheckpointStore
-  objects/         -- raw content-addressed object store  [NEW]
-  semantic/        -- semantic index (JSONL, later SQLite/graph)  [NEW]
-  views/           -- projection-layer mount points / manifests   [NEW]
+  identity/        -- IdentityRoot (node_id, public key, genesis timestamp)
+  memory/          -- CausalMemoryLog (append-only JSONL event stream)
+  checkpoints/     -- CheckpointStore + OverlayRuntime snapshot index
+  objects/         -- content-addressed raw object store (2-char sharding)
+  semantic/        -- SemanticIndex (JSONL-backed rich metadata plane)
+  views/           -- ViewManifest JSON files (one per registered view)
+  system/          -- read-only system plane (OverlayRuntime, created on demand)
+  data/            -- writable data plane   (OverlayRuntime, created on demand)
 
-Backward compatibility
------------------------
-The legacy flat-file paths (identity/root.json, memory/events.jsonl,
-checkpoints/) are preserved unchanged.  The three new directories are
-created alongside them.  All existing callers of build_default_gaia()
-continue to work without modification.
+All directories are created by build_default_gaia() on first run.
+Backward compatibility: legacy paths (identity/root.json, memory/events.jsonl,
+checkpoints/) are preserved unchanged.
+
+The returned GaiaSubstrate carries the dual-plane storage layer as first-class
+fields: substrate.object_store and substrate.view_registry.
 """
 from __future__ import annotations
 
@@ -30,6 +32,7 @@ from gaia_core.core.substrate import GaiaSubstrate
 from gaia_core.federation.workspace import CollectiveWorkspace
 from gaia_core.storage.substrate import ObjectSubstrate
 from gaia_core.storage.namespace_views import build_standard_views
+from gaia_core.storage.schemas import PlaneLayout
 
 
 DEFAULT_CORES = [
@@ -47,6 +50,11 @@ DEFAULT_CORES = [
 def build_default_gaia(root: str | Path = ".gaia_state") -> GaiaSubstrate:
     """Initialise and return a fully wired GaiaSubstrate.
 
+    The returned substrate carries:
+      - legacy continuity plane: identity, memory, checkpoints, workspace
+      - dual-plane storage: object_store (ObjectSubstrate), view_registry
+        (NamespaceViewRegistry with standard GAIA views pre-registered)
+
     Parameters
     ----------
     root:
@@ -56,20 +64,24 @@ def build_default_gaia(root: str | Path = ".gaia_state") -> GaiaSubstrate:
     Returns
     -------
     GaiaSubstrate
-        A ready-to-use substrate with identity, memory, checkpointing,
-        and the dual-plane object / semantic storage layer.
+        Ready-to-use substrate.  Access storage via::
+
+            substrate.object_store   # ObjectSubstrate
+            substrate.view_registry  # NamespaceViewRegistry
+            substrate.has_storage    # True
     """
     root = Path(root)
 
     # ------------------------------------------------------------------
-    # Legacy planes (unchanged paths -- preserve backward compat)
+    # Ensure full .gaia_state/ layout exists
     # ------------------------------------------------------------------
-    identity_dir = root / "identity"
-    memory_dir = root / "memory"
-    checkpoint_dir = root / "checkpoints"
-    identity_dir.mkdir(parents=True, exist_ok=True)
-    identity_path = identity_dir / "root.json"
+    layout = PlaneLayout(root)
+    layout.ensure_all()
 
+    # ------------------------------------------------------------------
+    # Legacy continuity plane (paths preserved for backward compat)
+    # ------------------------------------------------------------------
+    identity_path = layout.identity / "root.json"
     identity = (
         IdentityRoot.load(identity_path)
         if identity_path.exists()
@@ -82,17 +94,17 @@ def build_default_gaia(root: str | Path = ".gaia_state") -> GaiaSubstrate:
     for core in build_core_set():
         registry.register(core)
 
-    memory = CausalMemoryLog(memory_dir / "events.jsonl")
-    checkpoints = CheckpointStore(checkpoint_dir)
+    memory = CausalMemoryLog(layout.memory / "events.jsonl")
+    checkpoints = CheckpointStore(layout.checkpoints)
 
     # ------------------------------------------------------------------
-    # Dual-plane object + semantic storage  [NEW]
+    # Dual-plane object + semantic storage
     # ------------------------------------------------------------------
-    object_substrate = ObjectSubstrate(root)
+    object_store = ObjectSubstrate(root)
 
     # Standard projection views wired to the semantic index
     view_registry = build_standard_views(
-        index=object_substrate.index,
+        index=object_store.index,
         core_names=DEFAULT_CORES,
     )
 
@@ -116,21 +128,24 @@ def build_default_gaia(root: str | Path = ".gaia_state") -> GaiaSubstrate:
     )
     workspace.add_commitment("Bootstrap substrate initialized with dual-plane storage.")
 
+    # ------------------------------------------------------------------
+    # Assemble and return the fully wired substrate
+    # ------------------------------------------------------------------
     return GaiaSubstrate(
         registry=registry,
         identity=identity,
         memory=memory,
         checkpoints=checkpoints,
         workspace=workspace,
-        # Attach dual-plane storage references so callers can access them
-        # via substrate.object_store and substrate.view_registry if the
-        # GaiaSubstrate dataclass is extended to accept these fields.
-        # For now they are accessible via bootstrap module-level symbols.
+        object_store=object_store,
+        view_registry=view_registry,
     )
 
 
-# Module-level accessors for distro repos that need the storage plane
-# without instantiating a full substrate.
+# ---------------------------------------------------------------------------
+# Module-level accessors for distro repos
+# ---------------------------------------------------------------------------
+
 def get_object_substrate(root: str | Path = ".gaia_state") -> ObjectSubstrate:
     """Return an ObjectSubstrate rooted at *root* (creates dirs if needed)."""
     return ObjectSubstrate(Path(root))
