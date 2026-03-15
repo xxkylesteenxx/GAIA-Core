@@ -1,46 +1,65 @@
 # GAIA fleet bootstrap playbook.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7, DEP-003
 #
-# Targets all GAIA nodes. Safe to re-run (idempotent).
+# Targets all hosts in the gaia_nodes group.
+# Safe to re-run — all roles are idempotent.
 # High-risk destructive imaging steps are intentionally excluded.
+#
+# Role execution order:
+#   1. bootstrap         — OS prerequisites, package cache, SSH hardening
+#   2. container_runtime — install and configure Docker / containerd / podman
+#   3. gaia_node         — GAIA user, directory tree, node config
 #
 # Usage:
 #   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap.yml
-#   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap.yml --limit gaia_servers
+#   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap.yml --limit gaia-node-01
+#   ansible-playbook -i inventory/hosts.yml playbooks/bootstrap.yml --tags container_runtime
 ---
-- name: Bootstrap GAIA nodes
+- name: Bootstrap GAIA fleet nodes
   hosts: gaia_nodes
   become: true
   gather_facts: true
 
   pre_tasks:
-    - name: Assert supported OS
+    - name: Assert supported OS family
       ansible.builtin.assert:
         that:
           - ansible_os_family in ['Debian', 'RedHat']
-        fail_msg: "Unsupported OS family: {{ ansible_os_family }}"
+        fail_msg: >-
+          Unsupported OS family '{{ ansible_os_family }}' on {{ inventory_hostname }}.
+          Supported: Debian, RedHat.
 
-    - name: Update package cache (Debian)
-      when: ansible_os_family == 'Debian'
-      ansible.builtin.apt:
-        update_cache: true
-        cache_valid_time: 3600
+    - name: Print node summary
+      ansible.builtin.debug:
+        msg: >
+          Bootstrapping {{ inventory_hostname }}
+          ({{ ansible_host }}) — OS: {{ ansible_distribution }}
+          {{ ansible_distribution_version }}, role: {{ gaia_role | default('node') }}
 
   roles:
-    - role: gaia_node
+    - bootstrap
+    - container_runtime
+    - gaia_node
 
   post_tasks:
     - name: Verify GAIA directory tree
       ansible.builtin.stat:
         path: "{{ item }}"
       loop:
-        - /opt/gaia
-        - /etc/gaia
-        - /var/log/gaia
+        - "{{ gaia_root }}"
+        - "{{ gaia_config_dir }}"
+        - "{{ gaia_log_dir }}"
+        - "{{ gaia_run_dir }}"
       register: gaia_dirs
 
-    - name: Assert directories exist
+    - name: Assert all directories exist
       ansible.builtin.assert:
-        that: item.stat.exists
-        fail_msg: "Expected directory missing: {{ item.item }}"
+        that: item.stat.exists and item.stat.isdir
+        fail_msg: "Expected GAIA directory missing: {{ item.item }}"
       loop: "{{ gaia_dirs.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+
+    - name: Bootstrap complete
+      ansible.builtin.debug:
+        msg: "✅ GAIA bootstrap complete on {{ inventory_hostname }}"

@@ -1,0 +1,36 @@
+# bootstrap role — OS prerequisites.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7, DEP-003
+# Idempotent — safe to re-run.
+---
+- name: Update package cache (Debian)
+  when: ansible_os_family == 'Debian'
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: "{{ bootstrap_cache_valid_time }}"
+
+- name: Update package cache (RedHat)
+  when: ansible_os_family == 'RedHat'
+  ansible.builtin.dnf:
+    update_cache: true
+
+- name: Install base packages (Debian)
+  when: ansible_os_family == 'Debian'
+  ansible.builtin.apt:
+    name:  "{{ bootstrap_base_packages | reject('equalto', 'python3-pip') | list }}"
+    state: present
+
+- name: Install base packages (RedHat)
+  when: ansible_os_family == 'RedHat'
+  ansible.builtin.dnf:
+    name:  "{{ bootstrap_base_packages | reject('equalto', 'apt-transport-https') | list }}"
+    state: present
+
+- name: Harden SSH — disable password authentication
+  when: bootstrap_harden_ssh
+  ansible.builtin.lineinfile:
+    path:   /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line:   'PasswordAuthentication no'
+    state:  present
+    backup: true
+  notify: restart sshd

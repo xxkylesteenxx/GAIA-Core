@@ -1,0 +1,20 @@
+# bootstrap role — default variables.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
+
+# Packages installed on every GAIA node regardless of runtime choice.
+bootstrap_base_packages:
+  - curl
+  - ca-certificates
+  - gnupg
+  - apt-transport-https    # Debian only; ignored on RedHat
+  - python3
+  - python3-pip
+  - vim
+  - htop
+  - jq
+
+# Package cache max age before forced refresh (seconds)
+bootstrap_cache_valid_time: 3600
+
+# SSH hardening: disable password auth (set false to skip)
+bootstrap_harden_ssh: true
