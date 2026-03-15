@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package gaia.ipc.guardian;
+
+message GuardianPolicyDecision {
+  string request_id = 1;
+  string actor = 2;
+  string action = 3;
+  string resource = 4;
+  enum Effect {
+    EFFECT_UNSPECIFIED = 0;
+    ALLOW = 1;
+    DENY = 2;
+    CHALLENGE = 3;
+    ESCALATE = 4;
+  }
+  Effect effect = 5;
+  string rationale = 6;
+  repeated string obligations = 7;
+  uint64 decided_unix_ms = 8;
+}
+
+message GuardianPolicyRequest {
+  string request_id = 1;
+  string actor = 2;
+  string action = 3;
+  string resource = 4;
+  map<string, string> attributes = 5;
+}
+
+service GuardianPolicyService {
+  rpc Evaluate(GuardianPolicyRequest) returns (GuardianPolicyDecision);
+}
