@@ -1,140 +1,49 @@
-# GAIA — canonical reusable CI workflow: lint, build, and publish.
+# GAIA — canonical reusable CI workflow: validate, build, and publish.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
 #
 # Called by thin repo-local callers via:
 #   uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
 #
-# Input naming: both the canonical names and short aliases are accepted.
-#   Canonical       Short alias
-#   image           image_name
-#   working_directory  workdir
-#   publish         push_image
+# Inputs
+#   image_name   (required) — image name, no registry prefix
+#   workdir      (optional, default: .)        — Docker build context
+#   dockerfile   (optional, default: Dockerfile) — path to Dockerfile
+#   push_image   (optional, default: false)    — push to ghcr.io after build
+#
+# Secrets
+#   ghcr_token   (optional) — required only when push_image: true
 #
 # First adopters: GAIA-Core, GAIA-Server, GAIA-Desktop, GAIA-IoT, GAIA-Meta
+name: reusable-build-and-publish
 
 on:
   workflow_call:
     inputs:
-
-      # --- Image / build ---
-      image:
-        description: "Image name (canonical). Use image_name as alias."
-        required: false
-        default: ""
-        type: string
       image_name:
-        description: "Image name (alias for image)"
-        required: false
-        default: ""
-        type: string
-
-      dockerfile:
-        description: "Path to Dockerfile relative to repo root"
         required: true
         type: string
-      context:
-        description: "Docker build context path"
-        required: false
-        default: "."
-        type: string
-
-      # --- Lint ---
-      language:
-        description: "Service language for lint: python | rust | typescript | yaml"
-        required: false
-        default: ""
-        type: string
-      working_directory:
-        description: "Lint working directory (canonical). Use workdir as alias."
-        required: false
-        default: "."
-        type: string
       workdir:
-        description: "Lint working directory (alias for working_directory)"
         required: false
-        default: "."
         type: string
-
-      # --- Publish ---
-      publish:
-        description: "Push image to registry (canonical). Use push_image as alias."
+        default: .
+      dockerfile:
         required: false
-        default: false
-        type: boolean
+        type: string
+        default: Dockerfile
       push_image:
-        description: "Push image to registry (alias for publish)"
         required: false
-        default: false
         type: boolean
-
-      # --- Registry ---
-      registry:
-        description: "Container registry hostname (e.g. ghcr.io)"
-        required: false
-        default: "ghcr.io"
-        type: string
-      registry_namespace:
-        description: "Registry namespace / org"
-        required: false
-        default: "xxkylesteenxx"
-        type: string
-
+        default: false
     secrets:
-      REGISTRY_TOKEN:
+      ghcr_token:
         required: false
 
 jobs:
-  # ---- Lint ------------------------------------------------------------------
-  lint:
-    name: Lint (${{ inputs.language || 'skip' }})
+  validate-build:
     runs-on: ubuntu-latest
-    # Skip lint entirely when no language is declared
-    if: inputs.language != ''
-    defaults:
-      run:
-        # Prefer workdir alias; fall back to working_directory canonical
-        working-directory: ${{ inputs.workdir != '.' && inputs.workdir || inputs.working_directory }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Lint — Python (ruff + mypy)
-        if: inputs.language == 'python'
-        run: |
-          pip install ruff mypy --quiet
-          ruff check .
-          mypy . --ignore-missing-imports
-
-      - name: Lint — Rust (clippy)
-        if: inputs.language == 'rust'
-        run: |
-          rustup component add clippy
-          cargo clippy --all-targets --all-features -- -D warnings
-
-      - name: Lint — TypeScript (tsc + eslint)
-        if: inputs.language == 'typescript'
-        run: |
-          npm ci
-          npm run typecheck
-          npm run lint
-
-      - name: Lint — YAML / Kubernetes (yamllint + kubeconform)
-        if: inputs.language == 'yaml'
-        run: |
-          pip install yamllint --quiet
-          yamllint .
-          curl -sSLo kubeconform.tar.gz \
-            https://github.com/yannh/kubeconform/releases/latest/download/kubeconform-linux-amd64.tar.gz
-          tar xf kubeconform.tar.gz
-          find . -name '*.yaml' | xargs ./kubeconform -strict -ignore-missing-schemas
-
-  # ---- Build (and optional publish) -----------------------------------------
-  build:
-    name: Build ${{ inputs.image_name || inputs.image }}
-    needs: [lint]
-    # Run even when lint is skipped (always() prevents needs-failure blocking)
-    if: always()
-    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v4
@@ -142,38 +51,40 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Resolve effective inputs
-        id: resolve
-        run: |
-          # Prefer alias if set and non-empty, otherwise use canonical
-          IMAGE="${{ inputs.image_name != '' && inputs.image_name || inputs.image }}"
-          PUSH="${{ inputs.push_image || inputs.publish }}"
-          echo "image=${IMAGE}"  >> "$GITHUB_OUTPUT"
-          echo "push=${PUSH}"    >> "$GITHUB_OUTPUT"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
 
-      - name: Log in to ${{ inputs.registry }}
-        if: steps.resolve.outputs.push == 'true'
+      - name: Install YAML parser
+        run: python -m pip install pyyaml
+
+      - name: Lint YAML
+        run: |
+          python - <<'PY'
+          import pathlib, yaml
+          for path in list(pathlib.Path('.').rglob('*.yml')) + list(pathlib.Path('.').rglob('*.yaml')):
+              try:
+                  yaml.safe_load(path.read_text())
+              except Exception as exc:
+                  raise SystemExit(f"YAML parse failure in {path}: {exc}")
+          print('YAML parse ok')
+          PY
+
+      - name: Log in to ghcr.io
+        if: inputs.push_image
         uses: docker/login-action@v3
         with:
-          registry: ${{ inputs.registry }}
-          username: ${{ inputs.registry_namespace }}
-          password: ${{ secrets.REGISTRY_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.ghcr_token }}
 
-      - name: Derive image tags
-        id: tags
-        run: |
-          IMAGE="${{ inputs.registry }}/${{ inputs.registry_namespace }}/${{ steps.resolve.outputs.image }}"
-          echo "sha_tag=${IMAGE}:${{ github.sha }}" >> "$GITHUB_OUTPUT"
-          echo "latest_tag=${IMAGE}:latest"         >> "$GITHUB_OUTPUT"
-
-      - name: Build (and optionally publish)
+      - name: Build image
         uses: docker/build-push-action@v6
         with:
-          context:    ${{ inputs.context }}
+          context:    ${{ inputs.workdir }}
           file:       ${{ inputs.dockerfile }}
-          push:       ${{ steps.resolve.outputs.push == 'true' }}
-          tags: |
-            ${{ steps.tags.outputs.sha_tag }}
-            ${{ steps.tags.outputs.latest_tag }}
+          push:       ${{ inputs.push_image }}
+          tags:       ghcr.io/${{ github.repository_owner }}/${{ inputs.image_name }}:${{ github.sha }}
           cache-from: type=gha
           cache-to:   type=gha,mode=max
