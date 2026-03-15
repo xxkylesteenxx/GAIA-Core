@@ -1,0 +1,19 @@
+# GAIA-IoT — thin CI caller example.
+# Copy this file to .github/workflows/ci.yml in the GAIA-IoT repo.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  iot-gateway:
+    uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+    with:
+      image:             gaia-iot-gateway
+      dockerfile:        docker/Dockerfile.python-core
+      language:          python
+      working_directory: src
+      publish:           ${{ github.ref == 'refs/heads/main' }}
+    secrets: inherit

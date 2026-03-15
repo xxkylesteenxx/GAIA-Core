@@ -1,47 +1,42 @@
-name: CI
-
+# GAIA-Core — thin CI caller.
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
+#
+# All job logic lives in reusable-build-and-publish.yml.
+# This file passes repo-specific inputs only.
 on:
   push:
-    branches: ["main", "dev/**"]
+    branches: [main]
   pull_request:
-    branches: ["main"]
-
-defaults:
-  run:
-    working-directory: src/python
+    branches: [main]
 
 jobs:
-  python-checks:
-    name: Python — ruff · mypy · pytest
-    runs-on: ubuntu-latest
+  python-service:
+    uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+    with:
+      image:             gaia-core-python
+      dockerfile:        src/platform/deployment/docker/Dockerfile.python-core
+      context:           src/platform/deployment
+      language:          python
+      working_directory: src/python/gaia_server
+      publish:           false
+    secrets: inherit
 
-    strategy:
-      matrix:
-        python-version: ["3.11", "3.12"]
+  rust-service:
+    uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+    with:
+      image:             gaia-core-rust
+      dockerfile:        src/platform/deployment/docker/rust/Dockerfile
+      language:          rust
+      working_directory: src/rust/gaia_desktop/rust_desktop_runtime
+      publish:           false
+    secrets: inherit
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-
-      - name: Install dependencies
-        run: |
-          pip install --upgrade pip
-          pip install -e ".[dev]"
-
-      - name: Lint — ruff
-        run: ruff check .
-
-      - name: Format check — ruff format
-        run: ruff format --check .
-
-      - name: Type check — mypy
-        run: mypy gaia_cores
-
-      - name: Tests — pytest
-        run: pytest tests/ -v --tb=short
+  typescript-shell:
+    uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+    with:
+      image:             gaia-ui-shell
+      dockerfile:        src/typescript/ui_shell/Dockerfile   # scaffold — add when containerising shell
+      language:          typescript
+      working_directory: src/typescript/ui_shell
+      publish:           false
+    secrets: inherit
