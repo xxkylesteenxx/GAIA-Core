@@ -16,4 +16,5 @@ pub use hud_bridge::{CoreStatus, sample_core_statuses};
 pub use state::{
     DesktopState, GaiaCore, OverlayPriority, OverlayRecord, SurfaceRecord,
 };
-pub use window_manager::{TileSlot, WindowManager};
+// TileSlot removed — tile_layout now returns Vec<(u64, Rect)>.
+pub use window_manager::{Rect, WindowManager};
