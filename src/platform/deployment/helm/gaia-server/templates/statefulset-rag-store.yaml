@@ -1,0 +1,34 @@
+{{- if .Values.ragStore.enabled }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gaia-rag-store
+  namespace: {{ .Values.namespace }}
+spec:
+  serviceName: gaia-rag-store
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gaia-rag-store
+  template:
+    metadata:
+      labels:
+        app: gaia-rag-store
+    spec:
+      containers:
+        - name: rag-store
+          image: pgvector/pgvector:pg16
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: {{ .Values.ragStore.storage }}
+{{- end }}
