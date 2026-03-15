@@ -20,6 +20,16 @@ spec:
           image: pgvector/pgvector:pg16
           ports:
             - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: {{ .Values.ragStore.postgresDb | default "gaia" | quote }}
+            - name: POSTGRES_USER
+              value: {{ .Values.ragStore.postgresUser | default "gaia" | quote }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gaia-secrets
+                  key: MODEL_REGISTRY_TOKEN
           volumeMounts:
             - name: data
               mountPath: /var/lib/postgresql/data
@@ -30,5 +40,5 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: {{ .Values.ragStore.storage }}
+            storage: {{ .Values.ragStore.storage | default "20Gi" }}
 {{- end }}
