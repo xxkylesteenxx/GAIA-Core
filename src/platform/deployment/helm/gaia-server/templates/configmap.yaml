@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gaia-config
+  namespace: {{ .Values.namespace }}
+data:
+  GAIA_ENV:               {{ .Values.config.gaiaEnv     | quote }}
+  INFERENCE_ROUTER_MODE:  {{ .Values.config.routerMode  | quote }}
+  SPIFFE_TRUST_DOMAIN:    {{ .Values.config.trustDomain | quote }}
+  GAIA_LOG_LEVEL:         {{ .Values.config.logLevel    | quote }}
+  GAIA_SPIFFE_SOCKET:     {{ .Values.config.spiffeSocket | quote }}
+  GAIA_OTEL_ENDPOINT:     {{ .Values.config.otelEndpoint | quote }}

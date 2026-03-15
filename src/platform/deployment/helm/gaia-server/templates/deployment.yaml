@@ -4,9 +4,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "gaia-server.fullname" . }}
+  namespace: {{ .Values.namespace }}
   labels: {{- include "gaia-server.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.router.replicas }}
   selector:
     matchLabels: {{- include "gaia-server.selectorLabels" . | nindent 6 }}
   template:
@@ -23,27 +24,22 @@ spec:
           type: RuntimeDefault
       containers:
         - name: gaia-server
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.router.image.repository }}:{{ .Values.router.image.tag }}"
+          imagePullPolicy: {{ .Values.router.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: {{ .Values.router.containerPort }}
               protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: gaia-config
           env:
-            - name: GAIA_ENV
-              value: {{ .Values.config.env | quote }}
-            - name: GAIA_LOG_LEVEL
-              value: {{ .Values.config.logLevel | quote }}
-            - name: GAIA_SPIFFE_SOCKET
-              value: {{ .Values.config.spiffeSocket | quote }}
-            - name: GAIA_OTEL_ENDPOINT
-              value: {{ .Values.config.otelEndpoint | quote }}
             - name: GAIA_SECRET_KEY
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.externalSecretName }}
                   key: secret-key
-          resources: {{- toYaml .Values.resources | nindent 12 }}
+          resources: {{- toYaml .Values.router.resources | nindent 12 }}
           livenessProbe:
             httpGet: { path: /health, port: http }
             initialDelaySeconds: 10
