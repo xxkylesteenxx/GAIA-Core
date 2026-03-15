@@ -1,19 +1,25 @@
-# GAIA-Meta — thin CI caller example.
-# Copy this file to .github/workflows/ci.yml in the GAIA-Meta repo.
+# GAIA-Meta — thin CI caller.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
+#
+# Deploy instructions:
+#   1. Copy this file to .github/workflows/ci.yml in the GAIA-Meta repo.
+#   2. Reusable workflow is sourced from:
+#      xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+#   3. Add a Dockerfile at the repo root, or update the dockerfile input.
+#   4. Set push_image: true and add REGISTRY_TOKEN secret when ready to publish.
+name: meta-ci
+
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
-  meta-coordinator:
+  call-shared:
     uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
     with:
-      image:             gaia-meta-coordinator
-      dockerfile:        docker/Dockerfile.python-core
-      language:          python
-      working_directory: src
-      publish:           ${{ github.ref == 'refs/heads/main' }}
+      image_name: gaia-meta
+      workdir:    .
+      dockerfile: Dockerfile
+      push_image: false
     secrets: inherit
