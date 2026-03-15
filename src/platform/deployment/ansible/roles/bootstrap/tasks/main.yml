@@ -1,7 +1,11 @@
-# bootstrap role — OS prerequisites.
+# bootstrap role — OS prerequisites, system user/group, base packages.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7, DEP-003
-# Idempotent — safe to re-run.
+#
+# Idempotent — safe to re-run on a converged host.
+# Uses ansible.builtin.package for OS-portable installs where possible.
+# OS-specific cache refresh is gated by ansible_os_family.
 ---
+# --- Package cache refresh (must precede package installs) ---
 - name: Update package cache (Debian)
   when: ansible_os_family == 'Debian'
   ansible.builtin.apt:
@@ -13,18 +17,31 @@
   ansible.builtin.dnf:
     update_cache: true
 
-- name: Install base packages (Debian)
-  when: ansible_os_family == 'Debian'
-  ansible.builtin.apt:
-    name:  "{{ bootstrap_base_packages | reject('equalto', 'python3-pip') | list }}"
+# --- Base packages (OS-portable) ---
+- name: Install base packages
+  ansible.builtin.package:
+    name:
+      - curl
+      - ca-certificates
+      - git
     state: present
 
-- name: Install base packages (RedHat)
-  when: ansible_os_family == 'RedHat'
-  ansible.builtin.dnf:
-    name:  "{{ bootstrap_base_packages | reject('equalto', 'apt-transport-https') | list }}"
+# --- GAIA system group ---
+- name: Ensure GAIA group exists
+  ansible.builtin.group:
+    name:  "{{ gaia_group }}"
     state: present
 
+# --- GAIA system user ---
+- name: Ensure GAIA user exists
+  ansible.builtin.user:
+    name:        "{{ gaia_user }}"
+    group:       "{{ gaia_group }}"
+    system:      true
+    create_home: true
+    state:       present
+
+# --- SSH hardening (optional, gated by bootstrap_harden_ssh) ---
 - name: Harden SSH — disable password authentication
   when: bootstrap_harden_ssh
   ansible.builtin.lineinfile:
