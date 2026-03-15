@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package gaia.ipc.nexus;
+
+message VectorClockEntry {
+  string actor = 1;
+  uint64 counter = 2;
+}
+
+message SyncEnvelope {
+  string source_core = 1;
+  string target_core = 2;
+  string topic = 3;
+  string event_id = 4;
+  uint64 emitted_unix_ms = 5;
+  repeated VectorClockEntry vector_clock = 6;
+  bytes payload = 7;
+  map<string, string> labels = 8;
+}
+
+message SyncAck {
+  string event_id = 1;
+  string receiver = 2;
+  uint64 applied_unix_ms = 3;
+}
+
+service NexusSyncService {
+  rpc Publish(SyncEnvelope) returns (SyncAck);
+}
