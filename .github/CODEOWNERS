@@ -1,0 +1,35 @@
+# GAIA-Core CODEOWNERS
+# Each line is a file pattern followed by one or more owners.
+# These owners will be requested for review on matching PRs.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Global fallback — all files
+*                                   @xxkylesteenxx
+
+# Core substrate and bootstrap
+gaia_core/                          @xxkylesteenxx
+gaia_core/storage/                  @xxkylesteenxx
+gaia_core/bootstrap.py              @xxkylesteenxx
+
+# Security and trust-chain code
+gaia_core/security/                 @xxkylesteenxx
+gaia_core/attestation/              @xxkylesteenxx
+gaia_core/guardian/                 @xxkylesteenxx
+security/                           @xxkylesteenxx
+
+# Platform / kernel / VMM
+kernel/                             @xxkylesteenxx
+vmm/                                @xxkylesteenxx
+platform/                           @xxkylesteenxx
+hal/                                @xxkylesteenxx
+
+# CI / governance
+.github/                            @xxkylesteenxx
+
+# Specs and ADRs
+docs/specs/                         @xxkylesteenxx
+docs/adr/                           @xxkylesteenxx
+
+# Release and supply-chain files
+CHANGELOG.md                        @xxkylesteenxx
+LICENSE                             @xxkylesteenxx
