@@ -1,0 +1,50 @@
+{
+  "name": "gaia-ui-shell",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GAIA operator shell — panels, HUD, dashboards, and accessibility layer.",
+
+  "scripts": {
+    "dev":          "vite",
+    "build":        "tsc && vite build",
+    "preview":      "vite preview",
+    "typecheck":    "tsc --noEmit",
+    "lint":         "eslint src --ext .ts,.tsx",
+    "test":         "vitest run",
+    "test:watch":   "vitest",
+    "a11y:check":   "axe --exit http://localhost:5173"
+  },
+
+  "dependencies": {
+    "react":     "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+
+  "devDependencies": {
+    "typescript":            "^5.6.0",
+    "vite":                  "^6.0.0",
+    "@vitejs/plugin-react":  "^4.3.0",
+    "@types/react":          "^19.0.0",
+    "@types/react-dom":      "^19.0.0",
+
+    "vitest":                "^2.0.0",
+    "@vitest/ui":            "^2.0.0",
+    "@testing-library/react":       "^16.0.0",
+    "@testing-library/user-event":  "^14.0.0",
+    "@testing-library/jest-dom":    "^6.0.0",
+
+    "@axe-core/react":   "^4.10.0",
+    "axe-core":          "^4.10.0",
+
+    "eslint":                        "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser":        "^8.0.0",
+    "eslint-plugin-jsx-a11y":           "^6.10.0",
+    "eslint-plugin-react-hooks":        "^5.0.0"
+  },
+
+  "engines": {
+    "node": ">=20"
+  }
+}
