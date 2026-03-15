@@ -1,19 +1,28 @@
-# GAIA-Desktop — thin CI caller example.
-# Copy this file to .github/workflows/ci.yml in the GAIA-Desktop repo.
+# GAIA-Desktop — thin CI caller.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §8, DEP-004
+#
+# Deploy instructions:
+#   1. Copy this file to .github/workflows/ci.yml in the GAIA-Desktop repo.
+#   2. Ensure reusable-build-and-publish.yml is accessible at:
+#      xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
+#      (uses: ./.github/... resolves locally once copied into the Desktop repo
+#       only if the reusable workflow is also present there; use the fully-
+#       qualified ref below for cross-repo calls from GAIA-Desktop.)
+#   3. Add a Dockerfile at the repo root, or update the dockerfile input.
+#   4. Set push_image: true and add REGISTRY_TOKEN secret when ready to publish.
+name: desktop-ci
+
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
-  desktop-runtime:
+  call-shared:
     uses: xxkylesteenxx/GAIA-Core/.github/workflows/reusable-build-and-publish.yml@main
     with:
-      image:             gaia-desktop-runtime
-      dockerfile:        docker/rust/Dockerfile
-      language:          rust
-      working_directory: src/rust/gaia_desktop/rust_desktop_runtime
-      publish:           ${{ github.ref == 'refs/heads/main' }}
+      image_name: gaia-desktop
+      workdir:    .
+      dockerfile: Dockerfile
+      push_image: false
     secrets: inherit
