@@ -5,26 +5,25 @@
 //!
 //! Module layout
 //! -------------
-//! config      — DesktopConfig, OutputConfig (session startup configuration)
-//! state       — DesktopState, SurfaceRecord, OverlayRecord, GaiaCore, OverlayPriority
-//! compositor  — surface lifecycle + focus auditability          (DSK-008)
-//! workspace   — workspace state machine + overlay routing        (DSK-005)
-//! overlay     — z-band enforcement + safety overlay policy       (DSK-009)
-//! hud         — CoreStatus, sample_core_statuses (Consciousness HUD types)
-//! ipc         — Unix socket IPC server scaffold (shell ↔ runtime)
-//!
-//! All modules within this crate remain inside the trusted runtime
-//! boundary (DSK-001). The TypeScript shell communicates exclusively
-//! through the IPC layer — no direct FFI or shared memory.
+//! config          — DesktopConfig, OutputConfig
+//! state           — DesktopState, SurfaceRecord, OverlayRecord, GaiaCore, OverlayPriority
+//! compositor      — CompositorFacade: surface lifecycle + focus audit (DSK-008)
+//! workspace       — WorkspacePolicyEngine: workspace state machine (DSK-005)
+//! window_manager  — WindowManager: tile layout + overlay upsert
+//! overlay         — OverlayManager: z-band enforcement (DSK-009)
+//! hud_bridge      — CoreStatus, sample_core_statuses
+//! ipc             — IPC server scaffold (shell ↔ runtime)
 
 pub mod compositor;
 pub mod config;
-pub mod hud;
+pub mod hud_bridge;
 pub mod ipc;
 pub mod overlay;
 pub mod state;
+pub mod window_manager;
 pub mod workspace;
 
 pub use config::{DesktopConfig, OutputConfig};
-pub use hud::{CoreStatus, sample_core_statuses};
+pub use hud_bridge::{CoreStatus, sample_core_statuses};
 pub use state::{DesktopState, GaiaCore, OverlayPriority, OverlayRecord, SurfaceRecord};
+pub use window_manager::{TileSlot, WindowManager};
