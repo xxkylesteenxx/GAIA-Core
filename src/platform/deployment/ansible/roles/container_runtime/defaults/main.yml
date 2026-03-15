@@ -1,20 +1,9 @@
 # container_runtime role — default variables.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
 #
-# container_runtime is set in gaia_node/defaults/main.yml (docker | containerd | podman).
-# This role reads that variable and installs accordingly.
-
-docker_apt_repo:  "https://download.docker.com/linux/{{ ansible_distribution | lower }}"
-docker_gpg_url:   "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
-docker_packages:
-  - "docker-ce={{ docker_version }}.*"
-  - docker-ce-cli
-  - containerd.io
-  - docker-buildx-plugin
-  - docker-compose-plugin
-
-containerd_packages:
-  - "containerd.io={{ containerd_version }}.*"
-
-podman_packages:
-  - podman
+# container_runtime is the authoritative selector variable.
+# It is set in gaia_node/defaults/main.yml (default: 'docker').
+# Supported values: docker | containerd | podman
+#
+# No package lists needed — packages are declared inline in tasks
+# using distro-provided names for portability.

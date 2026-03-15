@@ -1,64 +1,51 @@
 # container_runtime role — install and configure container runtime.
 # Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7, DEP-003
-# Idempotent — safe to re-run.
+#
+# Idempotent — safe to re-run on a converged host.
+# Runtime is selected by the container_runtime variable (default: 'docker').
+# Supported values: docker | containerd | podman
 ---
-# --- Docker ---
-- name: Add Docker GPG key (Debian)
-  when:
-    - container_runtime == 'docker'
-    - ansible_os_family == 'Debian'
-  ansible.builtin.get_url:
-    url:  "{{ docker_gpg_url }}"
-    dest: /etc/apt/keyrings/docker.asc
-    mode: "0644"
-
-- name: Add Docker apt repository (Debian)
-  when:
-    - container_runtime == 'docker'
-    - ansible_os_family == 'Debian'
-  ansible.builtin.apt_repository:
-    repo: >-
-      deb [arch={{ ansible_architecture }} signed-by=/etc/apt/keyrings/docker.asc]
-      {{ docker_apt_repo }} {{ ansible_distribution_release }} stable
+# --- Docker (via distro package repositories) ---
+- name: Install Docker runtime on Debian-family nodes
+  ansible.builtin.package:
+    name:
+      - docker.io
     state: present
+  when: container_runtime == 'docker'
 
-- name: Install Docker (Debian)
-  when:
-    - container_runtime == 'docker'
-    - ansible_os_family == 'Debian'
-  ansible.builtin.apt:
-    name:         "{{ docker_packages }}"
-    state:        present
-    update_cache: true
-  notify: start and enable docker
-
-- name: Install Docker (RedHat)
-  when:
-    - container_runtime == 'docker'
-    - ansible_os_family == 'RedHat'
-  ansible.builtin.dnf:
-    name:  "{{ docker_packages }}"
-    state: present
-  notify: start and enable docker
+- name: Ensure docker service is enabled
+  ansible.builtin.service:
+    name:    docker
+    enabled: true
+    state:   started
+  when: container_runtime == 'docker'
 
 - name: Add GAIA user to docker group
-  when: container_runtime == 'docker'
   ansible.builtin.user:
     name:   "{{ gaia_user }}"
     groups: docker
     append: true
+  when: container_runtime == 'docker'
 
 # --- containerd ---
-- name: Install containerd
+- name: Install containerd runtime
+  ansible.builtin.package:
+    name:
+      - containerd
+    state: present
   when: container_runtime == 'containerd'
-  ansible.builtin.package:
-    name:  "{{ containerd_packages }}"
-    state: present
-  notify: start and enable containerd
 
-# --- podman ---
-- name: Install podman
-  when: container_runtime == 'podman'
+- name: Ensure containerd service is enabled
+  ansible.builtin.service:
+    name:    containerd
+    enabled: true
+    state:   started
+  when: container_runtime == 'containerd'
+
+# --- podman (daemonless; no service task required) ---
+- name: Install podman runtime
   ansible.builtin.package:
-    name:  "{{ podman_packages }}"
+    name:
+      - podman
     state: present
+  when: container_runtime == 'podman'
