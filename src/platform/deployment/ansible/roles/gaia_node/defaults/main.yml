@@ -1,18 +1,36 @@
 # GAIA node role — default variables.
-# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7
-
+# Spec ref: GAIA Deployment and Attested Identity Spec v1.0 §7, DEP-003
+#
+# Override any value in:
+#   inventory/group_vars/<group>.yml   — group-level override
+#   inventory/host_vars/<host>.yml     — host-level override
+#   playbook vars / extra-vars         — highest precedence
+#
+# Canonical variable names (spec input)
+gaia_root:            /opt/gaia
 gaia_user:            gaia
 gaia_group:           gaia
-gaia_uid:             1001
-gaia_gid:             1001
+container_runtime:    docker          # docker | containerd | podman
 
-gaia_base_dir:        /opt/gaia
+# Derived directory layout — all paths rooted under gaia_root.
+# Tasks reference these vars; do not hard-code paths in task files.
 gaia_config_dir:      /etc/gaia
 gaia_log_dir:         /var/log/gaia
 gaia_run_dir:         /run/gaia
+gaia_data_dir:        "{{ gaia_root }}/data"
+gaia_bin_dir:         "{{ gaia_root }}/bin"
 
-container_runtime:    docker   # docker | containerd | podman
-docker_version:       "26.1"
+# System account
+gaia_uid:             1001
+gaia_gid:             1001
 
+# Container runtime version pins
+docker_version:       "26.1"          # used when container_runtime == 'docker'
+containerd_version:   "1.7"           # used when container_runtime == 'containerd'
+
+# SPIRE
 gaia_spire_socket:    /run/spire/sockets/agent.sock
+
+# Node metadata
 gaia_node_tag:        scaffold
+gaia_role:            node            # server | edge | node
