@@ -2,23 +2,19 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: gaia-router-allow
+  name: gaia-default-deny-with-router-allow
   namespace: {{ .Values.namespace }}
 spec:
-  podSelector:
-    matchLabels:
-      app: gaia-router
+  podSelector: {}
   policyTypes:
     - Ingress
     - Egress
   ingress:
-    - ports:
-        - port: {{ .Values.router.containerPort }}
-  egress:
-    - ports:
-        - port: 5432
-      to:
+    - from:
         - podSelector:
             matchLabels:
-              app: gaia-rag-store
+              app: gaia-router
+  egress:
+    - to:
+        - podSelector: {}
 {{- end }}
